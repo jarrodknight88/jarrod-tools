@@ -12,7 +12,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .topbar span{font-size:13px;color:#94A3B8}
 .container{max-width:780px;margin:0 auto;padding:2rem 1rem}
 
-/* Landing / overview */
 .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.5rem}
 .stat{background:#fff;border:0.5px solid #E2E8F0;border-radius:10px;padding:1rem;text-align:center}
 .stat-num{font-size:26px;font-weight:600;color:#111}
@@ -21,14 +20,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .progress-wrap{background:#E2E8F0;border-radius:4px;height:5px;margin-bottom:1.5rem;overflow:hidden}
 .progress-fill{height:100%;background:#10B981;border-radius:4px;transition:width 0.3s}
 
-/* Controls */
 .controls{display:flex;gap:10px;margin-bottom:1.25rem;align-items:center;flex-wrap:wrap}
 .view-btns{display:flex;gap:6px}
 .view-btn{padding:6px 14px;border-radius:6px;border:0.5px solid #E2E8F0;background:#fff;font-size:13px;cursor:pointer;color:#475569;font-family:inherit;transition:all 0.1s}
 .view-btn.active{background:#111111;color:#fff;border-color:#111111}
-.date-select{padding:6px 12px;border-radius:6px;border:0.5px solid #E2E8F0;background:#fff;font-size:13px;color:#111;font-family:inherit;cursor:pointer;margin-left:auto}
+.view-label{font-size:11px;font-weight:600;color:#64748B;text-transform:uppercase;letter-spacing:0.06em}
 
-/* Open items summary cards */
 .summary-grid{display:grid;gap:8px;margin-bottom:1.5rem}
 .summary-card{background:#fff;border:0.5px solid #E2E8F0;border-radius:10px;padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:background 0.1s}
 .summary-card:hover{background:#F8FAFC}
@@ -39,7 +36,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .badge-count.ok{background:#D1FAE5;color:#065F46}
 .chevron{color:#94A3B8;font-size:16px}
 
-/* Section / checklist view */
 .section{background:#fff;border:0.5px solid #E2E8F0;border-radius:12px;margin-bottom:10px;overflow:hidden}
 .section-title{font-size:11px;font-weight:600;color:#64748B;text-transform:uppercase;letter-spacing:0.06em;padding:11px 16px 9px;border-bottom:0.5px solid #F1F5F9;background:#F8FAFC}
 .item{display:flex;align-items:flex-start;gap:12px;padding:10px 16px;border-bottom:0.5px solid #F1F5F9;cursor:pointer;transition:background 0.1s}
@@ -49,22 +45,38 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .item.checked .item-text{text-decoration:line-through;color:#94A3B8}
 .cb{width:19px;height:19px;min-width:19px;border-radius:5px;border:1.5px solid #CBD5E1;display:flex;align-items:center;justify-content:center;margin-top:1px;background:#fff;transition:all 0.15s}
 .cb.on{background:#10B981;border-color:#10B981}
-.cb svg{display:none}
-.cb.on svg{display:block}
-.item-body{flex:1}
-.item-text{font-size:13.5px;color:#111;line-height:1.5}
-.badge{display:inline-block;font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;margin-top:4px}
-.urgent{background:#FEE2E2;color:#991B1B}
-.soon{background:#FEF3C7;color:#92400E}
-.ongoing{background:#F1F5F9;color:#475569}
+.cb svg{opacity:0;transition:opacity 0.15s}
+.cb.on svg{opacity:1}
+.item-body{flex:1;min-width:0}
+.item-text{font-size:14px;color:#111;line-height:1.45}
+.item-meta{display:flex;gap:8px;margin-top:5px;align-items:center;flex-wrap:wrap}
+.badge{font-size:11px;font-weight:500;padding:2px 8px;border-radius:5px;display:inline-block}
+.badge.urgent{background:#FEE2E2;color:#991B1B}
+.badge.soon{background:#FEF3C7;color:#854D0E}
+.badge.ongoing{background:#E0E7FF;color:#3730A3}
+.link-badge{font-size:11px;font-weight:500;color:#3B82F6;background:#EFF6FF;padding:2px 7px;border-radius:5px;cursor:help;display:inline-flex;align-items:center;gap:3px;border:0.5px solid #DBEAFE}
 
-/* Empty state */
-.empty{text-align:center;padding:3rem 1rem;color:#94A3B8;font-size:14px}
+.back-btn{background:none;border:none;color:#64748B;font-size:13px;cursor:pointer;padding:0 0 1rem 0;font-family:inherit;display:flex;align-items:center;gap:4px}
+.back-btn:hover{color:#111}
 
-.footer{text-align:center;font-size:12px;color:#94A3B8;margin-top:2rem;padding-bottom:2rem}
-.back-btn{background:none;border:none;color:#3B82F6;font-size:13px;cursor:pointer;font-family:inherit;padding:0;margin-bottom:1rem;display:flex;align-items:center;gap:4px}
-.back-btn:hover{text-decoration:underline}
-.view-label{font-size:13px;color:#64748B;font-weight:500}
+.empty{text-align:center;color:#64748B;padding:3rem 1rem;font-size:14px}
+
+.modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,0.5);display:flex;align-items:center;justify-content:center;z-index:100;padding:1rem;opacity:0;pointer-events:none;transition:opacity 0.15s}
+.modal-backdrop.show{opacity:1;pointer-events:auto}
+.modal{background:#fff;border-radius:12px;max-width:480px;width:100%;padding:1.5rem;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);transform:scale(0.95);transition:transform 0.15s}
+.modal-backdrop.show .modal{transform:scale(1)}
+.modal h3{font-size:16px;font-weight:600;color:#111;margin-bottom:8px}
+.modal p{font-size:13px;color:#475569;line-height:1.5;margin-bottom:14px}
+.modal-task-list{background:#F8FAFC;border:0.5px solid #E2E8F0;border-radius:8px;padding:10px 12px;margin-bottom:1rem;max-height:180px;overflow-y:auto}
+.modal-task-item{font-size:12px;color:#334155;padding:5px 0;border-bottom:0.5px solid #E2E8F0;line-height:1.4}
+.modal-task-item:last-child{border-bottom:none}
+.modal-task-meeting{font-size:10px;color:#94A3B8;text-transform:uppercase;letter-spacing:0.05em;margin-top:2px;display:block}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end}
+.modal-btn{padding:8px 16px;border-radius:6px;border:0.5px solid #E2E8F0;background:#fff;font-size:13px;cursor:pointer;font-family:inherit;font-weight:500;color:#475569;transition:all 0.1s}
+.modal-btn:hover{background:#F8FAFC}
+.modal-btn.primary{background:#111;color:#fff;border-color:#111}
+.modal-btn.primary:hover{background:#27272A}
+.modal-btn.secondary{background:#fff;color:#475569}
 </style>
 </head>
 <body>
@@ -74,33 +86,43 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </div>
 <div class="container">
   <div id="app"></div>
-  <div class="footer">CardsHQ Ecommerce &nbsp;|&nbsp; Jarrod Knight</div>
+</div>
+
+<div class="modal-backdrop" id="link-modal">
+  <div class="modal">
+    <h3>Mark linked tasks complete?</h3>
+    <p id="modal-desc">This task is also tracked in other meetings.</p>
+    <div class="modal-task-list" id="modal-task-list"></div>
+    <div class="modal-actions">
+      <button class="modal-btn secondary" id="modal-just-this">Only this one</button>
+      <button class="modal-btn primary" id="modal-mark-all">Mark all complete</button>
+    </div>
+  </div>
 </div>
 
 <script>
-// ── DATA
 var MEETINGS = {
   "smile-david-may-12-2026": {
     label: "David Wyatt (Smile.io) - May 12, 2026",
     sections: [
       {g:"Immediate - Today",i:[
-        {t:"Send program specifications to Smile team - was due by 1:00 PM today",d:"Today",c:"urgent"},
-        {t:"Confirm Smile team configured staging within 1 hour of receiving specs",d:"Today",c:"urgent"},
+        {id:"sd-001",t:"Send program specifications to Smile team - was due by 1:00 PM today",d:"Today",c:"urgent"},
+        {id:"sd-002",t:"Confirm Smile team configured staging within 1 hour of receiving specs",d:"Today",c:"urgent"},
       ]},
       {g:"Tomorrow",i:[
-        {t:"Follow-up meeting with David Wyatt at 11:00 AM",d:"Tomorrow",c:"urgent"},
+        {id:"sd-003",t:"Follow-up meeting with David Wyatt at 11:00 AM",d:"Tomorrow",c:"urgent"},
       ]},
       {g:"Smile.io - Technical Setup",i:[
-        {t:"Accept production contract to activate live Smile.io environment",d:"Before June 1",c:"soon"},
-        {t:"Get API keys from Smile developer tools and pass to Nathaniel for headless integration",d:"This week",c:"urgent"},
-        {t:"Nathaniel to integrate point redemption display on PDPs",d:"By June 1",c:"soon"},
-        {t:"Set up digital loyalty card in Smile.io",d:"By June 16",c:"soon"},
-        {t:"Finalize retroactive points import process with Smile team",d:"Closer to June 1",c:"soon"},
+        {id:"sd-004",t:"Accept production contract to activate live Smile.io environment",d:"Before June 1",c:"soon"},
+        {id:"sd-005",t:"Get API keys from Smile developer tools and pass to Nathaniel for headless integration",d:"This week",c:"urgent",linkedTo:["kt-003"]},
+        {id:"sd-006",t:"Nathaniel to integrate point redemption display on PDPs",d:"By June 1",c:"soon",linkedTo:["sc-006"]},
+        {id:"sd-007",t:"Set up digital loyalty card in Smile.io",d:"By June 16",c:"soon"},
+        {id:"sd-008",t:"Finalize retroactive points import process with Smile team",d:"Closer to June 1",c:"soon",linkedTo:["kt-004"]},
       ]},
       {g:"Smile.io - Configuration",i:[
-        {t:"Confirm birthday rewards pricing - still under consideration",d:"This week",c:"urgent"},
-        {t:"Review customer distribution against Smile recommendations: VIP ~1%, Rare 5-10%, Gold 40-50%, Base remainder",d:"This week",c:"soon"},
-        {t:"Schedule internal leadership testing session before production push",d:"Before June 16",c:"soon"},
+        {id:"sd-009",t:"Confirm birthday rewards pricing - still under consideration",d:"This week",c:"urgent"},
+        {id:"sd-010",t:"Review customer distribution against Smile recommendations: VIP ~1%, Rare 5-10%, Gold 40-50%, Base remainder",d:"This week",c:"soon"},
+        {id:"sd-011",t:"Schedule internal leadership testing session before production push",d:"Before June 16",c:"soon"},
       ]},
     ]
   },
@@ -108,61 +130,61 @@ var MEETINGS = {
     label: "Kelly Touchbase - May 12, 2026",
     sections: [
       {g:"Smile.io - Loyalty Setup",i:[
-        {t:"Confirm Smile.io staging environment configured correctly - Hollow 1pt, Rare 2pt, Grail 2pt",d:"This week",c:"urgent"},
-        {t:"Manually recreate all staging configurations on production - no export/import available, must be done manually",d:"By June 1",c:"soon"},
-        {t:"Get API keys from Smile developer tools for Nathaniel's headless integration",d:"This week",c:"urgent"},
-        {t:"Confirm retroactive points import process with Smile team - finalize closer to June 1",d:"By June 1",c:"soon"},
+        {id:"kt-001",t:"Confirm Smile.io staging environment configured correctly - Hollow 1pt, Rare 2pt, Grail 2pt",d:"This week",c:"urgent"},
+        {id:"kt-002",t:"Manually recreate all staging configurations on production - no export/import available, must be done manually",d:"By June 1",c:"soon"},
+        {id:"kt-003",t:"Get API keys from Smile developer tools for Nathaniel's headless integration",d:"This week",c:"urgent",linkedTo:["sd-005"]},
+        {id:"kt-004",t:"Confirm retroactive points import process with Smile team - finalize closer to June 1",d:"By June 1",c:"soon",linkedTo:["sd-008"]},
       ]},
       {g:"Loyalty - Marketing & Launch",i:[
-        {t:"Draft Terms & Conditions page for loyalty program",d:"Before June 16",c:"soon"},
-        {t:"Draft customer-facing FAQ - how tiers, points, and rewards work",d:"Before June 16",c:"soon"},
-        {t:"Build visual customer-facing explanation of the loyalty program structure",d:"Before June 16",c:"soon"},
-        {t:"Confirm launch messaging plan for June 16 (Summer Virtual) vs July Detroit - must not overlap",d:"This week",c:"urgent"},
-        {t:"Confirm brand guidelines for loyalty graphics with Dizzy / Steven Polizzi",d:"This week",c:"urgent"},
-        {t:"Follow up with Dizzy on PassKit loyalty card template - delivery target next week",d:"Next week",c:"soon"},
+        {id:"kt-005",t:"Draft Terms & Conditions page for loyalty program",d:"Before June 16",c:"soon"},
+        {id:"kt-006",t:"Draft customer-facing FAQ - how tiers, points, and rewards work",d:"Before June 16",c:"soon"},
+        {id:"kt-007",t:"Build visual customer-facing explanation of the loyalty program structure",d:"Before June 16",c:"soon"},
+        {id:"kt-008",t:"Confirm launch messaging plan for June 16 (Summer Virtual) vs July Detroit - must not overlap",d:"This week",c:"urgent"},
+        {id:"kt-009",t:"Confirm brand guidelines for loyalty graphics with Dizzy / Steven Polizzi",d:"This week",c:"urgent"},
+        {id:"kt-010",t:"Follow up with Dizzy on PassKit loyalty card template - delivery target next week",d:"Next week",c:"soon"},
       ]},
       {g:"Loyalty - Technical",i:[
-        {t:"Get Carter review on B2B exclusion list - 325 tax-exempt customers at $6M YTD spend need proper tagging before launch",d:"This week",c:"urgent"},
-        {t:"Confirm Mailchimp sync flows with Nathaniel - tier upgrades, points earned/redeemed, birthday campaigns",d:"By June 1",c:"soon"},
-        {t:"Get enterprise pricing from Gorgias for AI chat agent - $0.90/convo too expensive at standard tier",d:"This week",c:"soon"},
-        {t:"Confirm Nathaniel's Slabber vs loyalty time split - ensure June 1 dev completion stays on track",d:"This week",c:"urgent"},
-        {t:"Clarify sequencing: loyalty launch vs PDP redesign - confirm with Kelly and Carter",d:"This week",c:"urgent"},
+        {id:"kt-011",t:"Get Carter review on B2B exclusion list - 325 tax-exempt customers at $6M YTD spend need proper tagging before launch",d:"This week",c:"urgent"},
+        {id:"kt-012",t:"Confirm Mailchimp sync flows with Nathaniel - tier upgrades, points earned/redeemed, birthday campaigns",d:"By June 1",c:"soon"},
+        {id:"kt-013",t:"Get enterprise pricing from Gorgias for AI chat agent - $0.90/convo too expensive at standard tier",d:"This week",c:"soon"},
+        {id:"kt-014",t:"Confirm Nathaniel's Slabber vs loyalty time split - ensure June 1 dev completion stays on track",d:"This week",c:"urgent"},
+        {id:"kt-015",t:"Clarify sequencing: loyalty launch vs PDP redesign - confirm with Kelly and Carter",d:"This week",c:"urgent",linkedTo:["sc-013"]},
       ]},
       {g:"Jira & Dev Workflow",i:[
-        {t:"Send epic breakdown document to Nathaniel",d:"This week",c:"urgent"},
-        {t:"Nathaniel to set up staging environment using Matrixify - both staging and production configured",d:"This week",c:"urgent"},
-        {t:"Schedule meeting with James to understand existing PM processes and align on unified approach",d:"This week",c:"soon"},
-        {t:"Increase check-in cadence with Nathaniel to Monday/Wednesday 15-minute standups",d:"This week",c:"soon"},
-        {t:"Add Gantt chart at epic level for overlapping initiative visibility - Kelly needs high-level view",d:"This week",c:"soon"},
+        {id:"kt-016",t:"Send epic breakdown document to Nathaniel",d:"This week",c:"urgent"},
+        {id:"kt-017",t:"Nathaniel to set up staging environment using Matrixify - both staging and production configured",d:"This week",c:"urgent"},
+        {id:"kt-018",t:"Schedule meeting with James to understand existing PM processes and align on unified approach",d:"This week",c:"soon"},
+        {id:"kt-019",t:"Increase check-in cadence with Nathaniel to Monday/Wednesday 15-minute standups",d:"This week",c:"soon"},
+        {id:"kt-020",t:"Add Gantt chart at epic level for overlapping initiative visibility - Kelly needs high-level view",d:"This week",c:"soon"},
       ]},
       {g:"Gorgias",i:[
-        {t:"Test Gorgias website chat widget on staging environment before go-live",d:"Before May 1",c:"urgent"},
-        {t:"Confirm DNS settings are in place - Geoff to complete when back next week",d:"Next week",c:"soon"},
-        {t:"Communicate email change to team - outbound shifting from donotreply@cardshq.com to help@cardshq.com",d:"Before go-live",c:"soon"},
+        {id:"kt-021",t:"Test Gorgias website chat widget on staging environment before go-live",d:"Before May 1",c:"urgent"},
+        {id:"kt-022",t:"Confirm DNS settings are in place - Geoff to complete when back next week",d:"Next week",c:"soon"},
+        {id:"kt-023",t:"Communicate email change to team - outbound shifting from donotreply@cardshq.com to help@cardshq.com",d:"Before go-live",c:"soon"},
       ]},
       {g:"Swedish Rounding",i:[
-        {t:"Work with Nathaniel on custom Swedish rounding solution - Georgia law requires round up if closer to 5, down if closer to lower number",d:"This week",c:"urgent"},
+        {id:"kt-024",t:"Work with Nathaniel on custom Swedish rounding solution - Georgia law requires round up if closer to 5, down if closer to lower number",d:"This week",c:"urgent",linkedTo:["sc-012"]},
       ]},
       {g:"Segment Analytics",i:[
-        {t:"Play around with Tresl platform - assess recommendation segments gap before deciding",d:"This week",c:"urgent"},
-        {t:"Schedule Predflow call - invite Kelly + Nick",d:"This week",c:"urgent"},
-        {t:"Brief Nick on both vendor calls before scheduling",d:"Before calls",c:"urgent"},
+        {id:"kt-025",t:"Play around with Tresl platform - assess recommendation segments gap before deciding",d:"This week",c:"urgent"},
+        {id:"kt-026",t:"Schedule Predflow call - invite Kelly + Nick",d:"This week",c:"urgent"},
+        {id:"kt-027",t:"Brief Nick on both vendor calls before scheduling",d:"Before calls",c:"urgent"},
       ]},
       {g:"Loyalty - Stakeholder Feedback",i:[
-        {t:"Send Tyler Nethercott email response - share with Kelly for review before sending",d:"This week",c:"urgent"},
-        {t:"Draft response to James Sowder feedback items",d:"This week",c:"soon"},
-        {t:"Model 2% buyback at Expert tier ($5K+) and above - cost per tier",d:"This week",c:"soon"},
-        {t:"Define First Right of Refusal process for multiple 1 of 1 customers wanting the same card",d:"This week",c:"soon"},
-        {t:"Resend Google feedback form to retail team for updated customer loyalty input",d:"This week",c:"soon"},
-        {t:"Get Dean's feedback on loyalty perks",d:"Before next loyalty session",c:"ongoing"},
-        {t:"Get Jimmy's take on David Adams loyalty program - what would CardsHQ need to do to beat it?",d:"Before next loyalty session",c:"ongoing"},
+        {id:"kt-028",t:"Send Tyler Nethercott email response - share with Kelly for review before sending",d:"This week",c:"urgent"},
+        {id:"kt-029",t:"Draft response to James Sowder feedback items",d:"This week",c:"soon"},
+        {id:"kt-030",t:"Model 2% buyback at Expert tier ($5K+) and above - cost per tier",d:"This week",c:"soon"},
+        {id:"kt-031",t:"Define First Right of Refusal process for multiple 1 of 1 customers wanting the same card",d:"This week",c:"soon"},
+        {id:"kt-032",t:"Resend Google feedback form to retail team for updated customer loyalty input",d:"This week",c:"soon"},
+        {id:"kt-033",t:"Get Dean's feedback on loyalty perks",d:"Before next loyalty session",c:"ongoing"},
+        {id:"kt-034",t:"Get Jimmy's take on David Adams loyalty program - what would CardsHQ need to do to beat it?",d:"Before next loyalty session",c:"ongoing"},
       ]},
       {g:"Trade Shows",i:[
-        {t:"Come back with prioritized recommendation on 1 event from eTail Boston, ShopTalk Fall, Walmart Seller Summit - with reasoning on why the other two were not chosen",d:"Within 2 weeks",c:"soon"},
+        {id:"kt-035",t:"Come back with prioritized recommendation on 1 event from eTail Boston, ShopTalk Fall, Walmart Seller Summit - with reasoning on why the other two were not chosen",d:"Within 2 weeks",c:"soon"},
       ]},
       {g:"Sale to Deals + Nav",i:[
-        {t:"Build Deals nav on staging - red/bold treatment, TCG + Sports sub-categories, Merch moved off L1",d:"This week",c:"urgent"},
-        {t:"Check whether red Deals nav item conflicts visually with the green CardsHQ gift card",d:"This week",c:"urgent"},
+        {id:"kt-036",t:"Build Deals nav on staging - red/bold treatment, TCG + Sports sub-categories, Merch moved off L1",d:"This week",c:"urgent"},
+        {id:"kt-037",t:"Check whether red Deals nav item conflicts visually with the green CardsHQ gift card",d:"This week",c:"urgent"},
       ]},
     ]
   },
@@ -170,70 +192,134 @@ var MEETINGS = {
     label: "Shopify Consultation - May 12, 2026",
     sections: [
       {g:"Jarrod - AI Readiness",i:[
-        {t:"Download and configure the Knowledge Base App - review surfaced answers, correct any inaccurate FAQs, align voice with brand standards",d:"By May 22",c:"urgent"},
-        {t:"Distribute AI readiness checklist across the team - normalized titles, variant logic, image consistency, structured data - with owners assigned",d:"This week",c:"urgent"},
-        {t:"Review the agentic AI readiness review and tech stack review when received from Shopify, then brief Kelly",d:"Within 1 week of receipt",c:"soon"},
+        {id:"sc-001",t:"Download and configure the Knowledge Base App - review surfaced answers, correct any inaccurate FAQs, align voice with brand standards",d:"By May 22",c:"urgent"},
+        {id:"sc-002",t:"Distribute AI readiness checklist across the team - normalized titles, variant logic, image consistency, structured data - with owners assigned",d:"This week",c:"urgent"},
+        {id:"sc-003",t:"Review the agentic AI readiness review and tech stack review when received from Shopify, then brief Kelly",d:"Within 1 week of receipt",c:"soon"},
       ]},
       {g:"Jarrod - Shop App Optimization",i:[
-        {t:"Optimize Shop app sales channel - hero graphic or video, header, navigation labels, sales channel toggle, product exclusions for one-off SKUs",d:"By May 29",c:"soon"},
+        {id:"sc-004",t:"Optimize Shop app sales channel - hero graphic or video, header, navigation labels, sales channel toggle, product exclusions for one-off SKUs",d:"By May 29",c:"soon"},
       ]},
       {g:"Jarrod - Scheduling",i:[
-        {t:"Schedule June Shopify call - confirm CRO and SEO audit walkthrough as the centerpiece",d:"By May 19",c:"urgent"},
+        {id:"sc-005",t:"Schedule June Shopify call - confirm CRO and SEO audit walkthrough as the centerpiece",d:"By May 19",c:"urgent"},
       ]},
       {g:"Nathaniel",i:[
-        {t:"Confirm LOE on PDP loyalty points display integration for the June 16 launch",d:"This week",c:"urgent"},
-        {t:"Scope automation approach for catalog-wide product data cleanup against the AI readiness checklist (60-70k SKUs) - identify AI-driven SEO and GEO tooling options",d:"By May 29",c:"soon"},
+        {id:"sc-006",t:"Confirm LOE on PDP loyalty points display integration for the June 16 launch",d:"This week",c:"urgent",linkedTo:["sd-006"]},
+        {id:"sc-007",t:"Scope automation approach for catalog-wide product data cleanup against the AI readiness checklist (60-70k SKUs) - identify AI-driven SEO and GEO tooling options",d:"By May 29",c:"soon"},
       ]},
       {g:"John",i:[
-        {t:"Coordinate with Jarrod on monthly deals catalog operations - first edition tied to loyalty launch",d:"By May 29",c:"soon"},
-        {t:"Plan tier-progression email campaign template - target customers within one or two orders of the next tier at loyalty go-live",d:"By June 8",c:"soon"},
+        {id:"sc-008",t:"Coordinate with Jarrod on monthly deals catalog operations - first edition tied to loyalty launch",d:"By May 29",c:"soon"},
+        {id:"sc-009",t:"Plan tier-progression email campaign template - target customers within one or two orders of the next tier at loyalty go-live",d:"By June 8",c:"soon"},
       ]},
       {g:"Shopify (Account Manager)",i:[
-        {t:"Deliver agentic AI readiness review",d:"This week",c:"urgent"},
-        {t:"Deliver tech stack review",d:"This week",c:"urgent"},
-        {t:"Fast-follow on penny rounding / sweetest rounding solutions for Georgia POS mandate",d:"Before June call",c:"soon"},
-        {t:"Walk through full CRO and SEO audit findings on next call",d:"June call",c:"ongoing"},
+        {id:"sc-010",t:"Deliver agentic AI readiness review",d:"This week",c:"urgent"},
+        {id:"sc-011",t:"Deliver tech stack review",d:"This week",c:"urgent"},
+        {id:"sc-012",t:"Fast-follow on penny rounding / sweetest rounding solutions for Georgia POS mandate",d:"Before June call",c:"soon",linkedTo:["kt-024"]},
+        {id:"sc-014",t:"Walk through full CRO and SEO audit findings on next call",d:"June call",c:"ongoing"},
       ]},
       {g:"Leadership Decision Needed",i:[
-        {t:"PDP redesign sequencing - full strategy first vs. loyalty-integrated MVP with redesign deferred to November refresh (Kelly, Carter)",d:"By May 26",c:"urgent"},
+        {id:"sc-013",t:"PDP redesign sequencing - full strategy first vs. loyalty-integrated MVP with redesign deferred to November refresh (Kelly, Carter)",d:"By May 26",c:"urgent",linkedTo:["kt-015"]},
       ]},
     ]
   }
 };
 
-var KEY_PREFIX = 'chq-actions-';
-var currentView = 'landing'; // 'landing' | 'meeting'
+// ==================== STATE ====================
+var STATE_KEY = 'chq-actions-global';
+var OLD_KEY_PREFIX = 'chq-actions-';
+
+function loadGlobalState(){
+  try { var s = localStorage.getItem(STATE_KEY); return s ? JSON.parse(s) : null; } catch(e){ return null; }
+}
+function saveGlobalState(state){
+  try { localStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch(e){}
+}
+
+function migrateOldState(){
+  var existing = loadGlobalState();
+  if(existing) return existing;
+  var globalState = {};
+  Object.keys(MEETINGS).forEach(function(mid){
+    var oldKey = OLD_KEY_PREFIX + mid;
+    var raw;
+    try { raw = localStorage.getItem(oldKey); } catch(e){}
+    if(!raw) return;
+    var oldState;
+    try { oldState = JSON.parse(raw); } catch(e){ return; }
+    var meeting = MEETINGS[mid];
+    meeting.sections.forEach(function(sec){
+      sec.i.forEach(function(item, i){
+        var oldId = sec.g + '_' + i;
+        if(oldState[oldId] && item.id){
+          globalState[item.id] = true;
+        }
+      });
+    });
+  });
+  saveGlobalState(globalState);
+  return globalState;
+}
+
+var STATE = migrateOldState();
+var currentView = 'landing';
 var currentMeeting = null;
 var showCompleted = true;
 
-function stateKey(meetingId){ return KEY_PREFIX + meetingId; }
-function loadState(mid){ try{ var s=localStorage.getItem(stateKey(mid)); return s?JSON.parse(s):{}; }catch(e){ return {}; } }
-function saveState(mid, state){ try{ localStorage.setItem(stateKey(mid), JSON.stringify(state)); }catch(e){} }
+// ==================== TASK INDEX ====================
+var TASK_INDEX = {};
+Object.keys(MEETINGS).forEach(function(mid){
+  var m = MEETINGS[mid];
+  m.sections.forEach(function(sec){
+    sec.i.forEach(function(item){
+      TASK_INDEX[item.id] = { item: item, meetingId: mid, meetingLabel: m.label, sectionName: sec.g };
+    });
+  });
+});
 
+function getLinkGroup(taskId){
+  var entry = TASK_INDEX[taskId];
+  if(!entry) return [taskId];
+  var linked = entry.item.linkedTo || [];
+  var seen = {};
+  seen[taskId] = true;
+  linked.forEach(function(lid){ if(TASK_INDEX[lid]) seen[lid] = true; });
+  return Object.keys(seen);
+}
+
+function isChecked(taskId){ return !!STATE[taskId]; }
+function setChecked(taskId, value){
+  if(value) STATE[taskId] = true;
+  else delete STATE[taskId];
+}
+
+// ==================== STATS ====================
 function getMeetingStats(mid){
   var meeting = MEETINGS[mid];
-  var state = loadState(mid);
   var total = 0, done = 0, open_urgent = 0;
   meeting.sections.forEach(function(sec){
-    sec.i.forEach(function(item, i){
-      var id = sec.g+'_'+i;
+    sec.i.forEach(function(item){
       total++;
-      if(state[id]) done++;
+      if(isChecked(item.id)) done++;
       else if(item.c === 'urgent') open_urgent++;
     });
   });
-  return {total:total, done:done, remaining:total-done, open_urgent:open_urgent};
+  return { total:total, done:done, remaining:total-done, open_urgent:open_urgent };
 }
 
 function getAllStats(){
-  var total=0, done=0, remaining=0;
-  Object.keys(MEETINGS).forEach(function(mid){
-    var s = getMeetingStats(mid);
-    total += s.total; done += s.done; remaining += s.remaining;
+  var seen = {};
+  var total = 0, done = 0;
+  Object.keys(TASK_INDEX).forEach(function(tid){
+    if(seen[tid]) return;
+    var group = getLinkGroup(tid);
+    group.forEach(function(g){ seen[g] = true; });
+    total++;
+    var anyDone = group.some(function(g){ return isChecked(g); });
+    if(anyDone) done++;
   });
-  return {total:total, done:done, remaining:remaining};
+  return { total:total, done:done, remaining:total-done };
 }
 
+// ==================== RENDER ====================
 function render(){
   var app = document.getElementById('app');
   var topbarDate = document.getElementById('topbar-date');
@@ -253,7 +339,6 @@ function renderLanding(app){
   var pct = stats.total > 0 ? Math.round(stats.done/stats.total*100) : 0;
 
   var html = '';
-  // Stats
   html += '<div class="stats-row">';
   html += '<div class="stat"><div class="stat-num">'+stats.remaining+'</div><div class="stat-label">open tasks</div></div>';
   html += '<div class="stat"><div class="stat-num done">'+stats.done+'</div><div class="stat-label">completed</div></div>';
@@ -261,7 +346,6 @@ function renderLanding(app){
   html += '</div>';
   html += '<div class="progress-wrap"><div class="progress-fill" style="width:'+pct+'%"></div></div>';
 
-  // Open tasks this week summary
   html += '<div class="view-label" style="margin-bottom:10px">Meetings</div>';
   html += '<div class="summary-grid">';
 
@@ -272,7 +356,7 @@ function renderLanding(app){
       ? '<span class="badge-count">'+s.remaining+' open</span>'
       : '<span class="badge-count ok">Complete</span>';
     html += '<div class="summary-card" data-mid="'+mid+'">';
-    html += '<div class="summary-card-left"><h3>'+m.label+'</h3><p>'+s.total+' tasks &nbsp;|&nbsp; '+s.open_urgent+' urgent</p></div>';
+    html += '<div class="summary-card-left"><h3>'+escapeHtml(m.label)+'</h3><p>'+s.total+' tasks &nbsp;|&nbsp; '+s.open_urgent+' urgent</p></div>';
     html += '<div class="summary-card-right">'+countHtml+'<span class="chevron">›</span></div>';
     html += '</div>';
   });
@@ -280,7 +364,6 @@ function renderLanding(app){
   html += '</div>';
   app.innerHTML = html;
 
-  // Bind clicks
   app.querySelectorAll('.summary-card').forEach(function(card){
     card.addEventListener('click', function(){
       currentMeeting = card.getAttribute('data-mid');
@@ -292,16 +375,11 @@ function renderLanding(app){
 
 function renderMeeting(app, mid){
   var meeting = MEETINGS[mid];
-  var state = loadState(mid);
   var stats = getMeetingStats(mid);
   var pct = stats.total > 0 ? Math.round(stats.done/stats.total*100) : 0;
 
   var html = '';
-
-  // Back button
   html += '<button class="back-btn" id="back-btn">‹ All Meetings</button>';
-
-  // Stats
   html += '<div class="stats-row">';
   html += '<div class="stat"><div class="stat-num">'+stats.remaining+'</div><div class="stat-label">remaining</div></div>';
   html += '<div class="stat"><div class="stat-num done">'+stats.done+'</div><div class="stat-label">completed</div></div>';
@@ -309,70 +387,150 @@ function renderMeeting(app, mid){
   html += '</div>';
   html += '<div class="progress-wrap"><div class="progress-fill" style="width:'+pct+'%"></div></div>';
 
-  // Controls
   html += '<div class="controls">';
   html += '<div class="view-btns">';
   html += '<button class="view-btn'+(showCompleted?'':' active')+'" id="btn-open">Open only</button>';
   html += '<button class="view-btn'+(showCompleted?' active':'')+'" id="btn-all">Show all</button>';
   html += '</div></div>';
 
-  // Sections
-  meeting.sections.forEach(function(sec, si){
-    var visibleItems = sec.i.filter(function(item, i){
-      var id = sec.g+'_'+i;
-      return showCompleted || !state[id];
+  var anyVisible = false;
+  meeting.sections.forEach(function(sec){
+    var visibleItems = sec.i.filter(function(item){
+      return showCompleted || !isChecked(item.id);
     });
     if(visibleItems.length === 0) return;
+    anyVisible = true;
 
     html += '<div class="section">';
-    html += '<div class="section-title">'+sec.g+'</div>';
+    html += '<div class="section-title">'+escapeHtml(sec.g)+'</div>';
 
-    sec.i.forEach(function(item, i){
-      var id = sec.g+'_'+i;
-      var checked = !!state[id];
+    sec.i.forEach(function(item){
+      var checked = isChecked(item.id);
       if(!showCompleted && checked) return;
-      html += '<div class="item'+(checked?' checked':'')+'" data-id="'+id+'" data-mid="'+mid+'">';
+      var linkedTo = item.linkedTo || [];
+      var linkBadge = '';
+      if(linkedTo.length > 0){
+        var totalLinked = linkedTo.length + 1;
+        linkBadge = '<span class="link-badge" title="Linked to '+linkedTo.length+' other task(s) across meetings">🔗 '+totalLinked+'</span>';
+      }
+      html += '<div class="item'+(checked?' checked':'')+'" data-tid="'+item.id+'">';
       html += '<div class="cb'+(checked?' on':'')+'"><svg width="11" height="8" viewBox="0 0 11 8" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
-      html += '<div class="item-body"><div class="item-text">'+item.t+'</div><span class="badge '+item.c+'">'+item.d+'</span></div>';
-      html += '</div>';
+      html += '<div class="item-body"><div class="item-text">'+escapeHtml(item.t)+'</div>';
+      html += '<div class="item-meta"><span class="badge '+item.c+'">'+escapeHtml(item.d)+'</span>'+linkBadge+'</div>';
+      html += '</div></div>';
     });
 
     html += '</div>';
   });
 
-  if(html.indexOf('class="item') === -1){
-    html += '<div class="empty">All tasks complete! 🎉</div>';
+  if(!anyVisible){
+    html += '<div class="empty">All tasks complete in this meeting</div>';
   }
 
   app.innerHTML = html;
 
-  // Back
   document.getElementById('back-btn').addEventListener('click', function(){
     currentView = 'landing'; currentMeeting = null; render();
   });
+  document.getElementById('btn-open').addEventListener('click', function(){ showCompleted = false; render(); });
+  document.getElementById('btn-all').addEventListener('click', function(){ showCompleted = true; render(); });
 
-  // Toggle
-  document.getElementById('btn-open').addEventListener('click', function(){
-    showCompleted = false; render();
-  });
-  document.getElementById('btn-all').addEventListener('click', function(){
-    showCompleted = true; render();
-  });
-
-  // Checkboxes
   app.querySelectorAll('.item').forEach(function(row){
     row.addEventListener('click', function(){
-      var id = row.getAttribute('data-id');
-      var mid2 = row.getAttribute('data-mid');
-      var st = loadState(mid2);
-      st[id] = !st[id];
-      saveState(mid2, st);
-      render();
+      var tid = row.getAttribute('data-tid');
+      handleTaskClick(tid);
     });
   });
 }
 
-// Init
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, function(c){
+    return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+  });
+}
+
+// ==================== TOGGLE + LINKED MODAL ====================
+function handleTaskClick(tid){
+  var entry = TASK_INDEX[tid];
+  if(!entry) return;
+  var currentlyChecked = isChecked(tid);
+  var linkedTo = entry.item.linkedTo || [];
+
+  if(currentlyChecked){
+    setChecked(tid, false);
+    saveGlobalState(STATE);
+    render();
+    return;
+  }
+
+  if(linkedTo.length === 0){
+    setChecked(tid, true);
+    saveGlobalState(STATE);
+    render();
+    return;
+  }
+
+  var openLinked = linkedTo.filter(function(lid){ return TASK_INDEX[lid] && !isChecked(lid); });
+  if(openLinked.length === 0){
+    setChecked(tid, true);
+    saveGlobalState(STATE);
+    render();
+    return;
+  }
+
+  showLinkedModal(tid, openLinked);
+}
+
+function showLinkedModal(tid, openLinked){
+  var modal = document.getElementById('link-modal');
+  var taskList = document.getElementById('modal-task-list');
+  var desc = document.getElementById('modal-desc');
+
+  desc.textContent = 'This task is linked to ' + openLinked.length + ' other ' +
+    (openLinked.length === 1 ? 'task' : 'tasks') +
+    ' tracked in other meetings. Mark them all complete in one go, or just this one?';
+
+  taskList.innerHTML = '';
+  openLinked.forEach(function(lid){
+    var lt = TASK_INDEX[lid];
+    if(!lt) return;
+    var div = document.createElement('div');
+    div.className = 'modal-task-item';
+    div.innerHTML = escapeHtml(lt.item.t) +
+      '<span class="modal-task-meeting">' + escapeHtml(lt.meetingLabel) + '</span>';
+    taskList.appendChild(div);
+  });
+
+  modal.classList.add('show');
+
+  var justThisBtn = document.getElementById('modal-just-this');
+  var markAllBtn = document.getElementById('modal-mark-all');
+
+  function onJustThis(){
+    setChecked(tid, true);
+    saveGlobalState(STATE);
+    cleanup();
+    render();
+  }
+  function onMarkAll(){
+    setChecked(tid, true);
+    openLinked.forEach(function(lid){ setChecked(lid, true); });
+    saveGlobalState(STATE);
+    cleanup();
+    render();
+  }
+  function onBackdrop(e){ if(e.target === modal){ cleanup(); } }
+  function cleanup(){
+    modal.classList.remove('show');
+    justThisBtn.removeEventListener('click', onJustThis);
+    markAllBtn.removeEventListener('click', onMarkAll);
+    modal.removeEventListener('click', onBackdrop);
+  }
+  justThisBtn.addEventListener('click', onJustThis);
+  markAllBtn.addEventListener('click', onMarkAll);
+  modal.addEventListener('click', onBackdrop);
+}
+
 render();
 </script>
 </body>
