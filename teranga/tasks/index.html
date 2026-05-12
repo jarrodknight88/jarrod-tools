@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teranga - Tasks</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F8FAFC;color:#111111;min-height:100vh}
+.topbar{background:#2C3E5C;padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between}
+.topbar h1{font-size:16px;font-weight:600;color:#fff;letter-spacing:0.02em}
+.topbar span{font-size:13px;color:#A8B5C8}
+.container{max-width:780px;margin:0 auto;padding:2rem 1rem}
+
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.5rem}
+.stat{background:#fff;border:0.5px solid #E2E8F0;border-radius:10px;padding:1rem;text-align:center}
+.stat-num{font-size:26px;font-weight:600;color:#111}
+.stat-num.done{color:#10B981}
+.stat-num.urgent{color:#DC2626}
+.stat-label{font-size:12px;color:#64748B;margin-top:3px}
+.progress-wrap{background:#E2E8F0;border-radius:4px;height:5px;margin-bottom:1.5rem;overflow:hidden}
+.progress-fill{height:100%;background:#10B981;border-radius:4px;transition:width 0.3s}
+
+.controls{display:flex;gap:10px;margin-bottom:1.25rem;align-items:center;flex-wrap:wrap;justify-content:space-between}
+.view-btns{display:flex;gap:6px;flex-wrap:wrap}
+.view-btn{padding:6px 14px;border-radius:6px;border:0.5px solid #E2E8F0;background:#fff;font-size:13px;cursor:pointer;color:#475569;font-family:inherit;transition:all 0.1s}
+.view-btn.active{background:#2C3E5C;color:#fff;border-color:#2C3E5C}
+.view-btn:hover:not(.active){background:#F1F5F9}
+.expand-btn{padding:6px 10px;border-radius:6px;border:0.5px solid #E2E8F0;background:#fff;font-size:12px;cursor:pointer;color:#64748B;font-family:inherit;transition:all 0.1s}
+.expand-btn:hover{background:#F1F5F9;color:#111}
+
+.category{background:#fff;border:0.5px solid #E2E8F0;border-radius:12px;margin-bottom:10px;overflow:hidden}
+.category-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;cursor:pointer;transition:background 0.1s;user-select:none}
+.category-header:hover{background:#F8FAFC}
+.category-header-left{display:flex;align-items:center;gap:12px;min-width:0;flex:1}
+.category-icon{width:28px;height:28px;min-width:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.category-title{font-size:14px;font-weight:600;color:#111;letter-spacing:-0.005em}
+.category-subtitle{font-size:11px;color:#64748B;margin-top:1px}
+.category-header-right{display:flex;align-items:center;gap:10px}
+.badge-count{background:#FEE2E2;color:#991B1B;font-size:12px;font-weight:600;padding:3px 9px;border-radius:20px;min-width:26px;text-align:center}
+.badge-count.ok{background:#D1FAE5;color:#065F46}
+.badge-count.zero{background:#F1F5F9;color:#94A3B8}
+.chevron{color:#94A3B8;font-size:11px;transition:transform 0.2s}
+.chevron.open{transform:rotate(90deg)}
+
+.category-body{display:none;border-top:0.5px solid #F1F5F9}
+.category.expanded .category-body{display:block}
+
+.item{display:flex;align-items:flex-start;gap:12px;padding:11px 18px;border-bottom:0.5px solid #F1F5F9;cursor:pointer;transition:background 0.1s}
+.item:last-child{border-bottom:none}
+.item:hover{background:#F8FAFC}
+.item.checked{opacity:0.42}
+.item.checked .item-text{text-decoration:line-through;color:#94A3B8}
+.cb{width:19px;height:19px;min-width:19px;border-radius:5px;border:1.5px solid #CBD5E1;display:flex;align-items:center;justify-content:center;margin-top:1px;background:#fff;transition:all 0.15s}
+.cb.on{background:#10B981;border-color:#10B981}
+.cb svg{opacity:0;transition:opacity 0.15s}
+.cb.on svg{opacity:1}
+.item-body{flex:1;min-width:0}
+.item-text{font-size:14px;color:#111;line-height:1.45}
+.item-meta{display:flex;gap:6px;margin-top:6px;align-items:center;flex-wrap:wrap}
+.badge{font-size:11px;font-weight:500;padding:2px 8px;border-radius:5px;display:inline-block;white-space:nowrap}
+.badge.urgent{background:#FEE2E2;color:#991B1B}
+.badge.soon{background:#FEF3C7;color:#854D0E}
+.badge.ongoing{background:#E0E7FF;color:#3730A3}
+.badge.due{background:#F1F5F9;color:#475569;font-weight:500}
+.badge.due.overdue{background:#FEE2E2;color:#991B1B;font-weight:600}
+.badge.entered{background:transparent;color:#94A3B8;padding:2px 4px;font-size:10px;font-weight:400}
+
+.empty{text-align:center;color:#64748B;padding:2rem 1rem;font-size:13px}
+.empty-cat{text-align:center;color:#94A3B8;padding:1.5rem 1rem;font-size:12px;font-style:italic}
+
+.footer-note{margin-top:2rem;padding:1rem;background:#fff;border:0.5px solid #E2E8F0;border-radius:10px;font-size:12px;color:#64748B;line-height:1.6}
+.footer-note strong{color:#111;font-weight:600}
+.footer-note code{background:#F1F5F9;padding:1px 5px;border-radius:3px;font-size:11px;font-family:'SF Mono',Menlo,monospace;color:#475569}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <h1>Teranga — Tasks</h1>
+  <span id="topbar-meta">All Categories</span>
+</div>
+<div class="container">
+  <div id="app"></div>
+</div>
+
+<script>
+// ====================================================================
+// TERANGA TASKS — single source of truth
+// ====================================================================
+// Each task has:
+//   id         stable identifier, prefix + 3 digits (e.g. vc-001)
+//   t          task text
+//   urg        urgency class: "urgent" | "soon" | "ongoing"
+//   entered    ISO date string YYYY-MM-DD when the task was added
+//   due        optional ISO date string YYYY-MM-DD, or null
+// ====================================================================
+
+var CATEGORIES = [
+  {
+    key: "vendor",
+    title: "Vendor & Contracts",
+    subtitle: "Helget, Easy Ice, IceWorks, supplier negotiations",
+    icon: "🤝",
+    iconBg: "#FEF3C7",
+    prefix: "vc",
+    items: []
+  },
+  {
+    key: "hiring",
+    title: "Hiring",
+    subtitle: "Postings, interviews, onboarding across locations",
+    icon: "👥",
+    iconBg: "#DBEAFE",
+    prefix: "hr",
+    items: []
+  },
+  {
+    key: "training",
+    title: "Training Content",
+    subtitle: "Synthesia videos, scripts, training modules",
+    icon: "🎬",
+    iconBg: "#FCE7F3",
+    prefix: "tc",
+    items: []
+  },
+  {
+    key: "ops",
+    title: "Operations & Policy",
+    subtitle: "Handbook, SOPs, Notion buildout",
+    icon: "⚙️",
+    iconBg: "#E0E7FF",
+    prefix: "op",
+    items: []
+  },
+  {
+    key: "bi",
+    title: "BI & Reporting",
+    subtitle: "Dashboards, payroll script, Toast exports",
+    icon: "📊",
+    iconBg: "#D1FAE5",
+    prefix: "bi",
+    items: []
+  },
+  {
+    key: "expansion",
+    title: "Expansion",
+    subtitle: "Afro District, R Thomas prep",
+    icon: "🌍",
+    iconBg: "#FED7AA",
+    prefix: "ex",
+    items: []
+  },
+  {
+    key: "comp",
+    title: "Compensation & Org",
+    subtitle: "Role structure, retainer model, group leadership",
+    icon: "💼",
+    iconBg: "#E9D5FF",
+    prefix: "co",
+    items: []
+  }
+];
+
+// ====================================================================
+// state
+// ====================================================================
+var STATE_KEY = "teranga-tasks-state";
+var EXPANDED_KEY = "teranga-tasks-expanded";
+var VIEW_KEY = "teranga-tasks-view";
+
+function loadState(){
+  try{ return JSON.parse(localStorage.getItem(STATE_KEY)||"{}"); }
+  catch(e){ return {}; }
+}
+function saveState(s){
+  try{ localStorage.setItem(STATE_KEY, JSON.stringify(s)); }catch(e){}
+}
+function loadExpanded(){
+  try{ return JSON.parse(localStorage.getItem(EXPANDED_KEY)||"{}"); }
+  catch(e){ return {}; }
+}
+function saveExpanded(e){
+  try{ localStorage.setItem(EXPANDED_KEY, JSON.stringify(e)); }catch(e){}
+}
+function loadView(){
+  return localStorage.getItem(VIEW_KEY) || "open";
+}
+function saveView(v){
+  try{ localStorage.setItem(VIEW_KEY, v); }catch(e){}
+}
+
+var state = loadState();
+var expanded = loadExpanded();
+var view = loadView(); // "open" | "all" | "urgent"
+
+// ====================================================================
+// helpers
+// ====================================================================
+function todayISO(){
+  var d = new Date();
+  var m = String(d.getMonth()+1).padStart(2,"0");
+  var day = String(d.getDate()).padStart(2,"0");
+  return d.getFullYear() + "-" + m + "-" + day;
+}
+
+function fmtShort(iso){
+  if(!iso) return "";
+  var parts = iso.split("-");
+  if(parts.length !== 3) return iso;
+  var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  var m = parseInt(parts[1],10) - 1;
+  return months[m] + " " + parseInt(parts[2],10);
+}
+
+function isOverdue(iso){
+  if(!iso) return false;
+  return iso < todayISO();
+}
+
+function allItems(){
+  var out = [];
+  CATEGORIES.forEach(function(c){
+    c.items.forEach(function(it){ out.push({cat: c, item: it}); });
+  });
+  return out;
+}
+
+function visibleItems(catItems){
+  if(view === "all") return catItems;
+  if(view === "urgent") return catItems.filter(function(it){
+    return !state[it.id] && (it.urg === "urgent" || isOverdue(it.due));
+  });
+  // default: open
+  return catItems.filter(function(it){ return !state[it.id]; });
+}
+
+// ====================================================================
+// rendering
+// ====================================================================
+var CHECK_SVG = '<svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+var CHEVRON_SVG = '▶';
+
+function render(){
+  var app = document.getElementById("app");
+  var all = allItems();
+  var total = all.length;
+  var done = all.filter(function(x){ return state[x.item.id]; }).length;
+  var open = total - done;
+  var urgent = all.filter(function(x){
+    return !state[x.item.id] && (x.item.urg === "urgent" || isOverdue(x.item.due));
+  }).length;
+  var pct = total ? Math.round((done/total)*100) : 0;
+
+  var html = "";
+
+  // stats
+  html += '<div class="stats-row">';
+  html += '<div class="stat"><div class="stat-num">'+open+'</div><div class="stat-label">Open</div></div>';
+  html += '<div class="stat"><div class="stat-num urgent">'+urgent+'</div><div class="stat-label">Urgent / Overdue</div></div>';
+  html += '<div class="stat"><div class="stat-num done">'+done+'</div><div class="stat-label">Complete</div></div>';
+  html += '</div>';
+
+  // progress
+  html += '<div class="progress-wrap"><div class="progress-fill" style="width:'+pct+'%"></div></div>';
+
+  // controls
+  html += '<div class="controls">';
+  html += '<div class="view-btns">';
+  html += '<button class="view-btn '+(view==="open"?"active":"")+'" data-view="open">Open</button>';
+  html += '<button class="view-btn '+(view==="urgent"?"active":"")+'" data-view="urgent">Urgent</button>';
+  html += '<button class="view-btn '+(view==="all"?"active":"")+'" data-view="all">All</button>';
+  html += '</div>';
+  html += '<button class="expand-btn" id="toggle-all">Expand all / Collapse all</button>';
+  html += '</div>';
+
+  // categories
+  if(total === 0){
+    html += '<div class="empty">No tasks yet. Use the Apple Shortcut on your phone or ask Claude to add one.</div>';
+  } else {
+    CATEGORIES.forEach(function(cat){
+      var catOpen = cat.items.filter(function(it){ return !state[it.id]; }).length;
+      var catUrgent = cat.items.filter(function(it){
+        return !state[it.id] && (it.urg === "urgent" || isOverdue(it.due));
+      }).length;
+      var isExpanded = expanded[cat.key] !== false; // default: expanded
+      var items = visibleItems(cat.items);
+
+      // skip empty categories on Urgent view if nothing matches
+      if(view === "urgent" && items.length === 0) return;
+
+      var badgeClass = catUrgent > 0 ? "" : (catOpen === 0 ? "zero ok" : "zero");
+      var badgeContent = catOpen;
+
+      html += '<div class="category '+(isExpanded?"expanded":"")+'" data-cat="'+cat.key+'">';
+      html += '<div class="category-header" data-cat="'+cat.key+'">';
+      html += '<div class="category-header-left">';
+      html += '<div class="category-icon" style="background:'+cat.iconBg+'">'+cat.icon+'</div>';
+      html += '<div><div class="category-title">'+cat.title+'</div>';
+      html += '<div class="category-subtitle">'+cat.subtitle+'</div></div>';
+      html += '</div>';
+      html += '<div class="category-header-right">';
+      html += '<span class="badge-count '+badgeClass+'">'+badgeContent+'</span>';
+      html += '<span class="chevron '+(isExpanded?"open":"")+'">'+CHEVRON_SVG+'</span>';
+      html += '</div></div>';
+
+      html += '<div class="category-body">';
+      if(items.length === 0){
+        html += '<div class="empty-cat">'+(view==="open"?"All clear in this category.":"Nothing to show.")+'</div>';
+      } else {
+        items.forEach(function(it){
+          var checked = !!state[it.id];
+          var overdue = !checked && isOverdue(it.due);
+          html += '<div class="item '+(checked?"checked":"")+'" data-id="'+it.id+'">';
+          html += '<div class="cb '+(checked?"on":"")+'">'+CHECK_SVG+'</div>';
+          html += '<div class="item-body">';
+          html += '<div class="item-text">'+escapeHtml(it.t)+'</div>';
+          html += '<div class="item-meta">';
+          if(it.urg){
+            html += '<span class="badge '+it.urg+'">'+it.urg+'</span>';
+          }
+          if(it.due){
+            html += '<span class="badge due '+(overdue?"overdue":"")+'">Due '+fmtShort(it.due)+(overdue?" — overdue":"")+'</span>';
+          }
+          if(it.entered){
+            html += '<span class="badge entered">added '+fmtShort(it.entered)+'</span>';
+          }
+          html += '</div></div></div>';
+        });
+      }
+      html += '</div></div>';
+    });
+  }
+
+  // footer
+  html += '<div class="footer-note">';
+  html += '<strong>About this page.</strong> Tasks are managed via the Apple Shortcut on Jarrod\'s phone or by asking Claude directly. ';
+  html += 'Checkbox state persists locally in this browser via <code>localStorage</code>. ';
+  html += 'The task list itself is the single source of truth and lives in the <code>jarrod-tools</code> GitHub repo.';
+  html += '</div>';
+
+  app.innerHTML = html;
+  bindEvents();
+  updateTopbar(open, urgent);
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];
+  });
+}
+
+function bindEvents(){
+  document.querySelectorAll(".view-btn").forEach(function(btn){
+    btn.onclick = function(){
+      view = btn.getAttribute("data-view");
+      saveView(view);
+      render();
+    };
+  });
+
+  document.querySelectorAll(".category-header").forEach(function(h){
+    h.onclick = function(){
+      var key = h.getAttribute("data-cat");
+      // default is expanded; first click should collapse
+      if(expanded[key] === undefined) expanded[key] = true;
+      expanded[key] = !expanded[key];
+      saveExpanded(expanded);
+      render();
+    };
+  });
+
+  document.querySelectorAll(".item").forEach(function(it){
+    it.onclick = function(){
+      var id = it.getAttribute("data-id");
+      state[id] = !state[id];
+      saveState(state);
+      render();
+    };
+  });
+
+  var toggleAll = document.getElementById("toggle-all");
+  if(toggleAll){
+    toggleAll.onclick = function(){
+      var anyCollapsed = CATEGORIES.some(function(c){ return expanded[c.key] === false; });
+      CATEGORIES.forEach(function(c){
+        expanded[c.key] = anyCollapsed; // if any collapsed, expand all; otherwise collapse all
+      });
+      saveExpanded(expanded);
+      render();
+    };
+  }
+}
+
+function updateTopbar(open, urgent){
+  var meta = document.getElementById("topbar-meta");
+  if(!meta) return;
+  if(urgent > 0){
+    meta.textContent = open + " open · " + urgent + " urgent";
+  } else {
+    meta.textContent = open + " open";
+  }
+}
+
+render();
+</script>
+</body>
+</html>
