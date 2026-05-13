@@ -141,11 +141,11 @@ var MEETINGS = {
         {id:"kt-007",t:"Build visual customer-facing explanation of the loyalty program structure",d:"Before June 16",c:"soon"},
         {id:"kt-008",t:"Confirm launch messaging plan for June 16 (Summer Virtual) vs July Detroit - must not overlap",d:"This week",c:"urgent"},
         {id:"kt-009",t:"Confirm brand guidelines for loyalty graphics with Dizzy / Steven Polizzi",d:"This week",c:"urgent"},
-        {id:"kt-010",t:"Follow up with Dizzy on PassKit loyalty card template - delivery target next week",d:"Next week",c:"soon"},
+        {id:"kt-010",t:"Follow up with Dizzy on PassKit loyalty card template - delivery target next week",d:"Next week",c:"soon",linkedTo:["lm-006"]},
       ]},
       {g:"Loyalty - Technical",i:[
         {id:"kt-011",t:"Get Carter review on B2B exclusion list - 325 tax-exempt customers at $6M YTD spend need proper tagging before launch",d:"This week",c:"urgent"},
-        {id:"kt-012",t:"Confirm Mailchimp sync flows with Nathaniel - tier upgrades, points earned/redeemed, birthday campaigns",d:"By June 1",c:"soon"},
+        {id:"kt-012",t:"Confirm Mailchimp sync flows with Nathaniel - tier upgrades, points earned/redeemed, birthday campaigns",d:"By June 1",c:"soon",linkedTo:["lm-004"]},
         {id:"kt-013",t:"Get enterprise pricing from Gorgias for AI chat agent - $0.90/convo too expensive at standard tier",d:"This week",c:"soon"},
         {id:"kt-014",t:"Confirm Nathaniel's Slabber vs loyalty time split - ensure June 1 dev completion stays on track",d:"This week",c:"urgent"},
         {id:"kt-015",t:"Clarify sequencing: loyalty launch vs PDP redesign - confirm with Kelly and Carter",d:"This week",c:"urgent",linkedTo:["sc-013"]},
@@ -227,15 +227,45 @@ var MEETINGS = {
       {g:"Today - Hard Deadlines",i:[
         {id:"ns-001",t:"Curate 500-1K product sample for staging - cover menu categories plus major collections with at least placeholder images, enough for loyalty test scenarios",d:"Today",c:"urgent",linkedTo:["kt-017"]},
         {id:"ns-002",t:"Send Smile API keys to Nathaniel via Slack",d:"Today",c:"urgent",linkedTo:["kt-003","sd-005"]},
-        {id:"ns-003",t:"Deliver loyalty program one-pager to Nathaniel for shared context",d:"Today",c:"urgent"},
+        {id:"ns-003",t:"Deliver loyalty program one-pager to Nathaniel for shared context",d:"Today",c:"urgent",linkedTo:["lm-001"]},
         {id:"ns-004",t:"Align with James and Kelly on Project Elevate requirements ahead of tomorrow's team cascade",d:"Today",c:"urgent"},
       ]},
       {g:"Tomorrow",i:[
-        {id:"ns-005",t:"Meet with Steven and Nick Forneris on loyalty marketing design - prioritize PDP redesign and account page redesign as first deliverables to unblock Nathaniel",d:"Tomorrow",c:"urgent"},
+        {id:"ns-005",t:"Meet with Steven and Nick Forneris on loyalty marketing design - prioritize PDP redesign and account page redesign as first deliverables to unblock Nathaniel",d:"Tomorrow",c:"urgent",linkedTo:["lm-003"]},
         {id:"ns-006",t:"Cascade Project Elevate new process to full team with stakeholders",d:"Tomorrow",c:"urgent"},
       ]},
       {g:"PDP Loyalty Display - Spec Confirmed",i:[
         {id:"ns-007",t:"Confirm with marketing/design that PDP and PLP show universal price/points display - format like '$100 or 1,000 points' - no per-page API calls, static conversion rate, redemption only happens at checkout",d:"Before June 16",c:"soon"},
+      ]},
+    ]
+  },
+  "loyalty-marketing-touchbase-may-13-2026": {
+    label: "Loyalty x Marketing Touchbase - May 13, 2026",
+    sections: [
+      {g:"Today - One-Pager",i:[
+        {id:"lm-001",t:"Build high-level loyalty one-pager - tier structure in points (not dollars), birthday gift, early access, VIP party - remove financial details and customer percentages - circulate to Dean and broader stakeholders",d:"Today",c:"urgent",linkedTo:["ns-003"]},
+      ]},
+      {g:"Today - Smile.io Marketing Integration Call",i:[
+        {id:"lm-002",t:"Set up secondary Smile.io call tomorrow focused on Mailchimp integration - invite Nick remotely, ideally John for marketing handoff",d:"Today",c:"urgent"},
+        {id:"lm-004",t:"On Smile call tomorrow, confirm Smile.io direct integration with Mailchimp - if not supported, fall back to Shopify-as-source-of-truth flowing into Mailchimp",d:"Tomorrow",c:"urgent",linkedTo:["kt-012"]},
+      ]},
+      {g:"Tomorrow - Design Kickoff",i:[
+        {id:"lm-003",t:"Schedule design meeting with Digi and Nick Forneiras - include Kelly and Jarrod - hand off one-pager and competitor references (David Adams Steel City, Best Buy, Starbucks, Target) so design can start building tier look and feel",d:"Tomorrow",c:"urgent",linkedTo:["ns-005"]},
+      ]},
+      {g:"Digital Loyalty Card - Platform Decision",i:[
+        {id:"lm-006",t:"Evaluate Novel Shopify app vs PassKit for digital loyalty card - confirm pricing and feature parity (tier, points, store credit, push notifications) with Nathaniel before committing - Novel may reduce dev work",d:"This week",c:"urgent",linkedTo:["kt-010"]},
+      ]},
+      {g:"Terms and Conditions",i:[
+        {id:"lm-005",t:"Pull Smile.io's terms and conditions template and adapt with CardsHQ-specific language - feed into Terms and Conditions page draft",d:"Before June 16",c:"soon"},
+      ]},
+      {g:"Competitor Research",i:[
+        {id:"lm-007",t:"Set up dummy customer accounts at David Adams, Steel City, and tops - screenshot account/profile pages, capture email and SMS communications, make small purchase to observe post-purchase flow",d:"This week",c:"soon"},
+        {id:"lm-008",t:"Nick to research competitor loyalty programs - David Adams Steel City, Best Buy, Starbucks, Target - bring findings to tomorrow's design meeting",d:"Tomorrow",c:"urgent"},
+      ]},
+      {g:"Future Phases - Tracking",i:[
+        {id:"lm-009",t:"Plan abuse prevention language for activity-based bonus points - sell-cards-for-store-credit, weekly TCG tournament check-ins, event scans - staff-only scanning (kiosk model rejected) needs T&C wording before activity launches",d:"Before activity launch",c:"ongoing"},
+        {id:"lm-010",t:"After Q4 fractional point earning unlocks, plan collection-based and event-based point multipliers (e.g. 1.5x on Christmas collection) rather than tier-based multiplier changes - keep tier structure stable",d:"Q4 planning",c:"ongoing"},
+        {id:"lm-011",t:"Plan B2B fine print copy for launch communications - confirm exclusion messaging and reference future B2B program so B2B customers are not alienated",d:"Before June 16",c:"soon"},
       ]},
     ]
   }
