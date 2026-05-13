@@ -115,12 +115,12 @@ var MEETINGS = {
       {g:"Smile.io - Technical Setup",i:[
         {id:"sd-004",t:"Accept production contract to activate live Smile.io environment",d:"Before June 1",c:"soon"},
         {id:"sd-005",t:"Get API keys from Smile developer tools and pass to Nathaniel for headless integration",d:"This week",c:"urgent",linkedTo:["kt-003","ns-002"]},
-        {id:"sd-006",t:"Nathaniel to integrate point redemption display on PDPs",d:"By June 1",c:"soon",linkedTo:["sc-006"]},
+        {id:"sd-006",t:"Nathaniel to integrate point redemption display on PDPs",d:"By June 1",c:"soon",linkedTo:["sc-006","sp-005"]},
         {id:"sd-007",t:"Set up digital loyalty card in Smile.io",d:"By June 16",c:"soon"},
         {id:"sd-008",t:"Finalize retroactive points import process with Smile team",d:"Closer to June 1",c:"soon",linkedTo:["kt-004"]},
       ]},
       {g:"Smile.io - Configuration",i:[
-        {id:"sd-009",t:"Confirm birthday rewards pricing - still under consideration",d:"This week",c:"urgent"},
+        {id:"sd-009",t:"Confirm birthday rewards pricing - still under consideration",d:"This week",c:"urgent",linkedTo:["sp-007"]},
         {id:"sd-010",t:"Review customer distribution against Smile recommendations: VIP ~1%, Rare 5-10%, Gold 40-50%, Base remainder",d:"This week",c:"soon"},
         {id:"sd-011",t:"Schedule internal leadership testing session before production push",d:"Before June 16",c:"soon"},
       ]},
@@ -130,7 +130,7 @@ var MEETINGS = {
     label: "Kelly Touchbase - May 12, 2026",
     sections: [
       {g:"Smile.io - Loyalty Setup",i:[
-        {id:"kt-001",t:"Confirm Smile.io staging environment configured correctly - Hollow 1pt, Rare 2pt, Grail 2pt",d:"This week",c:"urgent"},
+        {id:"kt-001",t:"Confirm Smile.io staging environment configured correctly - Hollow 1pt, Rare 2pt, Grail 2pt",d:"This week",c:"urgent",linkedTo:["sp-001"]},
         {id:"kt-002",t:"Manually recreate all staging configurations on production - no export/import available, must be done manually",d:"By June 1",c:"soon"},
         {id:"kt-003",t:"Get API keys from Smile developer tools for Nathaniel's headless integration",d:"This week",c:"urgent",linkedTo:["sd-005","ns-002"]},
         {id:"kt-004",t:"Confirm retroactive points import process with Smile team - finalize closer to June 1",d:"By June 1",c:"soon",linkedTo:["sd-008"]},
@@ -203,7 +203,7 @@ var MEETINGS = {
         {id:"sc-005",t:"Schedule June Shopify call - confirm CRO and SEO audit walkthrough as the centerpiece",d:"By May 19",c:"urgent"},
       ]},
       {g:"Nathaniel",i:[
-        {id:"sc-006",t:"Confirm LOE on PDP loyalty points display integration for the June 16 launch",d:"This week",c:"urgent",linkedTo:["sd-006"]},
+        {id:"sc-006",t:"Confirm LOE on PDP loyalty points display integration for the June 16 launch",d:"This week",c:"urgent",linkedTo:["sd-006","sp-005"]},
         {id:"sc-007",t:"Scope automation approach for catalog-wide product data cleanup against the AI readiness checklist (60-70k SKUs) - identify AI-driven SEO and GEO tooling options",d:"By May 29",c:"soon"},
       ]},
       {g:"John",i:[
@@ -235,7 +235,7 @@ var MEETINGS = {
         {id:"ns-006",t:"Cascade Project Elevate new process to full team with stakeholders",d:"Tomorrow",c:"urgent"},
       ]},
       {g:"PDP Loyalty Display - Spec Confirmed",i:[
-        {id:"ns-007",t:"Confirm with marketing/design that PDP and PLP show universal price/points display - format like '$100 or 1,000 points' - no per-page API calls, static conversion rate, redemption only happens at checkout",d:"Before June 16",c:"soon"},
+        {id:"ns-007",t:"Confirm with marketing/design that PDP and PLP show universal price/points display - format like '$100 or 1,000 points' - no per-page API calls, static conversion rate, redemption only happens at checkout",d:"Before June 16",c:"soon",linkedTo:["sp-005"]},
       ]},
     ]
   },
@@ -247,7 +247,7 @@ var MEETINGS = {
       ]},
       {g:"Today - Smile.io Marketing Integration Call",i:[
         {id:"lm-002",t:"Set up secondary Smile.io call tomorrow focused on Mailchimp integration - invite Nick remotely, ideally John for marketing handoff",d:"Today",c:"urgent"},
-        {id:"lm-004",t:"On Smile call tomorrow, confirm Smile.io direct integration with Mailchimp - if not supported, fall back to Shopify-as-source-of-truth flowing into Mailchimp",d:"Tomorrow",c:"urgent",linkedTo:["kt-012"]},
+        {id:"lm-004",t:"On Smile call tomorrow, confirm Smile.io direct integration with Mailchimp - if not supported, fall back to Shopify-as-source-of-truth flowing into Mailchimp",d:"Tomorrow",c:"urgent",linkedTo:["kt-012","sp-008"]},
       ]},
       {g:"Tomorrow - Design Kickoff",i:[
         {id:"lm-003",t:"Schedule design meeting with Steven, Nick Forneris, and Nicholas Green - include Kelly and Jarrod - hand off one-pager and competitor references (David Adams Steel City, Best Buy, Starbucks, Target) so design can start building tier look and feel",d:"Tomorrow",c:"urgent",linkedTo:["ns-005"]},
@@ -256,7 +256,7 @@ var MEETINGS = {
         {id:"lm-006",t:"Evaluate Novel Shopify app vs PassKit for digital loyalty card - confirm pricing and feature parity (tier, points, store credit, push notifications) with Nathaniel before committing - Novel may reduce dev work",d:"This week",c:"urgent",linkedTo:["kt-010"]},
       ]},
       {g:"Terms and Conditions",i:[
-        {id:"lm-005",t:"Pull Smile.io's terms and conditions template and adapt with CardsHQ-specific language - feed into Terms and Conditions page draft",d:"Before June 16",c:"soon"},
+        {id:"lm-005",t:"Pull Smile.io's terms and conditions template and adapt with CardsHQ-specific language - feed into Terms and Conditions page draft",d:"Before June 16",c:"soon",linkedTo:["sp-006"]},
       ]},
       {g:"Competitor Research",i:[
         {id:"lm-007",t:"Set up dummy customer accounts at David Adams, Steel City, and tops - screenshot account/profile pages, capture email and SMS communications, make small purchase to observe post-purchase flow",d:"This week",c:"soon"},
@@ -266,6 +266,36 @@ var MEETINGS = {
         {id:"lm-009",t:"Plan abuse prevention language for activity-based bonus points - sell-cards-for-store-credit, weekly TCG tournament check-ins, event scans - staff-only scanning (kiosk model rejected) needs T&C wording before activity launches",d:"Before activity launch",c:"ongoing"},
         {id:"lm-010",t:"After Q4 fractional point earning unlocks, plan collection-based and event-based point multipliers (e.g. 1.5x on Christmas collection) rather than tier-based multiplier changes - keep tier structure stable",d:"Q4 planning",c:"ongoing"},
         {id:"lm-011",t:"Plan B2B fine print copy for launch communications - confirm exclusion messaging and reference future B2B program so B2B customers are not alienated",d:"Before June 16",c:"soon"},
+      ]},
+    ]
+  },
+  "smile-points-pos-may-13-2026": {
+    label: "Smile - Points Redemption and POS - May 13, 2026",
+    sections: [
+      {g:"CRITICAL - Redemption Model Pivot",i:[
+        {id:"sp-002",t:"Take revised redemption model back to leadership team and re-align - Smile + Shopify cannot natively support 'dynamic point cost per product with 100% off' - leadership previously bought in to the original model, this is a material change to the customer-facing experience",d:"This week",c:"urgent"},
+        {id:"sp-003",t:"Design price-band collection workaround - automate product placement into collections by price tier ($15 collection, $25, $50, $100, etc.) so each collection ties to a fixed point cost - work with Nathaniel on the automation",d:"This week",c:"urgent"},
+        {id:"sp-001",t:"Re-spec the Smile staging environment to match new redemption model once price-band approach is locked - current staging is built to the old spec which is not viable",d:"This week",c:"urgent",linkedTo:["kt-001"]},
+        {id:"sp-005",t:"Update Nathaniel and design team on redemption model change - PDP/PLP point display may need to show point cost by collection band rather than per-product dynamic value - re-confirm display format before June 16",d:"This week",c:"urgent",linkedTo:["sd-006","sc-006","ns-007"]},
+      ]},
+      {g:"CRITICAL - Retail/POS Blocker",i:[
+        {id:"sp-004",t:"Resolve POS redemption strategy - Shopify POS only supports fixed dollar/percent off, NOT the collection-based 100%-off workaround - $2M retail revenue is at stake - decide between (a) launch web-only and defer POS, (b) accept different redemption mechanics in-store vs online, (c) wait on Smile PM research before deciding",d:"Before June 16 launch",c:"urgent"},
+      ]},
+      {g:"Tomorrow - 11 AM Smile Follow-Up",i:[
+        {id:"sp-008",t:"Tomorrow 11 AM Smile call - confirm with Smile PM (a) feasibility of dynamic point pricing on 100%-off collection discounts, (b) any POS workarounds for collection-based redemption - bring in marketing director for Mailchimp integration demo portion",d:"Tomorrow 11 AM",c:"urgent",linkedTo:["lm-004"]},
+      ]},
+      {g:"Birthday Rewards Path Decision",i:[
+        {id:"sp-007",t:"Decide birthday reward delivery: (a) Smile points - recommended by Smile, keeps engagement in loyalty account, no partial-redemption issue if model accepts incremental, (b) Mailchimp gift cards - matches original CardsHQ design intent, supports partial redemption, but loses Smile engagement loop - decision shapes Mailchimp scope",d:"This week",c:"urgent",linkedTo:["sd-009"]},
+      ]},
+      {g:"Spec Confirmations - No Action But Worth Noting",i:[
+        {id:"sp-009",t:"Confirmed: VIP tier qualification is based on points earned (not dollar spend) - matches original spec, Smile rep configured accordingly",d:"Locked",c:"completed"},
+        {id:"sp-010",t:"Confirmed: 365-day rolling expiration based on last engagement (not last purchase) - cannot be changed - points pool together with no FIFO/LIFO - liability managed via annual manual reset if needed, similar to VIP tier reset",d:"Locked",c:"completed"},
+        {id:"sp-011",t:"Confirmed: event check-in via digital loyalty card scan is supported through Smile's customer activities API - Nathaniel can wire this up post-launch",d:"Post-launch",c:"ongoing"},
+        {id:"sp-012",t:"Confirmed limitation: auto-applied tier rewards (e.g. coupon automatically lands in customer's account when they hit a tier) NOT currently supported - customer must intentionally redeem - communicate to marketing/design so messaging accounts for this",d:"Before June 16",c:"soon"},
+        {id:"sp-013",t:"Confirmed: coupon names and copy can be customized (e.g. '500 CardsHQ coins' instead of '$5 off') - feed this to design and marketing for tier and redemption naming",d:"Before June 16",c:"soon"},
+      ]},
+      {g:"T&C and Followups",i:[
+        {id:"sp-006",t:"Smile rep to send merchant examples of loyalty T&C (no boilerplate but they have examples from US/Canada/EU merchants) - chase if not received by end of week",d:"This week",c:"soon",linkedTo:["lm-005"]},
       ]},
     ]
   }
