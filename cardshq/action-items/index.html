@@ -114,7 +114,7 @@ var MEETINGS = {
       ]},
       {g:"Smile.io - Technical Setup",i:[
         {id:"sd-004",t:"Accept production contract to activate live Smile.io environment",d:"Before June 1",c:"soon"},
-        {id:"sd-005",t:"Get API keys from Smile developer tools and pass to Nathaniel for headless integration",d:"This week",c:"urgent",linkedTo:["kt-003"]},
+        {id:"sd-005",t:"Get API keys from Smile developer tools and pass to Nathaniel for headless integration",d:"This week",c:"urgent",linkedTo:["kt-003","ns-002"]},
         {id:"sd-006",t:"Nathaniel to integrate point redemption display on PDPs",d:"By June 1",c:"soon",linkedTo:["sc-006"]},
         {id:"sd-007",t:"Set up digital loyalty card in Smile.io",d:"By June 16",c:"soon"},
         {id:"sd-008",t:"Finalize retroactive points import process with Smile team",d:"Closer to June 1",c:"soon",linkedTo:["kt-004"]},
@@ -132,7 +132,7 @@ var MEETINGS = {
       {g:"Smile.io - Loyalty Setup",i:[
         {id:"kt-001",t:"Confirm Smile.io staging environment configured correctly - Hollow 1pt, Rare 2pt, Grail 2pt",d:"This week",c:"urgent"},
         {id:"kt-002",t:"Manually recreate all staging configurations on production - no export/import available, must be done manually",d:"By June 1",c:"soon"},
-        {id:"kt-003",t:"Get API keys from Smile developer tools for Nathaniel's headless integration",d:"This week",c:"urgent",linkedTo:["sd-005"]},
+        {id:"kt-003",t:"Get API keys from Smile developer tools for Nathaniel's headless integration",d:"This week",c:"urgent",linkedTo:["sd-005","ns-002"]},
         {id:"kt-004",t:"Confirm retroactive points import process with Smile team - finalize closer to June 1",d:"By June 1",c:"soon",linkedTo:["sd-008"]},
       ]},
       {g:"Loyalty - Marketing & Launch",i:[
@@ -152,7 +152,7 @@ var MEETINGS = {
       ]},
       {g:"Jira & Dev Workflow",i:[
         {id:"kt-016",t:"Send epic breakdown document to Nathaniel",d:"This week",c:"urgent"},
-        {id:"kt-017",t:"Nathaniel to set up staging environment using Matrixify - both staging and production configured",d:"This week",c:"urgent"},
+        {id:"kt-017",t:"Nathaniel to set up staging environment using Matrixify - both staging and production configured",d:"This week",c:"urgent",linkedTo:["ns-001"]},
         {id:"kt-018",t:"Schedule meeting with James to understand existing PM processes and align on unified approach",d:"This week",c:"soon"},
         {id:"kt-019",t:"Increase check-in cadence with Nathaniel to Monday/Wednesday 15-minute standups",d:"This week",c:"soon"},
         {id:"kt-020",t:"Add Gantt chart at epic level for overlapping initiative visibility - Kelly needs high-level view",d:"This week",c:"soon"},
@@ -218,6 +218,24 @@ var MEETINGS = {
       ]},
       {g:"Leadership Decision Needed",i:[
         {id:"sc-013",t:"PDP redesign sequencing - full strategy first vs. loyalty-integrated MVP with redesign deferred to November refresh (Kelly, Carter)",d:"By May 26",c:"urgent",linkedTo:["kt-015"]},
+      ]},
+    ]
+  },
+  "nathaniel-standup-may-13-2026": {
+    label: "Nathaniel Standup - May 13, 2026",
+    sections: [
+      {g:"Today - Hard Deadlines",i:[
+        {id:"ns-001",t:"Curate 500-1K product sample for staging - cover menu categories plus major collections with at least placeholder images, enough for loyalty test scenarios",d:"Today",c:"urgent",linkedTo:["kt-017"]},
+        {id:"ns-002",t:"Send Smile API keys to Nathaniel via Slack",d:"Today",c:"urgent",linkedTo:["kt-003","sd-005"]},
+        {id:"ns-003",t:"Deliver loyalty program one-pager to Nathaniel for shared context",d:"Today",c:"urgent"},
+        {id:"ns-004",t:"Align with James and Kelly on Project Elevate requirements ahead of tomorrow's team cascade",d:"Today",c:"urgent"},
+      ]},
+      {g:"Tomorrow",i:[
+        {id:"ns-005",t:"Meet with Steven and Nick Forneris on loyalty marketing design - prioritize PDP redesign and account page redesign as first deliverables to unblock Nathaniel",d:"Tomorrow",c:"urgent"},
+        {id:"ns-006",t:"Cascade Project Elevate new process to full team with stakeholders",d:"Tomorrow",c:"urgent"},
+      ]},
+      {g:"PDP Loyalty Display - Spec Confirmed",i:[
+        {id:"ns-007",t:"Confirm with marketing/design that PDP and PLP show universal price/points display - format like '$100 or 1,000 points' - no per-page API calls, static conversion rate, redemption only happens at checkout",d:"Before June 16",c:"soon"},
       ]},
     ]
   }
