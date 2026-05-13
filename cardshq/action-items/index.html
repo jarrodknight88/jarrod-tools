@@ -125,7 +125,7 @@ var MEETINGS = {
       {
         name: "Memorial Day Sale",
         i: [
-          { id:"cs-008", t:"Confirm Memorial Day sale is online-only with Kelly", d:"This week", c:"urgent" },
+          { id:"cs-008", t:"Confirm Memorial Day sale is online-only with Kelly", d:"This week", c:"urgent", linkedTo:["w20-001"] },
           { id:"cs-009", t:"Identify sale collection replenishment items for Memorial Day - keep ~30 products in collection", d:"Before May 20", c:"soon" },
           { id:"cs-010", t:"John: coordinate Memorial Day email campaign paired with SMS launch", d:"Before May 23", c:"soon" },
           { id:"cs-011", t:"John: activate Deals campaign budget for Memorial Day sale period", d:"Before May 23", c:"soon" },
@@ -262,7 +262,7 @@ var MEETINGS = {
         {id:"sc-014",t:"Walk through full CRO and SEO audit findings on next call",d:"June call",c:"ongoing"},
       ]},
       {g:"Leadership Decision Needed",i:[
-        {id:"sc-013",t:"PDP redesign sequencing - full strategy first vs. loyalty-integrated MVP with redesign deferred to November refresh (Kelly, Carter)",d:"By May 26",c:"urgent",linkedTo:["kt-015"]},
+        {id:"sc-013",t:"PDP redesign sequencing - full strategy first vs. loyalty-integrated MVP with redesign deferred to November refresh (Kelly, Carter)",d:"By May 26",c:"urgent",linkedTo:["kt-015","pe-002"]},
       ]},
     ]
   },
@@ -276,7 +276,7 @@ var MEETINGS = {
         {id:"ns-004",t:"Align with James and Kelly on Project Elevate requirements ahead of tomorrow's team cascade",d:"Today",c:"urgent"},
       ]},
       {g:"Tomorrow",i:[
-        {id:"ns-005",t:"Meet with Steven, Nick Forneris, and Nicholas Green on loyalty marketing design - prioritize PDP redesign and account page redesign as first deliverables to unblock Nathaniel",d:"Tomorrow",c:"urgent",linkedTo:["lm-003"]},
+        {id:"ns-005",t:"Meet with Steven, Nick Forneris, and Nicholas Green on loyalty marketing design - prioritize PDP redesign and account page redesign as first deliverables to unblock Nathaniel",d:"Tomorrow",c:"urgent",linkedTo:["lm-003","pe-010"]},
         {id:"ns-006",t:"Cascade Project Elevate new process to full team with stakeholders",d:"Tomorrow",c:"urgent"},
       ]},
       {g:"PDP Loyalty Display - Spec Confirmed",i:[
@@ -295,7 +295,7 @@ var MEETINGS = {
         {id:"lm-004",t:"On Smile call tomorrow, confirm Smile.io direct integration with Mailchimp - if not supported, fall back to Shopify-as-source-of-truth flowing into Mailchimp",d:"Tomorrow",c:"urgent",linkedTo:["kt-012","sp-008"]},
       ]},
       {g:"Tomorrow - Design Kickoff",i:[
-        {id:"lm-003",t:"Schedule design meeting with Steven, Nick Forneris, and Nicholas Green - include Kelly and Jarrod - hand off one-pager and competitor references (David Adams Steel City, Best Buy, Starbucks, Target) so design can start building tier look and feel",d:"Tomorrow",c:"urgent",linkedTo:["ns-005"]},
+        {id:"lm-003",t:"Schedule design meeting with Steven, Nick Forneris, and Nicholas Green - include Kelly and Jarrod - hand off one-pager and competitor references (David Adams Steel City, Best Buy, Starbucks, Target) so design can start building tier look and feel",d:"Tomorrow",c:"urgent",linkedTo:["ns-005","pe-010"]},
       ]},
       {g:"Digital Loyalty Card - Platform Decision",i:[
         {id:"lm-006",t:"Evaluate Novel Shopify app vs PassKit for digital loyalty card - confirm pricing and feature parity (tier, points, store credit, push notifications) with Nathaniel before committing - Novel may reduce dev work",d:"This week",c:"urgent",linkedTo:["kt-010"]},
@@ -341,6 +341,79 @@ var MEETINGS = {
       ]},
       {g:"T&C and Followups",i:[
         {id:"sp-006",t:"Smile rep to send merchant examples of loyalty T&C (no boilerplate but they have examples from US/Canada/EU merchants) - chase if not received by end of week",d:"This week",c:"soon",linkedTo:["lm-005"]},
+      ]},
+    ]
+  },
+  "week-20-cross-functional-may-13-2026": {
+    label: "Week 20 Cross-Functional Sync - May 13, 2026",
+    sections: [
+      {g:"Memorial Day Sale",i:[
+        {id:"w20-001",t:"Memorial Day sale decision finalized with Kelly - runs both online AND in-store (rejected online-only) - need 4x6 sale signage in store on top of sale products - communicate to John for assets",d:"Before May 21",c:"urgent",linkedTo:["cs-008"]},
+        {id:"w20-002",t:"Decide on additional Memorial Day promotional content - Marvel tie-in deemed risky given holiday's military significance, explore other product emphasis - circle back next week",d:"Before May 21",c:"soon"},
+      ]},
+      {g:"Virtual Event Prep",i:[
+        {id:"w20-003",t:"Circle back with Charles on virtual event app replacement - previous app is broken, need alternative before virtual event",d:"Before June 16",c:"urgent"},
+      ]},
+      {g:"Grailbox / Grady Grails",i:[
+        {id:"w20-004",t:"Confirm Hometown Heroes release timing with Carter - target first week of June around Pirates home series - product is ready, will not sit at PSA",d:"Next week",c:"urgent"},
+        {id:"w20-005",t:"Fix Grailbox URL link breakage - remove TM from URL slug but keep TM in product description and on-page text",d:"Today",c:"urgent"},
+        {id:"w20-006",t:"PSA basketball grading status - Joey to confirm tomorrow whether Majestic Glitzer basketball ships this week or slips to Week 21",d:"Tomorrow",c:"soon"},
+      ]},
+      {g:"Project Elevate Proof Points",i:[
+        {id:"w20-007",t:"Create UCC soccer product promotion content - what's in this box, what can you pay out of this box - social + website placement - Phil is calendar'd",d:"This week",c:"urgent"},
+      ]},
+      {g:"Operational",i:[
+        {id:"w20-008",t:"Schedule contractor for buying station wall repair - sand, repaint with proper gloss to match - tie scheduling to Rob's brother coming in for wire conduit work",d:"This week",c:"soon"},
+        {id:"w20-009",t:"Coordinate with Rob to get his brother in for wire conduit work at buying station - cables need to be cut and reattached due to undersized conduit",d:"This week",c:"soon"},
+        {id:"w20-010",t:"Include Carter in all TikTok Shop strategy conversations going forward - he has existing relationship with TikTok Shop rep",d:"Ongoing",c:"ongoing"},
+      ]},
+      {g:"Marketing Coordination",i:[
+        {id:"w20-011",t:"Sync all departments on tier-one product pricing visibility - living document approach in Google Sheets, weekly call alignment - Zach to lead, Jarrod and John in loop",d:"This week",c:"urgent"},
+        {id:"w20-012",t:"John: confirm Detroit awareness campaign budget with Matthew sign-off - estimate already approved by Jeff",d:"End of week",c:"soon"},
+      ]},
+      {g:"Trade Show / Events Coordination",i:[
+        {id:"w20-013",t:"Confirm Rafael show filming permission - Jeff to send target show dates (June show identified), Kelly to follow up with Rafael on media availability approval",d:"Before June show",c:"soon"},
+        {id:"w20-014",t:"Communicate trade night date shifts: July TCG = Friday July 10, July Sports = Saturday July 11 (July 4 conflict) - August TCG = August 8, August Sports = August 15 (National conflict)",d:"This week",c:"soon"},
+        {id:"w20-015",t:"Get soccer trade night promotional info out - June 20, ahead of two Sunday World Cup games and Father's Day - draws in traveling fans",d:"Before June 15",c:"soon"},
+      ]},
+      {g:"Shamrock Press Release",i:[
+        {id:"w20-016",t:"Track Shamrock investment press release language approval - expected Friday at earliest, more likely mid next week - coordinate social/web announcement plan once language is finalized",d:"Next week",c:"urgent"},
+      ]},
+      {g:"Milestone - Captured for Reference",i:[
+        {id:"w20-017",t:"Cards HQ hit $6.05M in a single month for first time - April revenue milestone - reference for board, Shamrock, future planning",d:"Captured",c:"completed"},
+        {id:"w20-018",t:"Website at $5M year-to-date revenue - reference point for growth tracking",d:"Captured",c:"completed"},
+      ]},
+    ]
+  },
+  "project-elevate-sync-may-13-2026": {
+    label: "Project Elevate Sync (Kelly + James) - May 13, 2026",
+    sections: [
+      {g:"Tomorrow - Dev Brain Merge",i:[
+        {id:"pe-001",t:"Tomorrow's meeting with Rich, Brad, Nathaniel, and Kelly - merge dev brains on Elevate architecture - ensure CardsHQ build aligns with foundational systems used elsewhere, nothing built that can't be transferred to existing back-end",d:"Tomorrow",c:"urgent"},
+      ]},
+      {g:"Jira Board + Documentation",i:[
+        {id:"pe-002",t:"Build out Project Elevate epic and stories in Jira before Monday - separate Loyalty from Elevate (Nathaniel had them merged) - finish loyalty structure first, then layer Elevate",d:"Before Monday",c:"urgent",linkedTo:["sc-013"]},
+        {id:"pe-003",t:"Use dual-component tagging in Jira for tasks that span product and marketing boards - prevents double-assigning while keeping visibility - mirror James' template structure for consistency",d:"Ongoing",c:"ongoing"},
+        {id:"pe-004",t:"Daily sync with James starting Monday - 15 minutes - overcommunicate during scoping phase - James also joining Nathaniel sync as fly-on-the-wall",d:"Starts Monday",c:"urgent"},
+      ]},
+      {g:"Top 5 Elevate Priorities for National (76 Days)",i:[
+        {id:"pe-005",t:"PDP redesign as proof of concept - content, rich text, community interaction, market data integration - if API data integration not feasible by pitch, show design with data as 'in development' note",d:"Before National (76 days)",c:"urgent"},
+        {id:"pe-006",t:"AI agent stopgap (Gorgias) for proof of concept + longer-term agentic storefront strategy - confirm with Rich tomorrow whether CardsHQ AI agent should be cross-functional with Market Movers - explore Shopify knowledge base app and agentic storefronts for end state",d:"Before National (76 days)",c:"urgent"},
+        {id:"pe-007",t:"New Collector Center concept - how-to-play content hub for Lorcana, Star Wars, Pokemon, etc. - reinforces Topps' education priority - second-biggest design need after loyalty",d:"Before National (76 days)",c:"urgent"},
+        {id:"pe-008",t:"Data-rich PDP content via Market Movers API integration - widget showing sales count in last 30 days - last sale price treatment TBD (risk of undercutting retail price) - bigger conversation needed on which data points actually help shoppers buy",d:"Before National (76 days)",c:"urgent"},
+        {id:"pe-009",t:"Loyalty UI work - checkout page redesign, customer profile page, PDP point display - top priority because launch is imminent - even if Alex Partners changes program mechanics, UI work proceeds",d:"Before June 16 launch",c:"urgent"},
+      ]},
+      {g:"Design Ownership",i:[
+        {id:"pe-010",t:"Loyalty + Elevate design ownership confirmed: Digi leads visual design, Forneris supports, Harada provides UX/functional oversight via wireframes only (not full mockups) - Jarrod to talk to Harada in Dallas Thu/Fri about availability",d:"This week",c:"urgent",linkedTo:["ns-005","lm-003"]},
+        {id:"pe-011",t:"Joint design meetings with Harada + Kelly + Jarrod as needed - wireframes focus on UX (user experience) over UI (interface) - colors and branding handled by Digi/Forneris separately",d:"Ongoing",c:"ongoing"},
+      ]},
+      {g:"Risks to Track",i:[
+        {id:"pe-012",t:"Alex Partners reviewing loyalty plan for Shamrock - possible delay to June 16 launch - hold internal target date, accept delay if review delays approval - any tweaks likely back-end (e.g. $1 vs $2 per point) not UI",d:"This week",c:"urgent"},
+        {id:"pe-013",t:"Topps will test allocation along the way - 76 days to National - pivots required mid-project (e.g. soft box availability test) - team needs to flex around foundational work",d:"Ongoing",c:"ongoing"},
+        {id:"pe-014",t:"Developer resource allocation uncertain - Jarrod committed to docs/design being ready, but build capacity TBD pending tomorrow's meeting with Tyler, Dan, Rich",d:"Tomorrow",c:"urgent"},
+      ]},
+      {g:"Future / Concept-Only for National Pitch",i:[
+        {id:"pe-015",t:"Mobile app concept - push notification capability is the key marketing hook - show as 'in development' on pitch, not buildable by National - PDP design and UX must be portable to app",d:"Concept for National",c:"ongoing"},
       ]},
     ]
   }
