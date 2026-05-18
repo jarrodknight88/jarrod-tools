@@ -392,7 +392,7 @@ var MEETINGS = {
         {id:"pe-001",t:"Tomorrow's meeting with Rich, Brad, Nathaniel, and Kelly - merge dev brains on Elevate architecture - ensure CardsHQ build aligns with foundational systems used elsewhere, nothing built that can't be transferred to existing back-end",d:"Tomorrow",c:"urgent"},
       ]},
       {g:"Jira Board + Documentation",i:[
-        {id:"pe-002",t:"Build out Project Elevate epic and stories in Jira before Monday - separate Loyalty from Elevate (Nathaniel had them merged) - finish loyalty structure first, then layer Elevate",d:"Before Monday",c:"urgent",linkedTo:["sc-013"]},
+        {id:"pe-002",t:"Build out Project Elevate epic and stories in Jira before Monday - separate Loyalty from Elevate (Nathaniel had them merged) - finish loyalty structure first, then layer Elevate",d:"Before Monday",c:"urgent",linkedTo:["sc-013","pe-023"]},
         {id:"pe-003",t:"Use dual-component tagging in Jira for tasks that span product and marketing boards - prevents double-assigning while keeping visibility - mirror James' template structure for consistency",d:"Ongoing",c:"ongoing"},
         {id:"pe-004",t:"Daily sync with James starting Monday - 15 minutes - overcommunicate during scoping phase - James also joining Nathaniel sync as fly-on-the-wall",d:"Starts Monday",c:"urgent"},
       ]},
@@ -404,11 +404,11 @@ var MEETINGS = {
         {id:"pe-009",t:"Loyalty UI work - checkout page redesign, customer profile page, PDP point display - top priority because launch is imminent - even if Alex Partners changes program mechanics, UI work proceeds",d:"Before June 16 launch",c:"urgent"},
       ]},
       {g:"Design Ownership",i:[
-        {id:"pe-010",t:"Loyalty + Elevate design ownership confirmed: Digi leads visual design, Forneris supports, Harada provides UX/functional oversight via wireframes only (not full mockups) - Jarrod to talk to Harada in Dallas Thu/Fri about availability",d:"This week",c:"urgent",linkedTo:["ns-005","lm-003"]},
+        {id:"pe-010",t:"Loyalty + Elevate design ownership confirmed: Digi leads visual design, Forneris supports, Harada provides UX/functional oversight via wireframes only (not full mockups) - Jarrod to talk to Harada in Dallas Thu/Fri about availability",d:"This week",c:"urgent",linkedTo:["ns-005","lm-003","pe-025"]},
         {id:"pe-011",t:"Joint design meetings with Harada + Kelly + Jarrod as needed - wireframes focus on UX (user experience) over UI (interface) - colors and branding handled by Digi/Forneris separately",d:"Ongoing",c:"ongoing"},
       ]},
       {g:"Risks to Track",i:[
-        {id:"pe-012",t:"Alex Partners reviewing loyalty plan for Shamrock - possible delay to June 16 launch - hold internal target date, accept delay if review delays approval - any tweaks likely back-end (e.g. $1 vs $2 per point) not UI",d:"This week",c:"urgent"},
+        {id:"pe-012",t:"Alex Partners reviewing loyalty plan for Shamrock - possible delay to June 16 launch - hold internal target date, accept delay if review delays approval - any tweaks likely back-end (e.g. $1 vs $2 per point) not UI",d:"This week",c:"urgent",linkedTo:["pe-017"]},
         {id:"pe-013",t:"Topps will test allocation along the way - 76 days to National - pivots required mid-project (e.g. soft box availability test) - team needs to flex around foundational work",d:"Ongoing",c:"ongoing"},
         {id:"pe-014",t:"Developer resource allocation uncertain - Jarrod committed to docs/design being ready, but build capacity TBD pending tomorrow's meeting with Tyler, Dan, Rich",d:"Tomorrow",c:"urgent"},
       ]},
@@ -443,6 +443,40 @@ var MEETINGS = {
       ]},
       {g:"David's Strategic Pushback - For Leadership Conversation",i:[
         {id:"sm-012",t:"David's strategic concerns with Option A (custom per-product pricing) to surface in sm-005 leadership conversation: (1) overly complicated, (2) customer comprehension problem - hard to see/understand program value with so many different point costs, (3) no merchant precedent at Smile, (4) industry direction is experiential rewards as differentiator, not mechanic complexity, (5) 99% of Shopify loyalty offers $5 off - bar to differentiate is low without taking maximum-complexity path",d:"Next week",c:"urgent",linkedTo:["sm-005"]},
+      ]},
+    ]
+  },
+  "project-elevate-kickoff-may-18-2026": {
+    label: "Project Elevate Daily Standup - Kickoff with Jared (Kelly, James, Nathaniel) - May 18, 2026",
+    sections: [
+      {g:"Priorities Locked - 70 Days to National",i:[
+        {id:"pe-016",t:"Top 3 Project Elevate priorities reconfirmed by Kelly: (1) PDPs for Google searchability and agentic storefronts, (2) Collector Center as education-first customer experience, (3) Loyalty program with Smile.io plug-and-play - all three remain non-negotiable, no deprioritization",d:"70-day window",c:"urgent"},
+        {id:"pe-017",t:"Leadership flexibility on June 16 loyalty launch confirmed - Kelly stated that if team determines launch is not feasible by sixteenth, leadership accepts the date adjustment - hold the line internally but flag early if at risk",d:"By end of week",c:"urgent",linkedTo:["pe-012"]},
+        {id:"pe-018",t:"Daily 10:30 AM standup this week to assess feasibility of full scope within 70 days - early sessions will be larger group, subsequent sessions can pare back as scope solidifies",d:"This week, daily",c:"urgent"},
+      ]},
+      {g:"Requirements Documentation - Single Source of Truth",i:[
+        {id:"pe-019",t:"James to perform gap analysis between Notion technical doc (Nathaniel's) and Google Doc - produce one unified requirements doc for loyalty - eliminate scatter across Notion, Google Docs, Slack",d:"This week",c:"urgent"},
+        {id:"pe-020",t:"Jarrod to review and confirm unified requirements doc before James drafts Jira user stories - product owner role - James as product manager handles Jira drafting, Jarrod confirms direction",d:"After pe-019",c:"urgent"},
+        {id:"pe-021",t:"Attach final unified requirements doc to the loyalty Slack channel along with all other critical links so documentation lives in one place going forward",d:"After pe-020",c:"soon"},
+        {id:"pe-022",t:"Open question: technical documentation moving to Notion (Brad decision for SCI/Market Movers) vs. company-wide Google Drive standard - Kelly to clarify with Teapot why CardsHQ docs would split platforms",d:"This week",c:"soon"},
+      ]},
+      {g:"Jira Board Structure",i:[
+        {id:"pe-023",t:"All Project Elevate work goes on the same product and engineering board - James to apply labels and quick filters so Nathaniel can swap views between Elevate and slabber/other work without seeing 1000+ tickets",d:"This week",c:"urgent",linkedTo:["pe-002"]},
+        {id:"pe-024",t:"Loyalty stories are the first two stories to be built out and estimated - prep work and staging already done as first story - James to draft, Nathaniel to estimate",d:"This week",c:"urgent"},
+      ]},
+      {g:"Design - Jared Joining as UX Oversight",i:[
+        {id:"pe-025",t:"Jared (SCI staff designer) added to loyalty design brain trust and 2:00 PM design meeting today - role is UX/UI oversight to ensure loyalty page design integrates with future full CardsHQ site redesign, not just a one-off build",d:"Today",c:"urgent",linkedTo:["pe-010"]},
+        {id:"pe-026",t:"Jarrod to sync with James for walkthrough of current CardsHQ customer portal infrastructure (built by Nathaniel and Kelly) - establishes baseline before Jared can recommend design direction",d:"This week",c:"urgent"},
+        {id:"pe-027",t:"Jarrod to connect with Nathaniel separately on technical build details for loyalty - feeds into design decisions on what is in-bounds for the 70-day window",d:"This week",c:"urgent"},
+        {id:"pe-028",t:"Jared to evaluate whether existing SCI/Market Movers product design system (button styling, colors, components) can be reused for CardsHQ ecommerce loyalty build - currently no ecommerce design system exists",d:"This week",c:"soon"},
+        {id:"pe-029",t:"Nathaniel to share existing customer portal design files with Jared for review",d:"This week",c:"urgent"},
+      ]},
+      {g:"Smile.io Resources - Awaiting Delivery",i:[
+        {id:"pe-030",t:"Jarrod chasing David Wyatt today for Smile out-of-box resources: page templates, real-life merchant examples similar to CardsHQ setup, and FAQ/terms templates - blocks design direction decisions on custom vs out-of-box",d:"Today",c:"urgent"},
+      ]},
+      {g:"Resourcing",i:[
+        {id:"pe-031",t:"Nathaniel hiring additional team member this week to ease 70-day capacity constraint - resource availability is the biggest single risk to Elevate scope",d:"This week",c:"urgent"},
+        {id:"pe-032",t:"NDA needed for Macau (new resource) - Kelly confirmed Nathaniel's NDA is already on file - send NDA over to Macau before any code or doc access",d:"This week",c:"urgent"},
       ]},
     ]
   }
