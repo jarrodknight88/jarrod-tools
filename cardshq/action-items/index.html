@@ -166,7 +166,7 @@ var MEETINGS = {
       ]},
       {g:"Smile.io - Configuration",i:[
         {id:"sd-009",t:"Confirm birthday rewards pricing - still under consideration",d:"This week",c:"urgent",linkedTo:["sp-007"]},
-        {id:"sd-010",t:"Review customer distribution against Smile recommendations: VIP ~1%, Rare 5-10%, Gold 40-50%, Base remainder",d:"This week",c:"soon"},
+        {id:"sd-010",t:"Review customer distribution against Smile recommendations: VIP ~1%, Rare 5-10%, Gold 40-50%, Base remainder",d:"This week",c:"soon",linkedTo:["ld-008"]},
         {id:"sd-011",t:"Schedule internal leadership testing session before production push",d:"Before June 16",c:"soon"},
       ]},
     ]
@@ -451,12 +451,12 @@ var MEETINGS = {
     sections: [
       {g:"Priorities Locked - 70 Days to National",i:[
         {id:"pe-016",t:"Top 3 Project Elevate priorities reconfirmed by Kelly: (1) PDPs for Google searchability and agentic storefronts, (2) Collector Center as education-first customer experience, (3) Loyalty program with Smile.io plug-and-play - all three remain non-negotiable, no deprioritization",d:"70-day window",c:"urgent"},
-        {id:"pe-017",t:"Leadership flexibility on June 16 loyalty launch confirmed - Kelly stated that if team determines launch is not feasible by sixteenth, leadership accepts the date adjustment - hold the line internally but flag early if at risk",d:"By end of week",c:"urgent",linkedTo:["pe-012"]},
+        {id:"pe-017",t:"Leadership flexibility on June 16 loyalty launch confirmed - Kelly stated that if team determines launch is not feasible by sixteenth, leadership accepts the date adjustment - hold the line internally but flag early if at risk",d:"By end of week",c:"urgent",linkedTo:["pe-012","ld-024"]},
         {id:"pe-018",t:"Daily 10:30 AM standup this week to assess feasibility of full scope within 70 days - early sessions will be larger group, subsequent sessions can pare back as scope solidifies",d:"This week, daily",c:"urgent"},
       ]},
       {g:"Requirements Documentation - Single Source of Truth",i:[
-        {id:"pe-019",t:"James to perform gap analysis between Notion technical doc (Nathaniel's) and Google Doc - produce one unified requirements doc for loyalty - eliminate scatter across Notion, Google Docs, Slack",d:"This week",c:"urgent"},
-        {id:"pe-020",t:"Jarrod to review and confirm unified requirements doc before James drafts Jira user stories - product owner role - James as product manager handles Jira drafting, Jarrod confirms direction",d:"After pe-019",c:"urgent"},
+        {id:"pe-019",t:"James to perform gap analysis between Notion technical doc (Nathaniel's) and Google Doc - produce one unified requirements doc for loyalty - eliminate scatter across Notion, Google Docs, Slack",d:"This week",c:"urgent",linkedTo:["ld-015"]},
+        {id:"pe-020",t:"Jarrod to review and confirm unified requirements doc before James drafts Jira user stories - product owner role - James as product manager handles Jira drafting, Jarrod confirms direction",d:"After pe-019",c:"urgent",linkedTo:["ld-015"]},
         {id:"pe-021",t:"Attach final unified requirements doc to the loyalty Slack channel along with all other critical links so documentation lives in one place going forward",d:"After pe-020",c:"soon"},
         {id:"pe-022",t:"Open question: technical documentation moving to Notion (Brad decision for SCI/Market Movers) vs. company-wide Google Drive standard - Kelly to clarify with Teapot why CardsHQ docs would split platforms",d:"This week",c:"soon"},
       ]},
@@ -468,15 +468,58 @@ var MEETINGS = {
         {id:"pe-025",t:"Jared (SCI staff designer) added to loyalty design brain trust and 2:00 PM design meeting today - role is UX/UI oversight to ensure loyalty page design integrates with future full CardsHQ site redesign, not just a one-off build",d:"Today",c:"urgent",linkedTo:["pe-010"]},
         {id:"pe-026",t:"Jarrod to sync with James for walkthrough of current CardsHQ customer portal infrastructure (built by Nathaniel and Kelly) - establishes baseline before Jared can recommend design direction",d:"This week",c:"urgent"},
         {id:"pe-027",t:"Jarrod to connect with Nathaniel separately on technical build details for loyalty - feeds into design decisions on what is in-bounds for the 70-day window",d:"This week",c:"urgent"},
-        {id:"pe-028",t:"Jared to evaluate whether existing SCI/Market Movers product design system (button styling, colors, components) can be reused for CardsHQ ecommerce loyalty build - currently no ecommerce design system exists",d:"This week",c:"soon"},
+        {id:"pe-028",t:"Jared to evaluate whether existing SCI/Market Movers product design system (button styling, colors, components) can be reused for CardsHQ ecommerce loyalty build - currently no ecommerce design system exists",d:"This week",c:"soon",linkedTo:["ld-006"]},
         {id:"pe-029",t:"Nathaniel to share existing customer portal design files with Jared for review",d:"This week",c:"urgent"},
       ]},
       {g:"Smile.io Resources - Awaiting Delivery",i:[
-        {id:"pe-030",t:"Jarrod chasing David Wyatt today for Smile out-of-box resources: page templates, real-life merchant examples similar to CardsHQ setup, and FAQ/terms templates - blocks design direction decisions on custom vs out-of-box",d:"Today",c:"urgent"},
+        {id:"pe-030",t:"Jarrod chasing David Wyatt today for Smile out-of-box resources: page templates, real-life merchant examples similar to CardsHQ setup, and FAQ/terms templates - blocks design direction decisions on custom vs out-of-box",d:"Today",c:"urgent",linkedTo:["ld-001"]},
       ]},
       {g:"Resourcing",i:[
         {id:"pe-031",t:"Nathaniel hiring additional team member this week to ease 70-day capacity constraint - resource availability is the biggest single risk to Elevate scope",d:"This week",c:"urgent"},
         {id:"pe-032",t:"NDA needed for Macau (new resource) - Kelly confirmed Nathaniel's NDA is already on file - send NDA over to Macau before any code or doc access",d:"This week",c:"urgent"},
+      ]},
+    ]
+  },
+  "loyalty-design-working-session-may-18-2026": {
+    label: "Loyalty Design Working Session (Nick Forneris, Jared, Nathaniel, Kelly, James) - May 18, 2026",
+    sections: [
+      {g:"Decisions Locked This Meeting",i:[
+        {id:"ld-001",t:"Smile.io out-of-box components NOT usable - everything embedded in Shopify themes or Shopify customer area, headless requires full custom build via Smile API - Nick Forneris and Jared have full design control, nothing constrained by out-of-box templates",d:"Confirmed",c:"completed",linkedTo:["pe-030"]},
+        {id:"ld-002",t:"Customer account page loyalty section will REPLACE the current Rise.ai gift cards and credits area - new section shows points balance, redemption options, tier status, tier tracker, current tier perks, and promotional callouts (refer-a-friend, seasonal multipliers)",d:"Wireframe by Wednesday",c:"urgent"},
+        {id:"ld-003",t:"Tier-based menu bar color confirmed for launch scope - logged-in customers see menu bar accent color tied to tier (Base, Holo, Rare, Grail) - drives login frequency, surfaces tier status throughout shopping experience",d:"Wireframe by Wednesday",c:"urgent"},
+        {id:"ld-004",t:"Points redemption locked at product-level only - full product value required, no partial redemption per product - cart CAN mix loyalty product (100% points) with regular product (cash/credit/store credit) - design must make this clear at checkout",d:"Locked",c:"completed"},
+        {id:"ld-005",t:"Rise.ai sunset DEFERRED until after National - keep Rise active through National launch due to competing priorities - loyalty section design must coexist with Rise during overlap window, then take over post-National",d:"Post-National",c:"ongoing"},
+        {id:"ld-006",t:"No existing CardsHQ design system - Nathaniel confirmed everything custom, built off old Shopify theme - Jared to baseline typography and components by pulling from cardshq.com directly, not redesign the site (keep scope tight)",d:"Today",c:"urgent",linkedTo:["pe-028"]},
+        {id:"ld-007",t:"Digital wallet card launch fields LOCKED: customer name, tier status, redeemable points, store credit - gift card balance EXCLUDED from launch (covered by store credit which is the more meaningful number) - PNG format, Apple needs 1x/2x/3x scaling, Google takes one size (Apple's 2x works for both)",d:"Locked",c:"completed"},
+      ]},
+      {g:"Customer Distribution - New Data Surfaced",i:[
+        {id:"ld-008",t:"Real customer distribution shared: 36,000 annual customers - Base 32,000 (89%), Holo 3,500 (10%), Rare 700 (2%), Grail 159 (0.4%) - vastly different from Smile's typical distribution recommendation - changes design priority",d:"Reference data",c:"completed",linkedTo:["sd-010"]},
+        {id:"ld-009",t:"Tier icon design pivot: Nick Forneris built 4 tier icons today (Base black/white simple, Holo brand colors, Rare gold, Grail fiery red Magic-inspired) - Jarrod flagged that since 89% land in Base, Nick's Holo treatment should become Base, and a new Holo design is needed - Nick to rework",d:"By Wednesday",c:"urgent"},
+        {id:"ld-010",t:"Kelly request: tier icons need to be shown in context (where they live on the site, in emails, on profiles) before locking design - separate design-specific meeting needed to walk through tier visualization across all surfaces",d:"This week",c:"soon"},
+      ]},
+      {g:"Wireframe Scope - For Wednesday Review",i:[
+        {id:"ld-011",t:"Jared owns user account page wireframe (UX/information flow) - includes points balance, tier display, tier tracker, redemption interface, promotional content section, refer-a-friend callout",d:"Wednesday meeting",c:"urgent"},
+        {id:"ld-012",t:"Jared owns PDP integration wireframe - how point cost displays on product detail pages (e.g. $120 product showing 12,000 points equivalent) - needs to integrate with existing PDP without redesign",d:"Wednesday meeting",c:"urgent"},
+        {id:"ld-013",t:"Jared owns explainer/FAQ page wireframe - full landing page version + module version reusable on homepage + dashboard widget for non-enrolled customers (zero-balance state)",d:"Wednesday meeting",c:"urgent"},
+        {id:"ld-014",t:"Nick Forneris owns all visual work: tier iconography, banners, badges, color system, brand applications - Jared owns UX, Nick owns visual",d:"Ongoing",c:"ongoing"},
+      ]},
+      {g:"Open Questions for James (Requirements Doc)",i:[
+        {id:"ld-015",t:"James to deliver updated unified requirements doc to Jarrod and Jared by tomorrow morning - blocks Jared from starting wireframes in earnest, currently working off cardshq.com baseline only",d:"Tomorrow AM",c:"urgent",linkedTo:["pe-019","pe-020"]},
+        {id:"ld-016",t:"Open edge cases James and Jared need to align on: showing point earn preview on PDP (e.g. 'you will earn X points'), receipt display for in-store point earning, customer-facing POS redemption display",d:"This week",c:"soon"},
+      ]},
+      {g:"POS and Receipt - Open Items",i:[
+        {id:"ld-017",t:"POS customer-facing display for loyalty redemption - back-end is straightforward (scan code to earn, scan via POS app to redeem) but customer-facing receipt display needs Smile feedback - Jarrod chasing David Wyatt for receipt formatting spec",d:"This week",c:"urgent"},
+        {id:"ld-018",t:"Track redeemable-product-by-loyalty-points as a year-end metric - operational request from Kelly - flag for analytics setup, ensure Smile API exposes the data we need",d:"Pre-launch",c:"soon"},
+      ]},
+      {g:"Project Management - Monday and Jira Split",i:[
+        {id:"ld-019",t:"Monday.com used for graphics team tasks only (Nick Forneris, Digi, Nicholas Green) - Jira used for all dev work (Nathaniel) - James handles cross-platform reference for blockers",d:"Confirmed",c:"completed"},
+        {id:"ld-020",t:"Jarrod added to Monday.com today for graphics coordination - access established, will track wireframe and design deliverables there",d:"Today",c:"completed"},
+        {id:"ld-021",t:"Cross-platform blocker reference between Monday and Jira not natively supported - Nick will share Figma links + finalized designs into Jira tickets via James - manual handoff process for launch, evaluate automation post-launch",d:"Ongoing",c:"ongoing"},
+      ]},
+      {g:"Staging and Recurring Cadence",i:[
+        {id:"ld-022",t:"Staging site live at staging.cardshq.com - Jarrod to distribute link and password to design team and James for testing once Smile integration is on staging",d:"This week",c:"urgent"},
+        {id:"ld-023",t:"Recurring Wednesday and Thursday design working sessions set up - Wednesday for presenting progress and feedback, Thursday for finalizing - continue weekly through launch",d:"Recurring",c:"ongoing"},
+        {id:"ld-024",t:"Kelly to assess June 16 feasibility by end of this week - team transparency expected if launch date needs to slip, leadership already accepts flexibility",d:"By Friday",c:"urgent",linkedTo:["pe-017"]},
       ]},
     ]
   }
