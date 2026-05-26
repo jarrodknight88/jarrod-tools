@@ -397,10 +397,10 @@ var MEETINGS = {
         {id:"pe-004",t:"Daily sync with James starting Monday - 15 minutes - overcommunicate during scoping phase - James also joining Nathaniel sync as fly-on-the-wall",d:"Starts Monday",c:"urgent"},
       ]},
       {g:"Top 5 Elevate Priorities for National (76 Days)",i:[
-        {id:"pe-005",t:"PDP redesign as proof of concept - content, rich text, community interaction, market data integration - if API data integration not feasible by pitch, show design with data as 'in development' note",d:"Before National (76 days)",c:"urgent"},
-        {id:"pe-006",t:"AI agent stopgap (Gorgias) for proof of concept + longer-term agentic storefront strategy - confirm with Rich tomorrow whether CardsHQ AI agent should be cross-functional with Market Movers - explore Shopify knowledge base app and agentic storefronts for end state",d:"Before National (76 days)",c:"urgent"},
+        {id:"pe-005",t:"PDP redesign as proof of concept - content, rich text, community interaction, market data integration - if API data integration not feasible by pitch, show design with data as 'in development' note",d:"Before National (76 days)",c:"urgent",linkedTo:["pe-036","pe-039"]},
+        {id:"pe-006",t:"AI agent stopgap (Gorgias) for proof of concept + longer-term agentic storefront strategy - confirm with Rich tomorrow whether CardsHQ AI agent should be cross-functional with Market Movers - explore Shopify knowledge base app and agentic storefronts for end state",d:"Before National (76 days)",c:"urgent",linkedTo:["pe-045"]},
         {id:"pe-007",t:"New Collector Center concept - how-to-play content hub for Lorcana, Star Wars, Pokemon, etc. - reinforces Topps' education priority - second-biggest design need after loyalty",d:"Before National (76 days)",c:"urgent"},
-        {id:"pe-008",t:"Data-rich PDP content via Market Movers API integration - widget showing sales count in last 30 days - last sale price treatment TBD (risk of undercutting retail price) - bigger conversation needed on which data points actually help shoppers buy",d:"Before National (76 days)",c:"urgent"},
+        {id:"pe-008",t:"Data-rich PDP content via Market Movers API integration - widget showing sales count in last 30 days - last sale price treatment TBD (risk of undercutting retail price) - bigger conversation needed on which data points actually help shoppers buy",d:"Before National (76 days)",c:"urgent",linkedTo:["pe-034","pe-046"]},
         {id:"pe-009",t:"Loyalty UI work - checkout page redesign, customer profile page, PDP point display - top priority because launch is imminent - even if Alex Partners changes program mechanics, UI work proceeds",d:"Before June 16 launch",c:"urgent"},
       ]},
       {g:"Design Ownership",i:[
@@ -450,13 +450,13 @@ var MEETINGS = {
     label: "Project Elevate Daily Standup - Kickoff with Jared (Kelly, James, Nathaniel) - May 18, 2026",
     sections: [
       {g:"Priorities Locked - 70 Days to National",i:[
-        {id:"pe-016",t:"Top 3 Project Elevate priorities reconfirmed by Kelly: (1) PDPs for Google searchability and agentic storefronts, (2) Collector Center as education-first customer experience, (3) Loyalty program with Smile.io plug-and-play - all three remain non-negotiable, no deprioritization",d:"70-day window",c:"urgent"},
+        {id:"pe-016",t:"Top 3 Project Elevate priorities reconfirmed by Kelly: (1) PDPs for Google searchability and agentic storefronts, (2) Collector Center as education-first customer experience, (3) Loyalty program with Smile.io plug-and-play - all three remain non-negotiable, no deprioritization",d:"70-day window",c:"urgent",linkedTo:["pe-037"]},
         {id:"pe-017",t:"Leadership flexibility on June 16 loyalty launch confirmed - Kelly stated that if team determines launch is not feasible by sixteenth, leadership accepts the date adjustment - hold the line internally but flag early if at risk",d:"By end of week",c:"urgent",linkedTo:["pe-012","ld-024"]},
         {id:"pe-018",t:"Daily 10:30 AM standup this week to assess feasibility of full scope within 70 days - early sessions will be larger group, subsequent sessions can pare back as scope solidifies",d:"This week, daily",c:"urgent"},
       ]},
       {g:"Requirements Documentation - Single Source of Truth",i:[
         {id:"pe-019",t:"James to perform gap analysis between Notion technical doc (Nathaniel's) and Google Doc - produce one unified requirements doc for loyalty - eliminate scatter across Notion, Google Docs, Slack",d:"This week",c:"urgent",linkedTo:["ld-015"]},
-        {id:"pe-020",t:"Jarrod to review and confirm unified requirements doc before James drafts Jira user stories - product owner role - James as product manager handles Jira drafting, Jarrod confirms direction",d:"After pe-019",c:"urgent",linkedTo:["ld-015"]},
+        {id:"pe-020",t:"Jarrod to review and confirm unified requirements doc before James drafts Jira user stories - product owner role - James as product manager handles Jira drafting, Jarrod confirms direction",d:"After pe-019",c:"urgent",linkedTo:["ld-015","pe-033","pe-035","pe-047"]},
         {id:"pe-021",t:"Attach final unified requirements doc to the loyalty Slack channel along with all other critical links so documentation lives in one place going forward",d:"After pe-020",c:"soon"},
         {id:"pe-022",t:"Open question: technical documentation moving to Notion (Brad decision for SCI/Market Movers) vs. company-wide Google Drive standard - Kelly to clarify with Teapot why CardsHQ docs would split platforms",d:"This week",c:"soon"},
       ]},
@@ -570,6 +570,37 @@ var MEETINGS = {
         {id:"af-005",t:"Loop Matthew in once locked rate and final terms are received - before signing contract",d:"Before contract signing",c:"urgent"},
         {id:"af-006",t:"Coordinate with Finance team for required financial documentation during Affirm signup",d:"At signup",c:"soon"},
         {id:"af-007",t:"Send Matthew weekly progress update on Affirm onboarding",d:"End of week",c:"urgent"},
+      ]},
+    ]
+  },
+  "pdp-requirements-data-sources-may-26-2026": {
+    label: "AI PDP Requirements & Data Sources - May 26, 2026",
+    sections: [
+      {g:"Requirements Definition",i:[
+        {id:"pe-033",t:"Run Jarrod + Kelly working session today (3-5pm, trying to move earlier) to produce the PDP requirements doc - must-have vs nice-to-have fields, data source per field, and reliability rating - target a v1 field list the team feels good about",d:"Today",c:"urgent",linkedTo:["pe-020"]},
+        {id:"pe-034",t:"Build the field list for AI-generated descriptions: product configuration (cards per pack, packs per box), highlights, full checklist, chase cards, odds - decide which render as separate sections vs one paragraph (WaxStat layout is the reference for information, not design)",d:"Today / this week",c:"urgent",linkedTo:["pe-008"]},
+        {id:"pe-035",t:"Answer James's PDP question list - high-level first, add detail after - so the whole group can see responses in real time",d:"ASAP - feeds PRD",c:"urgent",linkedTo:["pe-020"]},
+        {id:"pe-036",t:"Define generation trigger with Rich/Nathaniel: generate rich data when product goes live, plus ability to refresh descriptions on current events (e.g. target specific Knicks players in a Bowman basketball box during the finals) - trigger logic is outside Jarrod's scope to set alone",d:"Feeds PRD",c:"soon",linkedTo:["pe-005"]},
+      ]},
+      {g:"Scope & Sequencing",i:[
+        {id:"pe-037",t:"First batch: all Topps wax products go first (highest inventory, drives Google Shopping and Meta campaigns). Supplies likely before singles; singles come with Slabber regardless. AI description replaces existing wax descriptions, not an add-on",d:"v1 scope",c:"urgent",linkedTo:["pe-016"]},
+        {id:"pe-038",t:"Add a standing legal disclaimer to all AI-generated / multi-source descriptions - 'contents subject to change, checklists not always accurate' - to protect against misrepresenting box contents",d:"Build into v1",c:"urgent"},
+        {id:"pe-039",t:"PDP redesign: anchor full product description at the bottom, lead with a snapshot summary at top - confirm design constraints (replace description only vs broader page changes) with James/design",d:"Requirements phase",c:"soon",linkedTo:["pe-005"]},
+        {id:"pe-040",t:"Confirm who manually vets each AI-generated description before publish - leaning Nathaniel's team - manual vetting is required given data-accuracy risk",d:"Before first publish",c:"soon"},
+      ]},
+      {g:"Data Sources & Accuracy",i:[
+        {id:"pe-041",t:"Ask Topps directly whether they will provide box-configuration and checklist data, especially hobby vs retail/mega box breakdowns - source-of-truth is better than third-party; same need will repeat for Panini, Leaf, Upper Deck (~60 days to Topps meeting)",d:"~60 days to Topps mtg",c:"soon"},
+        {id:"pe-042",t:"Evaluate WaxStat.com ($500/mo) as an interim third-party data source for proof of concept - get shared login from Zach (Sportsbind lead buyer) - still discovery phase, unconfirmed whether its data can flow into our system",d:"Interim eval",c:"soon"},
+        {id:"pe-043",t:"Flag core accuracy risk for the team: Haystack provides card lists/variations but not box configuration or hobby-vs-retail differences, and no odds/chase data - WaxStat and Beckett also imperfect - assess misrepresentation exposure before trusting any single source",d:"Ongoing",c:"ongoing"},
+        {id:"pe-044",t:"Explore Beckett as a supplemental checklist source (Rich) - Beckett lists hobby-vs-box specifications similar to WaxStat - scraping looks involved; may not be critical for day one",d:"Research",c:"ongoing"},
+      ]},
+      {g:"Agentic Storefront & Reuse",i:[
+        {id:"pe-045",t:"Share the Shopify agentic storefront documentation (from Shopify rep) with the full team - covers the Shopify knowledge base app that feeds agentic storefronts - foundational for the initiative",d:"This week",c:"urgent",linkedTo:["pe-006"]},
+        {id:"pe-046",t:"Keep PDP data reusable across SCI / Market Movers - everything is being built on multiverse so fields should be consumable by both CardsHQ and Market Movers; sort out which system needs which fields/workflow",d:"Design principle",c:"ongoing",linkedTo:["pe-008"]},
+      ]},
+      {g:"PRD & Dev Handoff",i:[
+        {id:"pe-047",t:"James to send the PDP question list to the whole group, then draft the PRD once requirements + agentic docs land - get PRD approval before building Jira stories",d:"After requirements",c:"soon",linkedTo:["pe-020"]},
+        {id:"pe-048",t:"Nathaniel to point Mikael (new dev, starts today) at Slabber work until PDP stories are ready - no clarity yet on PDP requirements to assign him",d:"Today",c:"soon"},
       ]},
     ]
   }
