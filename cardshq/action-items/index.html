@@ -55,6 +55,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .badge.soon{background:#FEF3C7;color:#854D0E}
 .badge.ongoing{background:#E0E7FF;color:#3730A3}
 .link-badge{font-size:11px;font-weight:500;color:#3B82F6;background:#EFF6FF;padding:2px 7px;border-radius:5px;cursor:help;display:inline-flex;align-items:center;gap:3px;border:0.5px solid #DBEAFE}
+.scope-item{display:flex;flex-direction:column;gap:5px;padding:11px 16px;border-bottom:0.5px solid #F1F5F9;background:#F0FDF9;border-left:3px solid #10B981}
+.scope-item:last-child{border-bottom:none}
+.scope-item .item-text{font-size:13.5px;color:#334155;line-height:1.45}
+.scope-tag{font-size:10px;font-weight:600;color:#0F766E;text-transform:uppercase;letter-spacing:0.05em}
 
 .back-btn{background:none;border:none;color:#64748B;font-size:13px;cursor:pointer;padding:0 0 1rem 0;font-family:inherit;display:flex;align-items:center;gap:4px}
 .back-btn:hover{color:#111}
@@ -258,7 +262,7 @@ var MEETINGS = {
         {id:"kt-017",t:"Nathaniel to set up staging environment using Matrixify - both staging and production configured",d:"This week",c:"urgent",linkedTo:["ns-001"]},
         {id:"kt-018",t:"Schedule meeting with James to understand existing PM processes and align on unified approach",d:"This week",c:"soon"},
         {id:"kt-019",t:"Increase check-in cadence with Nathaniel to Monday/Wednesday 15-minute standups",d:"This week",c:"soon"},
-        {id:"kt-020",t:"Add Gantt chart at epic level for overlapping initiative visibility - Kelly needs high-level view",d:"This week",c:"soon"},
+        {id:"kt-020",scope:true,t:"Add Gantt chart at epic level for overlapping initiative visibility - Kelly needs high-level view",d:"This week",c:"soon"},
       ]},
       {g:"Gorgias",i:[
         {id:"kt-021",t:"Test Gorgias website chat widget on staging environment before go-live",d:"Before May 1",c:"urgent"},
@@ -377,7 +381,7 @@ var MEETINGS = {
     sections: [
       {g:"CRITICAL - Redemption Model Pivot",i:[
         {id:"sp-002",t:"UPDATED May 14: Smile confirmed per-product dynamic point pricing IS possible via points product endpoint API (custom build, headless setup makes UX viable) - but David explicitly does not recommend it, no merchant precedent, predicts customer comprehension issues - decision deferred to sm-005 pending David's docs",d:"This week",c:"urgent",linkedTo:["sm-005"]},
-        {id:"sp-003",t:"UPDATED May 14: Price-band collection workaround is now Option B of three (vs Option A custom API per-product, Option C simple + experiential) - not the only path - work depends on sm-005 decision",d:"This week",c:"urgent",linkedTo:["sm-005"]},
+        {id:"sp-003",scope:true,t:"UPDATED May 14: Price-band collection workaround is now Option B of three (vs Option A custom API per-product, Option C simple + experiential) - not the only path - work depends on sm-005 decision",d:"This week",c:"urgent",linkedTo:["sm-005"]},
         {id:"sp-001",t:"Re-spec the Smile staging environment - approach depends on Option A/B/C decision (sm-005) - do not re-spec until model is locked",d:"After sm-005",c:"urgent",linkedTo:["kt-001","sm-005"]},
         {id:"sp-005",t:"Update Nathaniel and design team on redemption model - PDP/PLP point display format depends on Option A (per-product dynamic via API) vs Option B (band-level fixed) vs Option C (simple discount) - wait for sm-005 before re-confirming display format",d:"After sm-005",c:"urgent",linkedTo:["sd-006","sc-006","ns-007","sm-005"]},
       ]},
@@ -438,8 +442,8 @@ var MEETINGS = {
         {id:"w20-016",t:"Track Shamrock investment press release language approval - expected Friday at earliest, more likely mid next week - coordinate social/web announcement plan once language is finalized",d:"Next week",c:"urgent"},
       ]},
       {g:"Milestone - Captured for Reference",i:[
-        {id:"w20-017",t:"Cards HQ hit $6.05M in a single month for first time - April revenue milestone - reference for board, Shamrock, future planning",d:"Captured",c:"completed"},
-        {id:"w20-018",t:"Website at $5M year-to-date revenue - reference point for growth tracking",d:"Captured",c:"completed"},
+        {id:"w20-017",scope:true,t:"Cards HQ hit $6.05M in a single month for first time - April revenue milestone - reference for board, Shamrock, future planning",d:"Captured",c:"completed"},
+        {id:"w20-018",scope:true,t:"Website at $5M year-to-date revenue - reference point for growth tracking",d:"Captured",c:"completed"},
       ]},
     ]
   },
@@ -489,7 +493,7 @@ var MEETINGS = {
         {id:"sm-004",t:"Trigger full meeting recap and re-analysis once David's docs arrive (sm-002 + sm-003) - revisit redemption model decision with full context",d:"On doc arrival",c:"urgent"},
       ]},
       {g:"CRITICAL DECISION - Redemption Model",i:[
-        {id:"sm-005",t:"DECIDE redemption model approach before re-speccing staging or design: Option A (per-product dynamic via custom API - matches original pitch, no merchant precedent, David does NOT recommend), Option B (price-band collections - 15 bands, simpler dev, standard Smile flow), Option C (simple program + experiential differentiation - VIP party, early access, signed product as differentiators per David's strategic advice) - bring to Kelly + Carter + leadership after sm-003 lands",d:"Next week",c:"urgent",linkedTo:["sp-002","sp-003","sp-001","sp-005","sp-004","sm-012"]},
+        {id:"sm-005",scope:true,t:"DECIDE redemption model approach before re-speccing staging or design: Option A (per-product dynamic via custom API - matches original pitch, no merchant precedent, David does NOT recommend), Option B (price-band collections - 15 bands, simpler dev, standard Smile flow), Option C (simple program + experiential differentiation - VIP party, early access, signed product as differentiators per David's strategic advice) - bring to Kelly + Carter + leadership after sm-003 lands",d:"Next week",c:"urgent",linkedTo:["sp-002","sp-003","sp-001","sp-005","sp-004","sm-012"]},
       ]},
       {g:"POS Resolution - Awaiting Decision",i:[
         {id:"sm-006",t:"POS workaround decision: (a) manual staff path - agent opens Shopify admin or API tool at register to remove points and apply matching discount (David showed UI), (b) custom QR/barcode scan triggers point removal via API - manual works at low volume, QR scales better - decide after sm-005 lands and Smile POS roadmap (Q2/Q3 2026 new products) is clearer",d:"Before June 16",c:"urgent",linkedTo:["sp-004"]},
@@ -723,7 +727,9 @@ function getLinkGroup(taskId){
   var seen = {};
   seen[taskId] = true;
   linked.forEach(function(lid){ if(TASK_INDEX[lid]) seen[lid] = true; });
-  return Object.keys(seen);
+  return Object.keys(seen).filter(function(id){
+    return !(TASK_INDEX[id] && TASK_INDEX[id].item.scope);
+  });
 }
 
 function isChecked(taskId){ return !!STATE[taskId]; }
@@ -738,6 +744,7 @@ function getMeetingStats(mid){
   var total = 0, done = 0, open_urgent = 0;
   meeting.sections.forEach(function(sec){
     sec.i.forEach(function(item){
+      if(item.scope) return;
       total++;
       if(isChecked(item.id)) done++;
       else if(item.c === 'urgent') open_urgent++;
@@ -751,6 +758,7 @@ function getAllStats(){
   var total = 0, done = 0;
   Object.keys(TASK_INDEX).forEach(function(tid){
     if(seen[tid]) return;
+    if(TASK_INDEX[tid].item.scope) return;
     var group = getLinkGroup(tid);
     group.forEach(function(g){ seen[g] = true; });
     total++;
@@ -836,16 +844,19 @@ function renderMeeting(app, mid){
 
   var anyVisible = false;
   meeting.sections.forEach(function(sec){
-    var visibleItems = sec.i.filter(function(item){
+    var actionItems = sec.i.filter(function(item){ return !item.scope; });
+    var scopeItems = sec.i.filter(function(item){ return item.scope; });
+    var visibleItems = actionItems.filter(function(item){
       return showCompleted || !isChecked(item.id);
     });
-    if(visibleItems.length === 0) return;
+    if(visibleItems.length === 0 && scopeItems.length === 0) return;
     anyVisible = true;
 
     html += '<div class="section">';
     html += '<div class="section-title">'+escapeHtml(sec.g)+'</div>';
 
     sec.i.forEach(function(item){
+      if(item.scope) return;
       var checked = isChecked(item.id);
       if(!showCompleted && checked) return;
       var linkedTo = item.linkedTo || [];
@@ -859,6 +870,13 @@ function renderMeeting(app, mid){
       html += '<div class="item-body"><div class="item-text">'+escapeHtml(item.t)+'</div>';
       html += '<div class="item-meta"><span class="badge '+item.c+'">'+escapeHtml(item.d)+'</span>'+linkBadge+'</div>';
       html += '</div></div>';
+    });
+
+    scopeItems.forEach(function(item){
+      html += '<div class="scope-item">';
+      html += '<div class="scope-tag">Scope &amp; Decision</div>';
+      html += '<div class="item-body"><div class="item-text">'+escapeHtml(item.t)+'</div></div>';
+      html += '</div>';
     });
 
     html += '</div>';
