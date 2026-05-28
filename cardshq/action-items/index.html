@@ -106,6 +106,59 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 <script>
 var MEETINGS = {
+  "loyalty-branding-tier-restructure-may-28-2026": {
+    label: "Loyalty Branding & Tier Restructure - May 28, 2026",
+    sections: [
+      {g:"Loyalty Doc Restructure",i:[
+        {id:"lr28-001",t:"Update loyalty doc with restructured tier names (Base/Rare/Hollow/Grail), new $ thresholds, and Num Num multiplier model",d:"Today",c:"urgent"},
+        {id:"lr28-002",t:"Post updated loyalty proposal in loyalty group chat for internal review (Kelly, Nick, Charles, Nathaniel)",d:"This week",c:"urgent"},
+        {id:"lr28-003",t:"Kelly + Jarrod working session to finalize launch phase scope before external (godfather) discussion",d:"Before Jarrod travels",c:"urgent"},
+      ]},
+      {g:"Branding & Design Iteration",i:[
+        {id:"lr28-004",t:"Iterate Grail icon: luxury black direction, refractor stars, thin border on dark backgrounds, keep refractor background",d:"This week",c:"soon",linkedTo:["ld-009"]},
+        {id:"lr28-005",t:"Build CardsHQ Loyalty lockup: blue-to-green gradient on 'loyalty', angled slope (H-angle), negative-space slab in the 'a', custom letterforms - logo optional when 'loyalty' is primary",d:"This week",c:"soon"},
+        {id:"lr28-006",t:"Build referral-friend callout using locked tier branding (reusable widget, not page-specific)",d:"Next session",c:"soon"},
+        {id:"lr28-007",t:"Refine loyalty dashboard mockups: circular progress tracker (not bar), show points to next tier, custom loyalty icon in left nav, points balance + earn rate visible",d:"Next session",c:"soon"},
+      ]},
+      {g:"Program Modeling - Open Items",i:[
+        {id:"lr28-008",t:"Run cross-year overlap analysis: how many Grail members are closer to $10K vs $30K in spend - inform Owners Club threshold ($30K vs $50K)",d:"Before godfather meeting",c:"urgent"},
+        {id:"lr28-009",t:"Stress-test Member Marketplace inventory model: required SKU depth at 50% churn across base/rare/hollow tiers",d:"Before godfather meeting",c:"urgent"},
+        {id:"lr28-010",t:"Confirm with Nathaniel: Member Marketplace online-only redemption, store pickup allowed, multi-location inventory implications",d:"Soon",c:"soon"},
+        {id:"lr28-011",t:"Phase planning: Phase 1 launch foundation; Phase 2 sell-to-us point redemptions; Phase 3 invite-only Grail concierge services",d:"Working session next week",c:"soon"},
+      ]},
+      {g:"Godfather Sign-Off",i:[
+        {id:"lr28-012",t:"Coordinate Geoff + Carter review of restructured program with Jen - while Jarrod travels",d:"Next week",c:"soon"},
+      ]},
+    ]
+  },
+  "pdp-description-workflow-may-28-2026": {
+    label: "PDP Description Workflow - May 28, 2026",
+    sections: [
+      {g:"Friday Kickoff Prep",i:[
+        {id:"pd28-001",t:"Add Jarrod, Rich, and Nate to Friday workflow kickoff call; extend to 1 hour",d:"Today",c:"urgent"},
+        {id:"pd28-002",t:"Loop Jimmy into workflow conversations - process insight from inventory side",d:"This week",c:"urgent"},
+      ]},
+      {g:"Technical Investigation",i:[
+        {id:"pd28-003",t:"Confirm whether Thrive description override is tag-based or controllable via Shopify script; identify integrator (Nathaniel or external)",d:"This week",c:"urgent"},
+        {id:"pd28-004",t:"Resolve workflow architecture: scrape-and-generate (Rich's lean) vs. structured source-doc storage per product - inform UI/no-UI decision",d:"Friday kickoff",c:"soon"},
+      ]},
+      {g:"Pilot Scope",i:[
+        {id:"pd28-005",t:"Send Topps TCG pilot product to James (4th pilot product). Confirms pilot set: UEFA Chrome Soccer, Bowman's Baseball, Topps Chrome Football, +1 Topps TCG",d:"Today",c:"urgent",linkedTo:["kt26-015"]},
+        {id:"pd28-005a",t:"Confirm manual vetting owner shifts from engineering to inventory team (PRD Section 7)",d:"This week",c:"urgent",linkedTo:["pe-040"]},
+        {id:"pd28-006",t:"Confirm Topps TCG product selection has multiple SKUs and sufficient inventory for pilot",d:"This week",c:"urgent",linkedTo:["kt26-016"]},
+      ]},
+      {g:"PRD Updates",i:[
+        {id:"pd28-007",t:"Recreate zone diagram in PRD: fix nested zone references (no zone-within-zone numbering)",d:"Today",c:"urgent"},
+        {id:"pd28-008",t:"Rename PRD Generation Trigger section to Generation Workflow - expand to cover trigger, human review checkpoint, approval, long-term storage",d:"Today",c:"urgent"},
+        {id:"pd28-009",t:"Update PRD Section 6.1.3 field surface mapping to new zone numbers",d:"Today",c:"urgent"},
+        {id:"pd28-010",t:"Send PRD draft preview to Jarrod for early review - do NOT share with Kelly yet",d:"Today",c:"urgent"},
+      ]},
+      {g:"Future Operations",i:[
+        {id:"pd28-011",t:"Defer Matrixify full product+tag export until needed - takes a couple of days to run",d:"As needed",c:"ongoing"},
+        {id:"pd28-012",t:"Once pilot proven, expand workflow to larger product subset in time for the National",d:"Before National",c:"soon"},
+      ]},
+    ]
+  },
   "kelly-touchbase-may-26-2026": {
     label: "Kelly Touchbase - May 26, 2026",
     sections: [
@@ -136,8 +189,8 @@ var MEETINGS = {
       ]},
       {g:"PDP Redesign - Project Elevate",i:[
         {id:"kt26-014",t:"Connect with James tomorrow - get concrete PDP timeline confirmed by Thursday",d:"Tomorrow",c:"urgent"},
-        {id:"kt26-015",t:"Send pilot PDP products to James: soccer, Bowman's Best, Topps Chrome, 2 from Carter, 1 TCG from Mike",d:"Today",c:"urgent"},
-        {id:"kt26-016",t:"Work with Mike to identify 1 TCG pilot product with multiple SKUs and sufficient inventory",d:"This week",c:"urgent"},
+        {id:"kt26-015",t:"Send pilot PDP products to James: soccer, Bowman's Best, Topps Chrome, 2 from Carter, 1 TCG from Mike",d:"Today",c:"urgent",linkedTo:["pd28-005"]},
+        {id:"kt26-016",t:"Work with Mike to identify 1 TCG pilot product with multiple SKUs and sufficient inventory",d:"This week",c:"urgent",linkedTo:["pd28-006"]},
         {id:"kt26-017",t:"Work with Jimmy to fix product image/publish flow - no product goes live without image and inventory > 0",d:"This week",c:"urgent"},
         {id:"kt26-018",t:"Build master hidden collection sorted by publish date for daily front-end image checks",d:"This week",c:"soon"},
       ]},
@@ -556,7 +609,7 @@ var MEETINGS = {
       ]},
       {g:"Customer Distribution - New Data Surfaced",i:[
         {id:"ld-008",t:"Real customer distribution shared: 36,000 annual customers - Base 32,000 (89%), Holo 3,500 (10%), Rare 700 (2%), Grail 159 (0.4%) - vastly different from Smile's typical distribution recommendation - changes design priority",d:"Reference data",c:"completed",linkedTo:["sd-010"]},
-        {id:"ld-009",t:"Tier icon design pivot: Nick Forneris built 4 tier icons today (Base black/white simple, Holo brand colors, Rare gold, Grail fiery red Magic-inspired) - Jarrod flagged that since 89% land in Base, Nick's Holo treatment should become Base, and a new Holo design is needed - Nick to rework",d:"By Wednesday",c:"urgent"},
+        {id:"ld-009",t:"Tier icon design pivot: Nick Forneris built 4 tier icons today (Base black/white simple, Holo brand colors, Rare gold, Grail fiery red Magic-inspired) - Jarrod flagged that since 89% land in Base, Nick's Holo treatment should become Base, and a new Holo design is needed - Nick to rework",d:"By Wednesday",c:"urgent",linkedTo:["lr28-004"]},
         {id:"ld-010",t:"Kelly request: tier icons need to be shown in context (where they live on the site, in emails, on profiles) before locking design - separate design-specific meeting needed to walk through tier visualization across all surfaces",d:"This week",c:"soon"},
       ]},
       {g:"Wireframe Scope - For Wednesday Review",i:[
@@ -648,7 +701,7 @@ var MEETINGS = {
         {id:"pe-037",t:"First batch: all Topps wax products go first (highest inventory, drives Google Shopping and Meta campaigns). Supplies likely before singles; singles come with Slabber regardless. AI description replaces existing wax descriptions, not an add-on",d:"v1 scope",c:"urgent",linkedTo:["pe-016"]},
         {id:"pe-038",t:"Add a standing legal disclaimer to all AI-generated / multi-source descriptions - 'contents subject to change, checklists not always accurate' - to protect against misrepresenting box contents",d:"Build into v1",c:"urgent"},
         {id:"pe-039",t:"PDP redesign: anchor full product description at the bottom, lead with a snapshot summary at top - confirm design constraints (replace description only vs broader page changes) with James/design",d:"Requirements phase",c:"soon",linkedTo:["pe-005"]},
-        {id:"pe-040",t:"Confirm who manually vets each AI-generated description before publish - leaning Nathaniel's team - manual vetting is required given data-accuracy risk",d:"Before first publish",c:"soon"},
+        {id:"pe-040",t:"Confirm who manually vets each AI-generated description before publish - leaning Nathaniel's team - manual vetting is required given data-accuracy risk",d:"Before first publish",c:"soon",linkedTo:["pd28-005a"]},
       ]},
       {g:"Data Sources & Accuracy",i:[
         {id:"pe-041",t:"Ask Topps directly whether they will provide box-configuration and checklist data, especially hobby vs retail/mega box breakdowns - source-of-truth is better than third-party; same need will repeat for Panini, Leaf, Upper Deck (~60 days to Topps meeting)",d:"~60 days to Topps mtg",c:"soon"},
