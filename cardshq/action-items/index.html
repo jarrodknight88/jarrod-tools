@@ -132,6 +132,33 @@ var MEETINGS = {
       ]},
     ]
   },
+  "jimmy-thrive-workflow-may-28-2026": {
+    label: "Jimmy x Thrive Workflow - May 28, 2026",
+    sections: [
+      {g:"Thrive Walkthrough",i:[
+        {id:"jt28-001",t:"Schedule and send Thrive walkthrough invite for tomorrow at 12 PM (Jimmy, Nate, Rich)",d:"Today",c:"urgent"},
+        {id:"jt28-002",t:"Walk Nate and Rich through Thrive before any credentials are shared",d:"Tomorrow 12 PM",c:"urgent"},
+        {id:"jt28-003",t:"Create generic Thrive login and share with Nate and Rich after the walkthrough",d:"Tomorrow",c:"urgent"},
+        {id:"jt28-004",t:"Rotate generic Thrive password by end of day Friday",d:"Friday",c:"urgent"},
+      ]},
+      {g:"Technical Investigation",i:[
+        {id:"jt28-005",t:"Test that Thrive does not overwrite Shopify metafields - confirm via quantity-limit field or a non-critical test metafield",d:"This week",c:"urgent"},
+        {id:"jt28-006",t:"Investigate whether Thrive sync direction is configurable - disable description sync while preserving sales sync",d:"This week",c:"urgent"},
+        {id:"jt28-007",t:"Reach out to Thrive for vendor relations or customer support contact for API and webhook documentation",d:"This week",c:"urgent"},
+      ]},
+      {g:"Data Sources",i:[
+        {id:"jt28-008",t:"Send sample Topps seller-portal PDFs for comparison against customer-facing pages",d:"This week",c:"urgent"},
+        {id:"jt28-011",t:"Continue Beckett evaluation as unified non-Topps data source",d:"Ongoing",c:"ongoing",linkedTo:["pe-044"]},
+      ]},
+      {g:"Enrichment Architecture",i:[
+        {id:"jt28-009",t:"Design event-driven enrichment pipeline on Thrive-to-Shopify product create webhook, with enrichment-status tag or metafield flag",d:"Before sprint planning",c:"soon",linkedTo:["pd28-004"]},
+        {id:"jt28-010",t:"Plan one-time batch enrichment for existing 300-400 wax SKUs, gated by the enrichment-status flag",d:"Before sprint planning",c:"soon"},
+      ]},
+      {g:"Quality of Life",i:[
+        {id:"jt28-012",t:"Move release-date from Discord-managed tag to a Shopify metafield so it is searchable, sortable, and alertable",d:"Backlog",c:"ongoing"},
+      ]},
+    ]
+  },
   "pdp-description-workflow-may-28-2026": {
     label: "PDP Description Workflow - May 28, 2026",
     sections: [
@@ -141,7 +168,7 @@ var MEETINGS = {
       ]},
       {g:"Technical Investigation",i:[
         {id:"pd28-003",t:"Confirm whether Thrive description override is tag-based or controllable via Shopify script; identify integrator (Nathaniel or external)",d:"This week",c:"urgent"},
-        {id:"pd28-004",t:"Resolve workflow architecture: scrape-and-generate (Rich's lean) vs. structured source-doc storage per product - inform UI/no-UI decision",d:"Friday kickoff",c:"soon"},
+        {id:"pd28-004",t:"Resolve workflow architecture: scrape-and-generate (Rich's lean) vs. structured source-doc storage per product - inform UI/no-UI decision",d:"Friday kickoff",c:"soon",linkedTo:["jt28-009"]},
       ]},
       {g:"Pilot Scope",i:[
         {id:"pd28-005",t:"Send Topps TCG pilot product to James (4th pilot product). Confirms pilot set: UEFA Chrome Soccer, Bowman's Baseball, Topps Chrome Football, +1 Topps TCG",d:"Today",c:"urgent",linkedTo:["kt26-015"]},
@@ -708,7 +735,7 @@ var MEETINGS = {
         {id:"pe-041",t:"Ask Topps directly whether they will provide box-configuration and checklist data, especially hobby vs retail/mega box breakdowns - source-of-truth is better than third-party; same need will repeat for Panini, Leaf, Upper Deck (~60 days to Topps meeting)",d:"~60 days to Topps mtg",c:"soon"},
         {id:"pe-042",t:"Evaluate WaxStat.com ($500/mo) as an interim third-party data source for proof of concept - get shared login from Zach (Sportsbind lead buyer) - still discovery phase, unconfirmed whether its data can flow into our system",d:"Interim eval",c:"soon"},
         {id:"pe-043",t:"Flag core accuracy risk for the team: Haystack provides card lists/variations but not box configuration or hobby-vs-retail differences, and no odds/chase data - WaxStat and Beckett also imperfect - assess misrepresentation exposure before trusting any single source",d:"Ongoing",c:"ongoing"},
-        {id:"pe-044",t:"Explore Beckett as a supplemental checklist source (Rich) - Beckett lists hobby-vs-box specifications similar to WaxStat - scraping looks involved; may not be critical for day one",d:"Research",c:"ongoing"},
+        {id:"pe-044",t:"Explore Beckett as a supplemental checklist source (Rich) - Beckett lists hobby-vs-box specifications similar to WaxStat - scraping looks involved; may not be critical for day one",d:"Research",c:"ongoing",linkedTo:["jt28-011"]},
       ]},
       {g:"Agentic Storefront & Reuse",i:[
         {id:"pe-045",t:"Share the Shopify agentic storefront documentation (from Shopify rep) with the full team - covers the Shopify knowledge base app that feeds agentic storefronts - foundational for the initiative",d:"This week",c:"urgent",linkedTo:["pe-006"]},
