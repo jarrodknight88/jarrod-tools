@@ -106,6 +106,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 <script>
 var MEETINGS = {
+  "weekly-ops-sync-jun-3-2026": {
+    label: "Weekly Ops Sync - June 3, 2026",
+    sections: [
+      { name: "This Week - Urgent", i: [
+        { id:"w21-001", t:"Father's Day sale - sync with Mike and Jimmy; have a plan to the team by end of week", d:"End of week", c:"urgent" },
+        { id:"w21-002", t:"Atlanta Grailbox (releasing Friday) - request hero banner from Digi; coordinate signage with Joseph and Mike Dean (QR code + one-pager for showcase)", d:"Before Friday", c:"urgent" },
+        { id:"w21-003", t:"V Friends preorder - confirm with Nathaniel if headless testing passes tomorrow; go live Friday if green", d:"Tomorrow", c:"urgent" },
+        { id:"w21-004", t:"PDP redesign - top focus today and tomorrow to finalize planning; execution kicks off next week", d:"Today/Tomorrow", c:"urgent", linkedTo:["pe-005"] },
+      ]},
+      { name: "Affirm / BNPL", i: [
+        { id:"w21-005", t:"Affirm - flip the switch once paperwork clears; currently in limbo pending completion", d:"When paperwork clears", c:"soon", linkedTo:["af-001"] },
+      ]},
+      { name: "Gorgias & Loyalty", i: [
+        { id:"w21-006", t:"Gorgias - ensure Lei and Adam have access for DMs; integration is live and ready", d:"This week", c:"soon" },
+        { id:"w21-007", t:"Loyalty program - finalize vendor decision and get plan to leadership for sign-off by June", d:"By end of June", c:"soon" },
+      ]},
+    ]
+  },
   "campaign-sync-jun-3-2026": {
     label: "Campaign Sync - June 3, 2026",
     sections: [
@@ -572,7 +590,7 @@ var MEETINGS = {
         {id:"pe-004",t:"Daily sync with James starting Monday - 15 minutes - overcommunicate during scoping phase - James also joining Nathaniel sync as fly-on-the-wall",d:"Starts Monday",c:"urgent"},
       ]},
       {g:"Top 5 Elevate Priorities for National (76 Days)",i:[
-        {id:"pe-005",t:"PDP redesign as proof of concept - content, rich text, community interaction, market data integration - if API data integration not feasible by pitch, show design with data as 'in development' note",d:"Before National (76 days)",c:"urgent",linkedTo:["pe-036","pe-039"]},
+        {id:"pe-005",t:"PDP redesign as proof of concept - content, rich text, community interaction, market data integration - if API data integration not feasible by pitch, show design with data as 'in development' note",d:"Before National (76 days)",c:"urgent",linkedTo:["pe-036","pe-039","w21-004"]},
         {id:"pe-006",t:"AI agent stopgap (Gorgias) for proof of concept + longer-term agentic storefront strategy - confirm with Rich tomorrow whether CardsHQ AI agent should be cross-functional with Market Movers - explore Shopify knowledge base app and agentic storefronts for end state",d:"Before National (76 days)",c:"urgent",linkedTo:["pe-045"]},
         {id:"pe-007",t:"New Collector Center concept - how-to-play content hub for Lorcana, Star Wars, Pokemon, etc. - reinforces Topps' education priority - second-biggest design need after loyalty",d:"Before National (76 days)",c:"urgent"},
         {id:"pe-008",t:"Data-rich PDP content via Market Movers API integration - widget showing sales count in last 30 days - last sale price treatment TBD (risk of undercutting retail price) - bigger conversation needed on which data points actually help shoppers buy",d:"Before National (76 days)",c:"urgent",linkedTo:["pe-034","pe-046"]},
@@ -736,7 +754,7 @@ var MEETINGS = {
     label: "Affirm / Finance Sync - May 19, 2026",
     sections: [
       {g:"Affirm Onboarding",i:[
-        {id:"af-001",t:"Get Affirm account rep assigned and request locked-in processing rate (will not exceed 6%)",d:"This week",c:"urgent"},
+        {id:"af-001",t:"Get Affirm account rep assigned and request locked-in processing rate (will not exceed 6%)",d:"This week",c:"urgent",linkedTo:["w21-005"]},
         {id:"af-002",t:"Provide Affirm with required business information to complete quote process",d:"This week",c:"urgent"},
         {id:"af-003",t:"Confirm reconciliation flow - does Affirm settle through Shopify or directly to bank account",d:"This week",c:"urgent"},
         {id:"af-004",t:"Confirm whether QuickBooks needs separate Affirm configuration or if Shopify integration covers it",d:"This week",c:"soon"},
