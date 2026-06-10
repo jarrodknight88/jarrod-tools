@@ -1,0 +1,360 @@
+{
+  "_comment": "The single source of truth for how Shopify products map into dashboard buckets. To add a tag/subject: add to `subjects` (or add a tag string to an existing subject). To turn on brand later: flip brandFacet.enabled and fill in the mappings. Nothing else needs to change - the pull script and dashboard read from here.",
+  "cardProductTypes": [
+    "Raw Single",
+    "Graded Single",
+    "Graded Card"
+  ],
+  "condition": {
+    "Raw": {
+      "productTypes": [
+        "Raw Single"
+      ]
+    },
+    "Graded": {
+      "productTypes": [
+        "Graded Single",
+        "Graded Card"
+      ]
+    }
+  },
+  "priceTiers": [
+    {
+      "key": "High",
+      "min": 1000
+    },
+    {
+      "key": "Mid",
+      "min": 150
+    },
+    {
+      "key": "Low",
+      "min": 0
+    }
+  ],
+  "subjects": [
+    {
+      "name": "Baseball",
+      "category": "Sports",
+      "tags": [
+        "Baseball",
+        "Baseball Raw",
+        "Baseball Graded"
+      ]
+    },
+    {
+      "name": "Basketball",
+      "category": "Sports",
+      "tags": [
+        "Basketball",
+        "Basketball Raw",
+        "Basketball Graded"
+      ]
+    },
+    {
+      "name": "Football",
+      "category": "Sports",
+      "tags": [
+        "Football",
+        "Football Raw",
+        "Football Graded"
+      ]
+    },
+    {
+      "name": "Soccer",
+      "category": "Sports",
+      "tags": [
+        "Soccer",
+        "Soccer Raw",
+        "Soccer Graded"
+      ]
+    },
+    {
+      "name": "Hockey",
+      "category": "Sports",
+      "tags": [
+        "Hockey",
+        "Hockey Raw",
+        "Hockey Graded"
+      ]
+    },
+    {
+      "name": "Multi-Sport",
+      "category": "Sports",
+      "tags": [
+        "Multi-Sport",
+        "Multi-Sport Raw",
+        "Multi-Sport Graded"
+      ]
+    },
+    {
+      "name": "UFC",
+      "category": "Sports",
+      "tags": [
+        "UFC",
+        "UFC Raw",
+        "UFC Graded"
+      ]
+    },
+    {
+      "name": "F1",
+      "category": "Sports",
+      "tags": [
+        "F1",
+        "F1 Raw",
+        "F1 Graded"
+      ]
+    },
+    {
+      "name": "Wrestling",
+      "category": "Sports",
+      "tags": [
+        "Wrestling",
+        "Wrestling Raw",
+        "Wrestling Graded"
+      ]
+    },
+    {
+      "name": "Other Sports",
+      "category": "Sports",
+      "tags": [
+        "Other Sports",
+        "Other Sports Raw",
+        "Other Sports Graded"
+      ]
+    },
+    {
+      "name": "Boxing",
+      "category": "Sports",
+      "tags": [
+        "Boxing",
+        "Boxing Raw",
+        "Boxing Graded"
+      ]
+    },
+    {
+      "name": "NASCAR",
+      "category": "Sports",
+      "tags": [
+        "NASCAR",
+        "NASCAR Raw",
+        "NASCAR Graded"
+      ]
+    },
+    {
+      "name": "Golf",
+      "category": "Sports",
+      "tags": [
+        "Golf",
+        "Golf Raw",
+        "Golf Graded"
+      ]
+    },
+    {
+      "name": "Tennis",
+      "category": "Sports",
+      "tags": [
+        "Tennis",
+        "Tennis Raw",
+        "Tennis Graded"
+      ]
+    },
+    {
+      "name": "Pokemon",
+      "category": "TCG",
+      "tags": [
+        "Pokemon",
+        "Pokemon Raw",
+        "Pokemon Graded"
+      ]
+    },
+    {
+      "name": "Magic the Gathering",
+      "category": "TCG",
+      "tags": [
+        "Magic the Gathering",
+        "Magic the Gathering Raw",
+        "Magic the Gathering Graded"
+      ]
+    },
+    {
+      "name": "One Piece",
+      "category": "TCG",
+      "tags": [
+        "One Piece",
+        "One Piece Raw",
+        "One Piece Graded"
+      ]
+    },
+    {
+      "name": "Yu-Gi-Oh",
+      "category": "TCG",
+      "tags": [
+        "Yu-Gi-Oh",
+        "Yu-Gi-Oh Raw",
+        "Yu-Gi-Oh Graded"
+      ]
+    },
+    {
+      "name": "Disney Lorcana",
+      "category": "TCG",
+      "tags": [
+        "Disney Lorcana",
+        "Disney Lorcana Raw",
+        "Disney Lorcana Graded"
+      ]
+    },
+    {
+      "name": "Star Wars Unlimited",
+      "category": "TCG",
+      "tags": [
+        "Star Wars Unlimited",
+        "Star Wars Unlimited Raw",
+        "Star Wars Unlimited Graded"
+      ]
+    },
+    {
+      "name": "Dragon Ball",
+      "category": "TCG",
+      "tags": [
+        "Dragon Ball",
+        "Dragon Ball Raw",
+        "Dragon Ball Graded"
+      ]
+    },
+    {
+      "name": "Digimon",
+      "category": "TCG",
+      "tags": [
+        "Digimon",
+        "Digimon Raw",
+        "Digimon Graded"
+      ]
+    },
+    {
+      "name": "Gundam",
+      "category": "TCG",
+      "tags": [
+        "Gundam",
+        "Gundam Raw",
+        "Gundam Graded"
+      ]
+    },
+    {
+      "name": "Union Arena",
+      "category": "TCG",
+      "tags": [
+        "Union Arena",
+        "Union Arena Raw",
+        "Union Arena Graded"
+      ]
+    },
+    {
+      "name": "Riftbound",
+      "category": "TCG",
+      "tags": [
+        "Riftbound",
+        "Riftbound Raw",
+        "Riftbound Graded"
+      ]
+    },
+    {
+      "name": "Elestrals",
+      "category": "TCG",
+      "tags": [
+        "Elestrals",
+        "Elestrals Raw",
+        "Elestrals Graded"
+      ]
+    },
+    {
+      "name": "Marvel",
+      "category": "TCG",
+      "tags": [
+        "Marvel",
+        "Marvel Raw",
+        "Marvel Graded"
+      ]
+    },
+    {
+      "name": "Star Wars Topps",
+      "category": "TCG",
+      "tags": [
+        "Star Wars Topps",
+        "Star Wars Topps Raw",
+        "Star Wars Topps Graded"
+      ]
+    },
+    {
+      "name": "DC",
+      "category": "TCG",
+      "tags": [
+        "DC",
+        "DC Raw",
+        "DC Graded"
+      ]
+    },
+    {
+      "name": "Pop-Culture",
+      "category": "TCG",
+      "tags": [
+        "Pop-Culture",
+        "Pop-Culture Raw",
+        "Pop-Culture Graded"
+      ]
+    },
+    {
+      "name": "Harry Potter",
+      "category": "TCG",
+      "tags": [
+        "Harry Potter",
+        "Harry Potter Raw",
+        "Harry Potter Graded"
+      ]
+    },
+    {
+      "name": "Disney Topps",
+      "category": "TCG",
+      "tags": [
+        "Disney Topps",
+        "Disney Topps Raw",
+        "Disney Topps Graded"
+      ]
+    },
+    {
+      "name": "Media IP",
+      "category": "TCG",
+      "tags": [
+        "Media IP",
+        "Media IP Raw",
+        "Media IP Graded"
+      ]
+    },
+    {
+      "name": "Stranger Things",
+      "category": "TCG",
+      "tags": [
+        "Stranger Things",
+        "Stranger Things Raw",
+        "Stranger Things Graded"
+      ]
+    },
+    {
+      "name": "Garbage Pail Kids",
+      "category": "TCG",
+      "tags": [
+        "Garbage Pail Kids",
+        "Garbage Pail Kids Graded"
+      ]
+    }
+  ],
+  "uncategorized": {
+    "name": "Other",
+    "category": "Other"
+  },
+  "brandFacet": {
+    "enabled": false,
+    "_note": "Brand (Topps / Bowman / Panini) is not tagged on products today - it only appears in product titles. Leave disabled until the brand: namespaced tags land from the taxonomy work with Jimmy. To enable: set enabled to true and add a brands array of { name, tags } here.",
+    "brands": []
+  }
+}

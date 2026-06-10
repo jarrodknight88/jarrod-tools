@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CardsHQ Buying Inventory</title>
+<style>
+  :root{
+    --black:#111111;
+    --blue:#3B82F6;
+    --teal:#10B981;
+    --amber:#D97706;
+    --ink:#111827;
+    --muted:#6B7280;
+    --faint:#9CA3AF;
+    --line:#D1D5DB;
+    --line-soft:#E5E7EB;
+    --callout:#F9FAFB;
+    --page:#F3F4F6;
+    --card:#FFFFFF;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:Arial, Helvetica, sans-serif;
+    background:var(--page);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+  #root{max-width:1240px;margin:0 auto;padding:0 20px 64px;}
+
+  /* ---------- Header banner ---------- */
+  .banner{
+    background:var(--black);
+    color:#fff;
+    border-radius:0 0 16px 16px;
+    margin:0 -20px 24px;
+    padding:26px 28px 24px;
+  }
+  .banner-inner{max-width:1240px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap;}
+  .brand-row{display:flex;align-items:center;gap:14px;}
+  .logo-mark{
+    width:46px;height:46px;flex:none;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .logo-img{height:30px;width:auto;display:block;flex:none;}
+  .brand-divider{width:1px;height:34px;background:rgba(255,255,255,0.22);flex:none;}
+  .brand-name{font-size:22px;font-weight:bold;letter-spacing:-0.4px;line-height:1.05;}
+  .brand-sub{font-size:12.5px;color:#9CA3AF;margin-top:3px;letter-spacing:0.2px;}
+  .banner-right{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
+  .snapshot-date{font-size:15px;font-weight:bold;}
+  .timestamp{font-size:12.5px;color:#9CA3AF;}
+  .sample-badge{
+    display:inline-flex;align-items:center;gap:7px;
+    background:rgba(217,118,6,0.16);
+    border:1px solid rgba(217,118,6,0.5);
+    color:#FBBF77;
+    font-size:11px;font-weight:bold;letter-spacing:1px;
+    padding:5px 11px;border-radius:999px;text-transform:uppercase;
+  }
+  .sample-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--amber);}
+
+  /* segmented period control (dark) */
+  .seg{display:inline-flex;background:#1C1C1C;border:1px solid #2E2E2E;border-radius:9px;padding:3px;gap:2px;}
+  .seg-btn{
+    font-family:inherit;font-size:12.5px;font-weight:bold;letter-spacing:0.2px;
+    color:#9CA3AF;background:none;border:none;padding:6px 15px;border-radius:7px;cursor:pointer;
+    transition:all .14s ease;
+  }
+  .seg-btn:hover{color:#E5E7EB;}
+  .seg-btn.on{background:var(--teal);color:#fff;}
+
+  /* ---------- Section heads ---------- */
+  .eyebrow{font-size:11px;font-weight:bold;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);}
+
+  /* ---------- Overview header + info ---------- */
+  .overview-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:0 0 18px;}
+  .oh-left{display:flex;align-items:center;gap:10px;}
+  .oh-title{margin:0;font-size:19px;font-weight:bold;letter-spacing:-0.4px;color:var(--ink);}
+  .info-wrap{position:relative;display:inline-flex;}
+  .info-btn{
+    width:22px;height:22px;border-radius:50%;flex:none;cursor:pointer;
+    border:1.5px solid var(--line);background:#fff;color:var(--muted);
+    font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:bold;font-size:13px;line-height:1;
+    display:inline-flex;align-items:center;justify-content:center;transition:all .14s ease;
+  }
+  .info-btn:hover,.info-btn[aria-expanded="true"]{border-color:var(--blue);color:var(--blue);}
+  .info-pop{
+    position:absolute;top:calc(100% + 8px);left:0;z-index:60;
+    width:min(380px,86vw);display:flex;flex-direction:column;gap:10px;
+    background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;
+    box-shadow:0 16px 40px rgba(17,17,17,0.18);
+  }
+  .info-pop-title{font-size:13px;font-weight:bold;letter-spacing:0.3px;color:var(--ink);}
+  .info-pop-body{font-size:12.5px;line-height:1.55;color:#374151;}
+  .info-pop-legend{display:flex;flex-direction:column;gap:7px;padding-top:10px;border-top:1px solid var(--line-soft);}
+  .legend-item{display:flex;align-items:center;gap:8px;font-size:12px;color:#374151;font-weight:bold;}
+  .swatch{width:12px;height:12px;border-radius:3px;flex:none;}
+
+  /* ---------- Totals ---------- */
+  .totals{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;
+  }
+  .total-card{
+    background:var(--card);border:1px solid var(--line-soft);border-radius:14px;
+    padding:18px 20px;display:flex;flex-direction:column;gap:9px;
+    box-shadow:0 1px 2px rgba(17,17,17,0.04);
+  }
+  .total-card .label{font-size:11px;font-weight:bold;letter-spacing:0.9px;text-transform:uppercase;color:var(--muted);}
+  .total-card .value{font-size:37px;font-weight:bold;letter-spacing:-1.6px;line-height:1;}
+  .total-card .sub{font-size:12px;color:var(--faint);}
+  .accent-bar{height:3px;border-radius:2px;width:34px;}
+
+  /* ---------- Filter (popup) ---------- */
+  .filter-bar{position:relative;flex:none;}
+  .filter-btn{
+    display:inline-flex;align-items:center;gap:8px;flex:none;
+    font-family:inherit;font-size:13.5px;font-weight:bold;color:var(--ink);
+    background:#fff;border:1.5px solid var(--line);border-radius:10px;
+    padding:9px 14px;cursor:pointer;transition:all .12s ease;
+  }
+  .filter-btn:hover{border-color:#9CA3AF;}
+  .filter-btn.open{border-color:var(--black);box-shadow:0 0 0 3px rgba(17,17,17,0.06);}
+  .filter-btn .caret{transition:transform .18s ease;color:var(--muted);}
+  .filter-btn .caret.open{transform:rotate(180deg);}
+  .filter-badge{
+    font-size:11px;font-weight:bold;color:#fff;background:var(--blue);
+    min-width:18px;height:18px;padding:0 5px;border-radius:999px;
+    display:inline-flex;align-items:center;justify-content:center;line-height:1;
+  }
+
+  /* active-filter row (below totals) */
+  .active-row{font-size:13px;display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:-6px 0 22px;}
+  .active-label{font-size:11px;font-weight:bold;letter-spacing:0.9px;text-transform:uppercase;color:var(--faint);}
+  .active-pill{
+    display:inline-flex;align-items:center;gap:6px;background:#EEF2FF;color:#1E3A8A;
+    border:1px solid #C7D2FE;border-radius:999px;font-size:12px;font-weight:bold;padding:3px 4px 3px 11px;
+  }
+  .active-pill .x{cursor:pointer;opacity:0.55;font-weight:bold;font-size:14px;padding:0 4px;border-radius:999px;}
+  .active-pill .x:hover{opacity:1;background:rgba(30,58,138,0.12);}
+  .clear-all{
+    font-family:inherit;font-size:12.5px;font-weight:bold;color:var(--muted);
+    background:none;border:none;cursor:pointer;text-decoration:underline;padding:3px 4px;
+  }
+  .clear-all:hover{color:var(--amber);}
+
+  .group-label{font-size:11px;font-weight:bold;letter-spacing:0.9px;text-transform:uppercase;color:var(--faint);margin-bottom:9px;}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;}
+  .chip{
+    font-family:inherit;font-size:13px;font-weight:bold;
+    padding:7px 14px;border-radius:999px;cursor:pointer;
+    border:1.5px solid var(--line);background:#fff;color:var(--muted);
+    transition:all .12s ease;line-height:1;
+  }
+  .chip:hover{border-color:#9CA3AF;}
+  .chip.on{background:var(--black);border-color:var(--black);color:#fff;}
+  .chip.on:hover{background:#000;}
+
+  /* popup panel */
+  .menu-overlay{position:fixed;inset:0;z-index:40;background:transparent;}
+  .filter-panel{
+    position:absolute;top:calc(100% + 8px);right:0;z-index:50;
+    width:min(440px,92vw);max-height:min(560px,80vh);display:flex;flex-direction:column;
+    background:#fff;border:1px solid var(--line);border-radius:14px;
+    box-shadow:0 18px 48px rgba(17,17,17,0.18);overflow:hidden;
+  }
+  .panel-head{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:14px 16px;border-bottom:1px solid var(--line-soft);
+  }
+  .panel-title{font-size:14px;font-weight:bold;letter-spacing:0.2px;}
+  .panel-reset{
+    font-family:inherit;font-size:12.5px;font-weight:bold;color:var(--muted);
+    background:none;border:none;cursor:pointer;text-decoration:underline;padding:0;
+  }
+  .panel-reset:hover:not(:disabled){color:var(--amber);}
+  .panel-reset:disabled{opacity:0.4;cursor:default;text-decoration:none;}
+  .panel-section{padding:14px 16px;}
+  .panel-section.category{flex:none;}
+  .panel-section.leagues{display:flex;flex-direction:column;flex:1;min-height:0;border-top:1px solid var(--line-soft);}
+  .panel-section.leagues .menu-body{overflow-y:auto;flex:1;min-height:0;}
+  .group-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;}
+  .group-row .group-label{margin-bottom:0;}
+  .menu-search{
+    width:100%;font-family:inherit;font-size:13px;padding:9px 12px;margin-bottom:6px;
+    border:1.5px solid var(--line);border-radius:9px;outline:none;color:var(--ink);
+  }
+  .menu-search:focus{border-color:var(--blue);}
+  .menu-clear{
+    font-family:inherit;font-size:12px;font-weight:bold;color:var(--muted);
+    background:none;border:none;cursor:pointer;text-decoration:underline;padding:0;
+  }
+  .menu-clear:hover:not(:disabled){color:var(--ink);}
+  .menu-clear:disabled{opacity:0.4;cursor:default;text-decoration:none;}
+  .menu-body{}
+  .menu-section{margin-top:10px;}
+  .menu-section-label{
+    font-size:10.5px;font-weight:bold;letter-spacing:0.9px;text-transform:uppercase;
+    color:var(--faint);padding:0 0 6px 2px;
+  }
+  .menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px 8px;}
+  .menu-item{
+    display:flex;align-items:center;gap:9px;width:100%;text-align:left;
+    font-family:inherit;font-size:13px;font-weight:bold;color:var(--ink);
+    background:none;border:none;padding:7px 8px;border-radius:8px;cursor:pointer;
+  }
+  .menu-item:hover{background:#F3F4F6;}
+  .menu-item.on{color:#065F46;}
+  .menu-item-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .check{
+    width:18px;height:18px;flex:none;border-radius:5px;border:1.5px solid var(--line);
+    display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;
+  }
+  .check.on{background:var(--teal);border-color:var(--teal);}
+  .menu-empty{padding:14px 4px;font-size:13px;color:var(--faint);}
+  .panel-foot{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:12px 16px;border-top:1px solid var(--line-soft);
+    font-size:12.5px;font-weight:bold;color:var(--muted);
+  }
+  .menu-done{
+    font-family:inherit;font-size:12.5px;font-weight:bold;color:#fff;
+    background:var(--black);border:none;border-radius:9px;padding:9px 20px;cursor:pointer;
+  }
+  .menu-done:hover{background:#000;}
+
+  /* ---------- Buckets ---------- */
+  .bucket-section{margin-top:28px;}
+  .cond-head{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;}
+  .cond-title{font-size:18px;font-weight:bold;letter-spacing:-0.3px;}
+  .cond-desc{font-size:12.5px;color:var(--muted);}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+
+  .bucket{
+    background:var(--card);border:1px solid var(--line-soft);border-radius:14px;
+    padding:18px 18px 16px;display:flex;flex-direction:column;gap:14px;
+    box-shadow:0 1px 2px rgba(17,17,17,0.04);
+    transition:box-shadow .15s ease, border-color .15s ease;
+  }
+  .bucket:hover{box-shadow:0 4px 14px rgba(17,17,17,0.07);border-color:var(--line);}
+  .bucket-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+  .bucket-tier{font-size:15px;font-weight:bold;letter-spacing:-0.2px;}
+  .bucket-range{font-size:12px;color:var(--faint);margin-top:2px;}
+  .net-tag{font-size:12px;font-weight:bold;padding:3px 8px;border-radius:6px;white-space:nowrap;}
+
+  .flow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;align-items:end;}
+  .flow .cell{display:flex;flex-direction:column;gap:3px;}
+  .flow .cell .k{font-size:10px;font-weight:bold;letter-spacing:0.7px;text-transform:uppercase;color:var(--faint);}
+  .flow .v-in{font-size:21px;font-weight:bold;color:var(--teal);letter-spacing:-0.5px;line-height:1;}
+  .flow .v-out{font-size:21px;font-weight:bold;color:var(--blue);letter-spacing:-0.5px;line-height:1;}
+  .flow .v-hand{font-size:26px;font-weight:bold;color:var(--ink);letter-spacing:-1px;line-height:1;}
+  .flow .cell.hand{align-items:flex-end;text-align:right;}
+
+  .pushpull{display:flex;flex-direction:column;gap:5px;}
+  .bar-row{display:flex;align-items:center;gap:8px;}
+  .bar-key{font-size:10px;font-weight:bold;letter-spacing:0.5px;color:var(--faint);width:26px;flex:none;}
+  .bar-track{flex:1;height:7px;background:#F1F3F5;border-radius:4px;overflow:hidden;}
+  .bar-fill{height:100%;border-radius:4px;}
+
+  .read{
+    display:flex;align-items:center;gap:8px;font-size:13px;font-weight:bold;
+    padding:9px 11px;border-radius:9px;line-height:1.2;
+  }
+  .read .rdot{width:8px;height:8px;border-radius:50%;flex:none;}
+
+  .empty-bucket{font-size:13px;color:var(--faint);font-weight:bold;padding:8px 0;}
+
+  .footnote{font-size:12px;color:var(--faint);text-align:center;margin-top:30px;line-height:1.6;}
+
+  @media (max-width:880px){
+    .totals{grid-template-columns:repeat(2,1fr);}
+    .grid{grid-template-columns:1fr;}
+  }
+  @media (max-width:560px){
+    #root{padding:0 14px 48px;}
+    .banner{margin:0 -14px 20px;padding:22px 18px;}
+    .totals{grid-template-columns:1fr 1fr;}
+    .total-card .value{font-size:26px;}
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" data-presets="react">
+const { useState, useMemo } = React;
+
+const COLORS = { black:'#111111', blue:'#3B82F6', teal:'#10B981', amber:'#D97706', ink:'#111827', muted:'#6B7280' };
+
+/* ============================================================
+   SAMPLE DATA  (deterministic, seeded — stable across reloads)
+   ============================================================ */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+
+const TIERS = [
+  { key:'High', label:'High Value', range:'$1,000 and up' },
+  { key:'Mid',  label:'Mid Tier',   range:'$150 – $999' },
+  { key:'Low',  label:'Low Tier',   range:'Under $150' },
+];
+const CONDS = ['Raw','Graded'];
+
+// Real CardsHQ catalog (Boxes excluded per Jimmy; non-card lines omitted).
+// c = category, w = relative popularity weight, conds = condition variants that exist.
+const SUBJECTS = [
+  // ---- Sports ----
+  { n:'Baseball',     c:'Sports', w:1.40 },
+  { n:'Basketball',   c:'Sports', w:1.40 },
+  { n:'Football',     c:'Sports', w:1.30 },
+  { n:'Soccer',       c:'Sports', w:0.95 },
+  { n:'Hockey',       c:'Sports', w:0.70 },
+  { n:'Multi-Sport',  c:'Sports', w:0.70 },
+  { n:'UFC',          c:'Sports', w:0.60 },
+  { n:'F1',           c:'Sports', w:0.60 },
+  { n:'Wrestling',    c:'Sports', w:0.55 },
+  { n:'Other Sports', c:'Sports', w:0.50 },
+  { n:'Boxing',       c:'Sports', w:0.45 },
+  { n:'NASCAR',       c:'Sports', w:0.40 },
+  { n:'Golf',         c:'Sports', w:0.40 },
+  { n:'Tennis',       c:'Sports', w:0.35 },
+  // ---- TCG ----
+  { n:'Pokemon',             c:'TCG', w:1.50 },
+  { n:'Magic the Gathering', c:'TCG', w:1.20 },
+  { n:'One Piece',           c:'TCG', w:1.10 },
+  { n:'Yu-Gi-Oh',            c:'TCG', w:1.00 },
+  { n:'Disney Lorcana',      c:'TCG', w:0.90 },
+  { n:'Star Wars Unlimited', c:'TCG', w:0.70 },
+  { n:'Dragon Ball',         c:'TCG', w:0.60 },
+  { n:'Digimon',             c:'TCG', w:0.50 },
+  { n:'Gundam',              c:'TCG', w:0.50 },
+  { n:'Union Arena',         c:'TCG', w:0.45 },
+  { n:'Riftbound',           c:'TCG', w:0.40 },
+  { n:'Elestrals',           c:'TCG', w:0.30 },
+  // ---- Entertainment / Non-Sport (filed under TCG per Jimmy) ----
+  { n:'Marvel',            c:'TCG', w:0.80 },
+  { n:'Star Wars Topps',   c:'TCG', w:0.70 },
+  { n:'DC',                c:'TCG', w:0.65 },
+  { n:'Pop-Culture',       c:'TCG', w:0.60 },
+  { n:'Harry Potter',      c:'TCG', w:0.60 },
+  { n:'Disney Topps',      c:'TCG', w:0.55 },
+  { n:'Media IP',          c:'TCG', w:0.50 },
+  { n:'Stranger Things',   c:'TCG', w:0.45 },
+  { n:'Garbage Pail Kids', c:'TCG', w:0.40, conds:['Graded'] },
+];
+// Quick-pick chips shown inline; the rest live behind the "More" menu.
+const COMMON = ['Pokemon','Basketball','Baseball','Football','Magic the Gathering','One Piece','Yu-Gi-Oh','Soccer','Marvel','Disney Lorcana'];
+
+// per-record on-hand base ranges by tier + condition (scaled by subject weight)
+const BASE = {
+  High:{ Raw:[0,3],  Graded:[1,6]  },
+  Mid: { Raw:[14,60], Graded:[7,28] },
+  Low: { Raw:[80,400],Graded:[5,22] },
+};
+
+function buildRecords(){
+  const rng = mulberry32(20260608);
+  const recs = [];
+  SUBJECTS.forEach(s=>{
+    const conds = s.conds || CONDS;
+    TIERS.forEach(t=>{
+      conds.forEach(cond=>{
+        const [lo,hi] = BASE[t.key][cond];
+        const onhand = Math.round((lo + rng()*(hi-lo)) * s.w);
+        if(onhand<=0){
+          recs.push({ category:s.c, subject:s.n, tier:t.key, cond, onhand:0,
+            p:{ daily:{in:0,out:0}, weekly:{in:0,out:0}, monthly:{in:0,out:0} } });
+          return;
+        }
+        let inn, out;
+        if(t.key==='High'){
+          // high-value acquisitions are episodic — intake usually dried up; steady sales => buy signals
+          inn = rng()<0.78 ? 0 : 1;
+          const r = rng();
+          out = r<0.5 ? 1 : (r<0.78 ? 2 : 0);
+        } else if(t.key==='Mid'){
+          // mid tier is restocked in batches (collection buys) — often building
+          inn = Math.round(onhand*(0.045+rng()*0.13));
+          out = Math.round(onhand*(0.005+rng()*0.105));
+        } else { // Low — high floor churn, sells a touch faster than it restocks
+          inn = Math.round(onhand*(0.015+rng()*0.105));
+          out = Math.round(onhand*(0.02+rng()*0.115));
+        }
+
+        // ---- Roll the daily flow up into weekly (7d) and monthly (30d) windows ----
+        // On-hand is a live snapshot (constant); only the flow accumulates per window.
+        const wN = 0.85 + rng()*0.3, mN = 0.85 + rng()*0.3; // per-window lumpiness
+        let weekly, monthly;
+        if(t.key==='High'){
+          // sales accrue steadily regardless of yesterday; intake is episodic and "catches up" over time
+          const wOut = 1 + Math.round(rng()*3);
+          const wIn  = (rng()<0.5?0:1) + (rng()<0.22?1:0);
+          const mOut = wOut*3 + Math.round(rng()*4);
+          const mIn  = wIn + (rng()<0.6?1:0) + (rng()<0.35?1:0) + (rng()<0.15?2:0);
+          weekly  = { in:wIn,  out:wOut };
+          monthly = { in:mIn,  out:mOut };
+        } else {
+          const wMul = 5.5 + rng()*2.0;  // ~days of accumulation
+          const mMul = 3.7 + rng()*1.1;  // weekly -> monthly
+          const wIn = Math.round(inn*wMul*wN), wOut = Math.round(out*wMul*wN);
+          weekly  = { in:wIn, out:wOut };
+          monthly = { in:Math.round(wIn*mMul*mN), out:Math.round(wOut*mMul*mN) };
+        }
+
+        recs.push({ category:s.c, subject:s.n, tier:t.key, cond, onhand,
+          p:{ daily:{in:inn,out:out}, weekly, monthly } });
+      });
+    });
+  });
+  return recs;
+}
+const SAMPLE_RECORDS = buildRecords(); // fallback only - real data comes from data.json
+
+/* ============================================================
+   FILTER MODEL  — faceted: OR within group, AND across groups,
+   a fully-selected (or empty) group = wildcard (no constraint)
+   ============================================================ */
+const GROUPS = [
+  { key:'category', field:'category', label:'Category',     tags:['Sports','TCG'] },
+  { key:'league',   field:'subject',  label:'Sport / Game', tags: SUBJECTS.map(s=>s.n) },
+];
+const CATEGORY = GROUPS[0], LEAGUE = GROUPS[1];
+const GAME_CAT = Object.fromEntries(SUBJECTS.map(s=>[s.n, s.c]));
+
+// Inclusion model: an empty selection within a group = no constraint (show all).
+// Selecting tags narrows to exactly those.
+function matches(rec, selected){
+  for(const g of GROUPS){
+    const sel = g.tags.filter(t=>selected.has(t));
+    if(sel.length===0) continue;            // group unconstrained
+    if(!sel.includes(rec[g.field])) return false;
+  }
+  return true;
+}
+const groupActive = (group, selected) => group.tags.some(t=>selected.has(t));
+
+// Dynamic auto-tagging: keep Category in sync with the finer Sport/Game picks.
+function reconcile(next, touched){
+  if(touched==='league'){
+    const games = LEAGUE.tags.filter(t=>next.has(t));
+    const cats = new Set(games.map(g=>GAME_CAT[g]));
+    CATEGORY.tags.forEach(c=>next.delete(c));     // category is derived from games
+    cats.forEach(c=>next.add(c));
+  } else if(touched==='category'){
+    const cats = CATEGORY.tags.filter(t=>next.has(t));
+    if(cats.length>0){
+      LEAGUE.tags.forEach(g=>{ if(next.has(g) && !cats.includes(GAME_CAT[g])) next.delete(g); });
+    }
+  }
+  return next;
+}
+
+/* ============================================================
+   AGGREGATION + READS
+   ============================================================ */
+function aggregate(records){
+  return records.reduce((a,r)=>{ const f=r.p.daily; a.in+=f.in; a.out+=f.out; a.onhand+=r.onhand; return a; },{in:0,out:0,onhand:0});
+}
+function readOf(inv){
+  const i=inv.in, o=inv.out;
+  if(o<=0 && i<=0) return { label:'No movement yesterday', tone:'neutral' };
+  if(o>0 && i/o < 0.22) return { label: i===0 ? 'Selling with no intake — buy signal' : 'Intake dried up — buy signal', tone:'amber' };
+  if(o > i) return { label:'Selling faster than intake', tone:'blue' };
+  if(i > o) return { label:'Building stock', tone:'teal' };
+  return { label:'Balanced flow', tone:'neutral' };
+}
+const TONE = {
+  teal:   { dot:COLORS.teal,  bg:'#ECFDF5', fg:'#065F46' },
+  blue:   { dot:COLORS.blue,  bg:'#EFF6FF', fg:'#1E40AF' },
+  amber:  { dot:COLORS.amber, bg:'#FFF7ED', fg:'#9A3412' },
+  neutral:{ dot:'#9CA3AF',    bg:'#F3F4F6', fg:'#374151' },
+};
+const fmt = n => n.toLocaleString('en-US');
+
+// Single daily snapshot for now (weekly/monthly to revisit later).
+const SNAPSHOT = { range:'Mon, Jun 8, 2026', stamp:'As of 8:00 AM ET · yesterday', added:'Added Yesterday', sold:'Sold Yesterday' };
+
+/* ============================================================
+   COMPONENTS
+   ============================================================ */
+function Banner({ isSample, dateLabel, stampLabel }){
+  return (
+    <div className="banner">
+      <div className="banner-inner">
+        <div className="brand-row">
+          <img className="logo-img" src="assets/cardshq-logo.png" alt="CardsHQ" />
+          <span className="brand-divider"></span>
+          <div>
+            <div className="brand-name">Buying Inventory</div>
+            <div className="brand-sub">Inventory snapshot · Cards · All channels (Online + In-store POS)</div>
+          </div>
+        </div>
+        <div className="banner-right">
+          {isSample && <span className="sample-badge"><span className="dot"></span>Sample data</span>}
+          <div className="snapshot-date">{dateLabel}</div>
+          <div className="timestamp">{stampLabel}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function InfoButton(){
+  const [open, setOpen] = useState(false);
+  const legend = [
+    { c:COLORS.teal,  t:'In — units added' },
+    { c:COLORS.blue,  t:'Out — units sold' },
+    { c:COLORS.amber, t:'Negative net & buy signals' },
+  ];
+  return (
+    <span className="info-wrap" onMouseEnter={()=>setOpen(true)} onMouseLeave={()=>setOpen(false)}>
+      <button className="info-btn" aria-label="How to read this" aria-expanded={open} onClick={()=>setOpen(o=>!o)}>i</button>
+      {open && (
+        <span className="info-pop" role="tooltip">
+          <span className="info-pop-title">How to read this</span>
+          <span className="info-pop-body">On-hand alone doesn't tell you much. Read each bucket as a <b>push vs. pull</b> — units coming <b>in</b> against units going <b>out</b>. Low stock is healthy when it's selling with steady intake; it's only a problem when intake has dried up. Each bucket calls it: <b>building stock</b>, <b>selling faster than intake</b>, or <b>selling with no intake — a buy signal</b>.</span>
+          <span className="info-pop-legend">
+            {legend.map((x,i)=>(
+              <span className="legend-item" key={i}><span className="swatch" style={{background:x.c}}></span>{x.t}</span>
+            ))}
+          </span>
+        </span>
+      )}
+    </span>
+  );
+}
+
+function Totals({ totals }){
+  const net = totals.in - totals.out;
+  const netPos = net >= 0;
+  const cards = [
+    { label:'Total On Hand', value:fmt(totals.onhand), sub:'units across all buckets', accent:COLORS.black, color:COLORS.ink },
+    { label:SNAPSHOT.added, value:'+'+fmt(totals.in), sub:'units in', accent:COLORS.teal, color:COLORS.teal },
+    { label:SNAPSHOT.sold, value:'−'+fmt(totals.out), sub:'units out', accent:COLORS.blue, color:COLORS.blue },
+    { label:'Net Change', value:(netPos?'+':'−')+fmt(Math.abs(net)), sub:netPos?'building overall':'drawing down overall', accent:netPos?COLORS.teal:COLORS.amber, color:netPos?COLORS.teal:COLORS.amber },
+  ];
+  return (
+    <div className="totals">
+      {cards.map((c,i)=>(
+        <div className="total-card" key={i}>
+          <div className="accent-bar" style={{background:c.accent}}></div>
+          <div className="value" style={{color:c.color}}>{c.value}</div>
+          <div className="label">{c.label}</div>
+          <div className="sub">{c.sub}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function FilterBar({ selected, setSelected }){
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState('');
+
+  const toggle = (tag, group) => {
+    const next = new Set(selected);
+    next.has(tag) ? next.delete(tag) : next.add(tag);
+    reconcile(next, group.key); // dynamic auto-tagging across groups
+    setSelected(next);
+  };
+  const reset = (e) => { if(e) e.stopPropagation(); setSelected(new Set()); };
+  const clearLeague = () => {
+    const next = new Set(selected);
+    LEAGUE.tags.forEach(t=>next.delete(t));
+    reconcile(next, 'league'); // also clears the derived category tags
+    setSelected(next);
+  };
+
+  const activeGroups = GROUPS.filter(g=>groupActive(g, selected));
+  const isFiltered = activeGroups.length > 0;
+  const activeCount = activeGroups.reduce((n,g)=>n + g.tags.filter(t=>selected.has(t)).length, 0);
+  const leagueSelected = LEAGUE.tags.filter(t=>selected.has(t));
+
+  const q = query.trim().toLowerCase();
+  const menuSections = CATEGORY.tags.map(cat=>({
+    cat,
+    items: LEAGUE.tags.filter(t=>GAME_CAT[t]===cat && t.toLowerCase().includes(q)),
+  })).filter(sec=>sec.items.length>0);
+
+  return (
+    <div className="filter-bar">
+      <button className={'filter-btn'+(open?' open':'')} onClick={()=>setOpen(o=>!o)} aria-expanded={open}>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 5h18M6 12h12M10 19h4"/></svg>
+        <span>Filter</span>
+        {isFiltered && <span className="filter-badge">{activeCount}</span>}
+        <svg className={'caret'+(open?' open':'')} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+
+      {open && (
+        <React.Fragment>
+          <div className="menu-overlay" onClick={()=>setOpen(false)}></div>
+          <div className="filter-panel" role="dialog" aria-label="Filter inventory by tag">
+            <div className="panel-head">
+              <span className="panel-title">Filter inventory</span>
+              <button className="panel-reset" onClick={reset} disabled={!isFiltered}>Reset to all</button>
+            </div>
+
+            <div className="panel-section category">
+              <div className="group-label">Category</div>
+              <div className="chips">
+                {CATEGORY.tags.map(t=>(
+                  <button key={t} className={'chip'+(selected.has(t)?' on':'')} onClick={()=>toggle(t,CATEGORY)}>{t}</button>
+                ))}
+              </div>
+            </div>
+
+            <div className="panel-section leagues">
+              <div className="group-row">
+                <div className="group-label">Sport / Game</div>
+                <button className="menu-clear" onClick={clearLeague} disabled={leagueSelected.length===0}>Clear</button>
+              </div>
+              <input className="menu-search" placeholder="Search sports & games…" value={query}
+                onChange={e=>setQuery(e.target.value)} autoFocus/>
+              <div className="menu-body">
+                {menuSections.length===0 && <div className="menu-empty">No tags match “{query}”.</div>}
+                {menuSections.map(sec=>(
+                  <div className="menu-section" key={sec.cat}>
+                    <div className="menu-section-label">{sec.cat}</div>
+                    <div className="menu-grid">
+                      {sec.items.map(t=>{
+                        const on = selected.has(t);
+                        return (
+                          <button key={t} className={'menu-item'+(on?' on':'')} onClick={()=>toggle(t,LEAGUE)}>
+                            <span className={'check'+(on?' on':'')}>{on?'✓':''}</span>
+                            <span className="menu-item-label">{t}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="panel-foot">
+              <span>{activeCount ? activeCount+' filter'+(activeCount!==1?'s':'')+' active' : 'No filters — showing all'}</span>
+              <button className="menu-done" onClick={()=>setOpen(false)}>Done</button>
+            </div>
+          </div>
+        </React.Fragment>
+      )}
+    </div>
+  );
+}
+
+function ActiveFilters({ selected, setSelected }){
+  const toggle = (tag, group) => {
+    const next = new Set(selected);
+    next.has(tag) ? next.delete(tag) : next.add(tag);
+    reconcile(next, group.key);
+    setSelected(next);
+  };
+  const reset = () => setSelected(new Set());
+  const activeGroups = GROUPS.filter(g=>groupActive(g, selected));
+  if(activeGroups.length===0) return null;
+  return (
+    <div className="active-row">
+      <span className="active-label">Showing</span>
+      {activeGroups.map(g =>
+        g.tags.filter(t=>selected.has(t)).map(t=>(
+          <span className="active-pill" key={t}>{t}<span className="x" onClick={()=>toggle(t,g)}>×</span></span>
+        ))
+      )}
+      <button className="clear-all" onClick={reset}>Clear all</button>
+    </div>
+  );
+}
+
+function Bucket({ tier, inv }){
+  const empty = inv.onhand===0 && inv.in===0 && inv.out===0;
+  const net = inv.in - inv.out;
+  const r = readOf(inv);
+  const tone = TONE[r.tone];
+  const max = Math.max(inv.in, inv.out, 1);
+  const netPos = net >= 0;
+  const netStyle = netPos
+    ? { background:'#ECFDF5', color:'#065F46' }
+    : { background:'#FFF7ED', color:'#9A3412' };
+
+  return (
+    <div className="bucket">
+      <div className="bucket-top">
+        <div>
+          <div className="bucket-tier">{tier.label}</div>
+          <div className="bucket-range">{tier.range}</div>
+        </div>
+        {!empty && (
+          <span className="net-tag" style={netStyle}>Net {netPos?'+':'−'}{fmt(Math.abs(net))}</span>
+        )}
+      </div>
+
+      {empty ? (
+        <div className="empty-bucket">No matching inventory in this slice.</div>
+      ) : (
+        <React.Fragment>
+          <div className="flow">
+            <div className="cell">
+              <div className="k">In</div>
+              <div className="v-in">+{fmt(inv.in)}</div>
+            </div>
+            <div className="cell">
+              <div className="k">Out</div>
+              <div className="v-out">−{fmt(inv.out)}</div>
+            </div>
+            <div className="cell hand">
+              <div className="k">On Hand</div>
+              <div className="v-hand">{fmt(inv.onhand)}</div>
+            </div>
+          </div>
+
+          <div className="pushpull">
+            <div className="bar-row">
+              <span className="bar-key" style={{color:COLORS.teal}}>IN</span>
+              <span className="bar-track"><span className="bar-fill" style={{width:(inv.in/max*100)+'%', background:COLORS.teal}}></span></span>
+            </div>
+            <div className="bar-row">
+              <span className="bar-key" style={{color:COLORS.blue}}>OUT</span>
+              <span className="bar-track"><span className="bar-fill" style={{width:(inv.out/max*100)+'%', background:COLORS.blue}}></span></span>
+            </div>
+          </div>
+
+          <div className="read" style={{background:tone.bg, color:tone.fg}}>
+            <span className="rdot" style={{background:tone.dot}}></span>{r.label}
+          </div>
+        </React.Fragment>
+      )}
+    </div>
+  );
+}
+
+function ConditionSection({ cond, desc, records }){
+  return (
+    <div className="bucket-section">
+      <div className="cond-head">
+        <span className="cond-title">{cond}</span>
+        <span className="cond-desc">{desc}</span>
+      </div>
+      <div className="grid">
+        {TIERS.map(t=>{
+          const inv = aggregate(records.filter(r=>r.tier===t.key));
+          return <Bucket key={t.key} tier={t} inv={inv} />;
+        })}
+      </div>
+    </div>
+  );
+}
+
+function App(){
+  const [selected, setSelected] = useState(()=>new Set());
+  const [data, setData] = useState(null);
+
+  React.useEffect(()=>{
+    fetch('./data.json', { cache:'no-store' })
+      .then(r=>{ if(!r.ok) throw new Error('no data.json'); return r.json(); })
+      .then(d=>{
+        const dt = new Date((d.date||'') + 'T12:00:00');
+        const dateLabel = isNaN(dt) ? SNAPSHOT.range
+          : dt.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+        const stampLabel = d.generatedAt
+          ? ('As of ' + new Date(d.generatedAt).toLocaleString('en-US',{hour:'numeric',minute:'2-digit'}) + ' ET · yesterday')
+          : SNAPSHOT.stamp;
+        setData({ records:d.records||[], isSample:!!d.isSample, dateLabel, stampLabel });
+      })
+      .catch(()=> setData({ records:SAMPLE_RECORDS, isSample:true, dateLabel:SNAPSHOT.range, stampLabel:SNAPSHOT.stamp }));
+  }, []);
+
+  const records = data ? data.records : null;
+  const filtered = useMemo(()=> records ? records.filter(r=>matches(r, selected)) : [], [records, selected]);
+  const totals = useMemo(()=>aggregate(filtered), [filtered]);
+
+  if(!data) return <div style={{padding:'60px 20px', textAlign:'center', color:'#6B7280', fontFamily:'Arial'}}>Loading inventory…</div>;
+
+  return (
+    <React.Fragment>
+      <Banner isSample={data.isSample} dateLabel={data.dateLabel} stampLabel={data.stampLabel}/>
+      <div className="overview-head">
+        <div className="oh-left">
+          <h2 className="oh-title">Today's Snapshot</h2>
+          <InfoButton/>
+        </div>
+        <FilterBar selected={selected} setSelected={setSelected}/>
+      </div>
+      <Totals totals={totals}/>
+      <ActiveFilters selected={selected} setSelected={setSelected}/>
+      <ConditionSection cond="Raw" desc="Ungraded singles, sealed & loose" records={filtered.filter(r=>r.cond==='Raw')}/>
+      <ConditionSection cond="Graded" desc="Slabbed by PSA · BGS · SGC" records={filtered.filter(r=>r.cond==='Graded')}/>
+      <div className="footnote">
+        {data.isSample
+          ? 'Showing sample data — figures are illustrative, not yet pulled from live systems.'
+          : 'Cards only · all channels (online + POS) · refreshed daily at 8:00 AM ET.'}
+      </div>
+    </React.Fragment>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
