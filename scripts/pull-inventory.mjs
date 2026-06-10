@@ -18,7 +18,8 @@
  *   API_VERSION           optional, defaults to 2025-01
  *   OUT                   optional output path, defaults to cardshq/inventory-dashboard/data.json
  *
- * Required custom-app scopes: read_products, read_orders, read_marketplace_orders, read_quick_sale
+ * Required custom-app scopes: read_products, read_orders
+ *   (read_orders covers all channels including POS; read_inventory and read_locations are fine to have too)
  */
 
 import fs from "node:fs";
