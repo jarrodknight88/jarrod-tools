@@ -36,6 +36,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .badge-count.ok{background:#D1FAE5;color:#065F46}
 .chevron{color:#94A3B8;font-size:16px}
 
+.close-all-btn{margin-left:auto;padding:6px 14px;border-radius:6px;border:0.5px solid #10B981;background:#10B981;color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;transition:all 0.1s}
+.close-all-btn:hover{background:#0E9F6E;border-color:#0E9F6E}
+.close-all-btn.reopen{background:#fff;color:#475569;border-color:#E2E8F0}
+.close-all-btn.reopen:hover{background:#F8FAFC}
+
+.archive-header{display:flex;align-items:center;gap:8px;padding:10px 4px;margin:0.5rem 0 0.75rem;cursor:pointer;user-select:none}
+.archive-header:hover .archive-label{color:#111}
+.archive-chevron{color:#94A3B8;font-size:16px;transition:transform 0.15s;display:inline-block}
+.archive-chevron.open{transform:rotate(90deg)}
+.archive-label{font-size:11px;font-weight:600;color:#64748B;text-transform:uppercase;letter-spacing:0.06em}
+.archive-count{font-size:11px;font-weight:600;color:#94A3B8;background:#F1F5F9;padding:2px 8px;border-radius:20px}
+.archive-grid .summary-card{background:#FCFCFD;border-style:dashed}
+
 .section{background:#fff;border:0.5px solid #E2E8F0;border-radius:12px;margin-bottom:10px;overflow:hidden}
 .section-title{font-size:11px;font-weight:600;color:#64748B;text-transform:uppercase;letter-spacing:0.06em;padding:11px 16px 9px;border-bottom:0.5px solid #F1F5F9;background:#F8FAFC}
 .item{display:flex;align-items:flex-start;gap:12px;padding:10px 16px;border-bottom:0.5px solid #F1F5F9;cursor:pointer;transition:background 0.1s}
@@ -254,6 +267,7 @@ var MEETINGS = {
     ]
   },
   "loyalty-branding-tier-restructure-may-28-2026": {
+    archived: true,
     label: "Loyalty Branding & Tier Restructure - May 28, 2026",
     sections: [
       {g:"Loyalty Doc Restructure",i:[
@@ -280,6 +294,7 @@ var MEETINGS = {
     ]
   },
   "jimmy-thrive-workflow-may-28-2026": {
+    archived: true,
     label: "Jimmy x Thrive Workflow - May 28, 2026",
     sections: [
       {g:"Thrive Walkthrough",i:[
@@ -307,6 +322,7 @@ var MEETINGS = {
     ]
   },
   "pdp-description-workflow-may-28-2026": {
+    archived: true,
     label: "PDP Description Workflow - May 28, 2026",
     sections: [
       {g:"Friday Kickoff Prep",i:[
@@ -335,6 +351,7 @@ var MEETINGS = {
     ]
   },
   "kelly-touchbase-may-26-2026": {
+    archived: true,
     label: "Kelly Touchbase - May 26, 2026",
     sections: [
       {g:"Affirm - BNPL",i:[
@@ -377,6 +394,7 @@ var MEETINGS = {
     ]
   },
   "smile-david-may-21-2026": {
+    archived: true,
     label: "David Wyatt (Smile.io) - May 21, 2026",
     sections: [
       {g:"Smile.io - Setup",i:[
@@ -393,6 +411,7 @@ var MEETINGS = {
     ]
   },
   "campaign-sync-may-13-2026": {
+    archived: true,
     label: "Campaign Sync - May 13, 2026",
     sections: [
       {
@@ -438,6 +457,7 @@ var MEETINGS = {
     ]
   },
   "smile-david-may-12-2026": {
+    archived: true,
     label: "David Wyatt (Smile.io) - May 12, 2026",
     sections: [
       {g:"Immediate - Today",i:[
@@ -462,6 +482,7 @@ var MEETINGS = {
     ]
   },
   "may-12-2026": {
+    archived: true,
     label: "Kelly Touchbase - May 12, 2026",
     sections: [
       {g:"Smile.io - Loyalty Setup",i:[
@@ -524,6 +545,7 @@ var MEETINGS = {
     ]
   },
   "shopify-consultation-may-12-2026": {
+    archived: true,
     label: "Shopify Consultation - May 12, 2026",
     sections: [
       {g:"Jarrod - AI Readiness",i:[
@@ -557,6 +579,7 @@ var MEETINGS = {
     ]
   },
   "nathaniel-standup-may-13-2026": {
+    archived: true,
     label: "Nathaniel Standup - May 13, 2026",
     sections: [
       {g:"Today - Hard Deadlines",i:[
@@ -575,6 +598,7 @@ var MEETINGS = {
     ]
   },
   "loyalty-marketing-touchbase-may-13-2026": {
+    archived: true,
     label: "Loyalty x Marketing Touchbase - May 13, 2026",
     sections: [
       {g:"Today - One-Pager",i:[
@@ -605,6 +629,7 @@ var MEETINGS = {
     ]
   },
   "smile-points-pos-may-13-2026": {
+    archived: true,
     label: "Smile - Points Redemption and POS - May 13, 2026",
     sections: [
       {g:"CRITICAL - Redemption Model Pivot",i:[
@@ -635,6 +660,7 @@ var MEETINGS = {
     ]
   },
   "week-20-cross-functional-may-13-2026": {
+    archived: true,
     label: "Week 20 Cross-Functional Sync - May 13, 2026",
     sections: [
       {g:"Memorial Day Sale",i:[
@@ -676,6 +702,7 @@ var MEETINGS = {
     ]
   },
   "project-elevate-sync-may-13-2026": {
+    archived: true,
     label: "Project Elevate Sync (Kelly + James) - May 13, 2026",
     sections: [
       {g:"Tomorrow - Dev Brain Merge",i:[
@@ -708,6 +735,7 @@ var MEETINGS = {
     ]
   },
   "smile-mailchimp-may-14-2026": {
+    archived: true,
     label: "Smile - Mailchimp Integration and Rewards Structure - May 14, 2026",
     sections: [
       {g:"Mailchimp Integration - Staging Setup",i:[
@@ -737,6 +765,7 @@ var MEETINGS = {
     ]
   },
   "project-elevate-kickoff-may-18-2026": {
+    archived: true,
     label: "Project Elevate Daily Standup - Kickoff with Jared (Kelly, James, Nathaniel) - May 18, 2026",
     sections: [
       {g:"Priorities Locked - 70 Days to National",i:[
@@ -771,6 +800,7 @@ var MEETINGS = {
     ]
   },
   "loyalty-design-working-session-may-18-2026": {
+    archived: true,
     label: "Loyalty Design Working Session (Nick Forneris, Jared, Nathaniel, Kelly, James) - May 18, 2026",
     sections: [
       {g:"Decisions Locked This Meeting",i:[
@@ -814,6 +844,7 @@ var MEETINGS = {
     ]
   },
   "loyalty-working-session-may-19-2026": {
+    archived: true,
     label: "Loyalty Pitch Working Session - May 19, 2026",
     sections: [
       {g:"Deck v5 - Tonight (by 6pm)",i:[
@@ -848,6 +879,7 @@ var MEETINGS = {
     ]
   },
   "affirm-finance-may-19-2026": {
+    archived: true,
     label: "Affirm / Finance Sync - May 19, 2026",
     sections: [
       {g:"Affirm Onboarding",i:[
@@ -864,6 +896,7 @@ var MEETINGS = {
     ]
   },
   "pdp-requirements-data-sources-may-26-2026": {
+    archived: true,
     label: "AI PDP Requirements & Data Sources - May 26, 2026",
     sections: [
       {g:"Requirements Definition",i:[
@@ -943,7 +976,7 @@ Object.keys(MEETINGS).forEach(function(mid){
   var m = MEETINGS[mid];
   m.sections.forEach(function(sec){
     sec.i.forEach(function(item){
-      TASK_INDEX[item.id] = { item: item, meetingId: mid, meetingLabel: m.label, sectionName: sec.g };
+      TASK_INDEX[item.id] = { item: item, meetingId: mid, meetingLabel: m.label, sectionName: (sec.name || sec.g || '') };
     });
   });
 });
@@ -987,6 +1020,7 @@ function getAllStats(){
   Object.keys(TASK_INDEX).forEach(function(tid){
     if(seen[tid]) return;
     if(TASK_INDEX[tid].item.scope) return;
+    if(MEETINGS[TASK_INDEX[tid].meetingId].archived) return;
     var group = getLinkGroup(tid);
     group.forEach(function(g){ seen[g] = true; });
     total++;
@@ -995,6 +1029,18 @@ function getAllStats(){
   });
   return { total:total, done:done, remaining:total-done };
 }
+
+// ==================== DATE / ARCHIVE HELPERS ====================
+var MONTHS = {jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+function getMeetingDate(mid){
+  var re = /(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)-(\d{1,2})-(\d{4})/g;
+  var match, last = null;
+  while((match = re.exec(mid)) !== null){ last = match; }
+  if(!last) return new Date(0);
+  return new Date(+last[3], MONTHS[last[1]], +last[2]);
+}
+function byDateAsc(a, b){ return getMeetingDate(a) - getMeetingDate(b); }
+var archiveOpen = false;
 
 // ==================== RENDER ====================
 function render(){
@@ -1023,23 +1069,45 @@ function renderLanding(app){
   html += '</div>';
   html += '<div class="progress-wrap"><div class="progress-fill" style="width:'+pct+'%"></div></div>';
 
-  html += '<div class="view-label" style="margin-bottom:10px">Meetings</div>';
-  html += '<div class="summary-grid">';
-
-  Object.keys(MEETINGS).sort().reverse().forEach(function(mid){
+  function cardHtml(mid){
     var m = MEETINGS[mid];
     var s = getMeetingStats(mid);
     var countHtml = s.remaining > 0
       ? '<span class="badge-count">'+s.remaining+' open</span>'
       : '<span class="badge-count ok">Complete</span>';
-    html += '<div class="summary-card" data-mid="'+mid+'">';
-    html += '<div class="summary-card-left"><h3>'+escapeHtml(m.label)+'</h3><p>'+s.total+' tasks &nbsp;|&nbsp; '+s.open_urgent+' urgent</p></div>';
-    html += '<div class="summary-card-right">'+countHtml+'<span class="chevron">›</span></div>';
-    html += '</div>';
-  });
+    var h = '<div class="summary-card" data-mid="'+mid+'">';
+    h += '<div class="summary-card-left"><h3>'+escapeHtml(m.label)+'</h3><p>'+s.total+' tasks &nbsp;|&nbsp; '+s.open_urgent+' urgent</p></div>';
+    h += '<div class="summary-card-right">'+countHtml+'<span class="chevron">›</span></div>';
+    h += '</div>';
+    return h;
+  }
 
+  var allKeys = Object.keys(MEETINGS);
+  var active = allKeys.filter(function(mid){ return !MEETINGS[mid].archived; }).sort(byDateAsc);
+  var archived = allKeys.filter(function(mid){ return MEETINGS[mid].archived; }).sort(byDateAsc);
+
+  html += '<div class="view-label" style="margin-bottom:10px">Meetings</div>';
+  html += '<div class="summary-grid">';
+  active.forEach(function(mid){ html += cardHtml(mid); });
   html += '</div>';
+
+  if(archived.length > 0){
+    html += '<div class="archive-header" id="archive-toggle">';
+    html += '<span class="archive-chevron'+(archiveOpen?' open':'')+'">›</span>';
+    html += '<span class="archive-label">Archive</span>';
+    html += '<span class="archive-count">'+archived.length+'</span>';
+    html += '</div>';
+    html += '<div class="summary-grid archive-grid"'+(archiveOpen?'':' style="display:none"')+' id="archive-grid">';
+    archived.forEach(function(mid){ html += cardHtml(mid); });
+    html += '</div>';
+  }
+
   app.innerHTML = html;
+
+  var archiveToggle = document.getElementById('archive-toggle');
+  if(archiveToggle){
+    archiveToggle.addEventListener('click', function(){ archiveOpen = !archiveOpen; render(); });
+  }
 
   app.querySelectorAll('.summary-card').forEach(function(card){
     card.addEventListener('click', function(){
@@ -1068,7 +1136,13 @@ function renderMeeting(app, mid){
   html += '<div class="view-btns">';
   html += '<button class="view-btn'+(showCompleted?'':' active')+'" id="btn-open">Open only</button>';
   html += '<button class="view-btn'+(showCompleted?' active':'')+'" id="btn-all">Show all</button>';
-  html += '</div></div>';
+  html += '</div>';
+  if(stats.remaining > 0){
+    html += '<button class="close-all-btn" id="btn-closeall">Mark all complete</button>';
+  } else if(stats.total > 0){
+    html += '<button class="close-all-btn reopen" id="btn-closeall">Reopen all</button>';
+  }
+  html += '</div>';
 
   var anyVisible = false;
   meeting.sections.forEach(function(sec){
@@ -1081,7 +1155,7 @@ function renderMeeting(app, mid){
     anyVisible = true;
 
     html += '<div class="section">';
-    html += '<div class="section-title">'+escapeHtml(sec.g)+'</div>';
+    html += '<div class="section-title">'+escapeHtml(sec.name || sec.g || '')+'</div>';
 
     sec.i.forEach(function(item){
       if(item.scope) return;
@@ -1121,6 +1195,33 @@ function renderMeeting(app, mid){
   });
   document.getElementById('btn-open').addEventListener('click', function(){ showCompleted = false; render(); });
   document.getElementById('btn-all').addEventListener('click', function(){ showCompleted = true; render(); });
+
+  var closeAllBtn = document.getElementById('btn-closeall');
+  if(closeAllBtn){
+    closeAllBtn.addEventListener('click', function(){
+      var s = getMeetingStats(mid);
+      if(s.remaining > 0){
+        if(!confirm('Mark all '+s.remaining+' open task(s) in this meeting complete?')) return;
+        meeting.sections.forEach(function(sec){
+          sec.i.forEach(function(item){
+            if(item.scope) return;
+            setChecked(item.id, true);
+            (item.linkedTo||[]).forEach(function(lid){ if(TASK_INDEX[lid]) setChecked(lid, true); });
+          });
+        });
+      } else {
+        if(!confirm('Reopen all tasks in this meeting?')) return;
+        meeting.sections.forEach(function(sec){
+          sec.i.forEach(function(item){
+            if(item.scope) return;
+            setChecked(item.id, false);
+          });
+        });
+      }
+      saveGlobalState(STATE);
+      render();
+    });
+  }
 
   app.querySelectorAll('.item').forEach(function(row){
     row.addEventListener('click', function(){
