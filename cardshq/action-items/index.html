@@ -49,6 +49,33 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .archive-count{font-size:11px;font-weight:600;color:#94A3B8;background:#F1F5F9;padding:2px 8px;border-radius:20px}
 .archive-grid .summary-card{background:#FCFCFD;border-style:dashed}
 
+/* Agenda (Today & Overdue) */
+.agenda{background:#fff;border:0.5px solid #E2E8F0;border-radius:12px;padding:14px 16px;margin-bottom:1.5rem}
+.agenda-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.agenda-title{font-size:13px;font-weight:600;color:#111}
+.agenda-group-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin:10px 0 4px;color:#94A3B8}
+.agenda-group-label.overdue{color:#991B1B}
+.agenda-row{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:0.5px solid #F1F5F9}
+.agenda-row:last-child{border-bottom:none}
+.agenda-row .item-text{font-size:13.5px;cursor:pointer}
+.agenda-row .item-text:hover{color:#3B82F6}
+.agenda-meeting{font-size:10px;color:#94A3B8;text-transform:uppercase;letter-spacing:0.04em}
+.agenda-empty{font-size:13px;color:#64748B;padding:4px 0 2px}
+.add-task-btn{padding:6px 12px;border-radius:6px;border:0.5px solid #3B82F6;background:#3B82F6;color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;transition:all 0.1s}
+.add-task-btn:hover{background:#2563EB;border-color:#2563EB}
+.due-badge{font-size:11px;font-weight:500;padding:2px 8px;border-radius:5px;display:inline-flex;align-items:center;gap:4px;cursor:pointer;border:0.5px solid transparent}
+.due-badge.overdue{background:#FEE2E2;color:#991B1B}
+.due-badge.today{background:#FFEDD5;color:#9A3412}
+.due-badge.soon{background:#FEF3C7;color:#854D0E}
+.due-badge.upcoming{background:#E0E7FF;color:#3730A3}
+.due-badge.none{background:#F1F5F9;color:#64748B}
+.due-badge:hover{border-color:#94A3B8}
+.modal-input{width:100%;padding:8px 10px;border:0.5px solid #E2E8F0;border-radius:6px;font-size:14px;font-family:inherit;margin-bottom:12px;color:#111;background:#fff}
+.modal-input:focus{outline:none;border-color:#3B82F6}
+.modal-label{font-size:11px;font-weight:600;color:#64748B;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:5px;display:block}
+.modal-btn.danger{color:#991B1B;border-color:#FECACA}
+.modal-btn.danger:hover{background:#FEF2F2}
+
 .section{background:#fff;border:0.5px solid #E2E8F0;border-radius:12px;margin-bottom:10px;overflow:hidden}
 .section-title{font-size:11px;font-weight:600;color:#64748B;text-transform:uppercase;letter-spacing:0.06em;padding:11px 16px 9px;border-bottom:0.5px solid #F1F5F9;background:#F8FAFC}
 .item{display:flex;align-items:flex-start;gap:12px;padding:10px 16px;border-bottom:0.5px solid #F1F5F9;cursor:pointer;transition:background 0.1s}
@@ -113,6 +140,36 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div class="modal-actions">
       <button class="modal-btn secondary" id="modal-just-this">Only this one</button>
       <button class="modal-btn primary" id="modal-mark-all">Mark all complete</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="due-modal">
+  <div class="modal">
+    <h3>Change due date</h3>
+    <p id="due-modal-task" style="font-weight:500;color:#111"></p>
+    <label class="modal-label">Due date</label>
+    <input type="date" id="due-input" class="modal-input">
+    <div class="modal-actions">
+      <button class="modal-btn danger" id="due-clear">Clear date</button>
+      <button class="modal-btn secondary" id="due-cancel">Cancel</button>
+      <button class="modal-btn primary" id="due-save">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="add-modal">
+  <div class="modal">
+    <h3>Add a task</h3>
+    <label class="modal-label">Task</label>
+    <input type="text" id="add-text" class="modal-input" placeholder="What needs to get done?">
+    <label class="modal-label">Due date (optional)</label>
+    <input type="date" id="add-date" class="modal-input">
+    <label class="modal-label">Add to</label>
+    <select id="add-meeting" class="modal-input"></select>
+    <div class="modal-actions">
+      <button class="modal-btn secondary" id="add-cancel">Cancel</button>
+      <button class="modal-btn primary" id="add-save">Add task</button>
     </div>
   </div>
 </div>
@@ -1067,6 +1124,16 @@ var currentView = 'landing';
 var currentMeeting = null;
 var showCompleted = true;
 
+// Due-date overrides + user-added tasks (browser-local, like completion state)
+var DUE_KEY = 'chq-actions-due';
+var ADDED_KEY = 'chq-actions-added';
+function loadDue(){ try{ var s=localStorage.getItem(DUE_KEY); return s?JSON.parse(s):{}; }catch(e){ return {}; } }
+function saveDue(){ try{ localStorage.setItem(DUE_KEY, JSON.stringify(DUE)); }catch(e){} }
+function loadAdded(){ try{ var s=localStorage.getItem(ADDED_KEY); return s?JSON.parse(s):[]; }catch(e){ return []; } }
+function saveAdded(){ try{ localStorage.setItem(ADDED_KEY, JSON.stringify(ADDED)); }catch(e){} }
+var DUE = loadDue();
+var ADDED = loadAdded();
+
 // ==================== TASK INDEX ====================
 var TASK_INDEX = {};
 Object.keys(MEETINGS).forEach(function(mid){
@@ -1077,6 +1144,19 @@ Object.keys(MEETINGS).forEach(function(mid){
     });
   });
 });
+
+// Inject user-added tasks (from localStorage) into the in-memory model + index
+function addTaskToModel(t){
+  var mid = (t.mid && MEETINGS[t.mid]) ? t.mid : 'quick-tasks';
+  if(!MEETINGS[mid]){ MEETINGS[mid] = { label: 'Quick Tasks', sections: [], synthetic: true }; }
+  var sec = null;
+  MEETINGS[mid].sections.forEach(function(s){ if((s.name || s.g) === 'Added') sec = s; });
+  if(!sec){ sec = { name: 'Added', i: [] }; MEETINGS[mid].sections.push(sec); }
+  var item = { id:t.id, t:t.t, d:(t.d||'No date'), c:(t.c||'ongoing'), due:(t.due||null), added:true };
+  sec.i.push(item);
+  TASK_INDEX[item.id] = { item:item, meetingId:mid, meetingLabel:MEETINGS[mid].label, sectionName:'Added' };
+}
+ADDED.forEach(addTaskToModel);
 
 function getLinkGroup(taskId){
   var entry = TASK_INDEX[taskId];
@@ -1139,6 +1219,55 @@ function getMeetingDate(mid){
 function byDateAsc(a, b){ return getMeetingDate(a) - getMeetingDate(b); }
 var archiveOpen = false;
 
+// Resolve a real Date for a task: override > stored ISO > date parsed from display text
+function parseDateFromString(str, anchorYear){
+  if(!str) return null;
+  var iso = String(str).match(/(\d{4})-(\d{2})-(\d{2})/);
+  if(iso) return new Date(+iso[1], +iso[2]-1, +iso[3]);
+  var mm = String(str).toLowerCase().match(/(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\s+(\d{1,2})/);
+  if(mm){ var y = anchorYear || 2026; return new Date(y, MONTHS[mm[1]], +mm[2]); }
+  return null;
+}
+function getEffectiveDue(item, mid){
+  if(DUE[item.id]){ var p = parseDateFromString(DUE[item.id]); if(p) return p; }
+  if(item.due){ var p2 = parseDateFromString(item.due); if(p2) return p2; }
+  var year = mid ? getMeetingDate(mid).getFullYear() : 2026;
+  if(year < 2000) year = 2026;
+  return parseDateFromString(item.d, year);
+}
+function startOfToday(){ var n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate()); }
+function dueStatus(item, mid){
+  var d = getEffectiveDue(item, mid);
+  if(!d) return { has:false };
+  var diff = Math.round((d - startOfToday())/86400000);
+  var state = diff < 0 ? 'overdue' : (diff === 0 ? 'today' : (diff <= 7 ? 'soon' : 'upcoming'));
+  return { has:true, date:d, diff:diff, state:state };
+}
+function fmtDate(d){
+  var mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return mo[d.getMonth()]+' '+d.getDate();
+}
+function toISO(d){
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function computeAgenda(){
+  var overdue = [], today = [];
+  Object.keys(MEETINGS).forEach(function(mid){
+    if(MEETINGS[mid].archived) return;
+    MEETINGS[mid].sections.forEach(function(sec){
+      sec.i.forEach(function(item){
+        if(item.scope || isChecked(item.id)) return;
+        var st = dueStatus(item, mid);
+        if(!st.has) return;
+        if(st.state === 'overdue') overdue.push({ item:item, mid:mid, st:st });
+        else if(st.state === 'today') today.push({ item:item, mid:mid, st:st });
+      });
+    });
+  });
+  overdue.sort(function(a, b){ return a.st.date - b.st.date; });
+  return { overdue:overdue, today:today };
+}
+
 // ==================== RENDER ====================
 function render(){
   var app = document.getElementById('app');
@@ -1165,6 +1294,34 @@ function renderLanding(app){
   html += '<div class="stat"><div class="stat-num">'+pct+'%</div><div class="stat-label">overall progress</div></div>';
   html += '</div>';
   html += '<div class="progress-wrap"><div class="progress-fill" style="width:'+pct+'%"></div></div>';
+
+  function agendaRow(e){
+    var item = e.item, st = e.st;
+    var label = st.state === 'overdue' ? ('Overdue · '+fmtDate(st.date)) : fmtDate(st.date);
+    var h = '<div class="agenda-row">';
+    h += '<div class="cb" data-cb="'+item.id+'"><svg width="11" height="8" viewBox="0 0 11 8" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
+    h += '<div class="item-body"><div class="item-text" data-nav="'+e.mid+'">'+escapeHtml(item.t)+'</div>';
+    h += '<div class="item-meta"><span class="due-badge '+st.state+'" data-due="'+item.id+'" title="Click to change date">'+escapeHtml(label)+'</span><span class="agenda-meeting">'+escapeHtml(MEETINGS[e.mid].label)+'</span></div>';
+    h += '</div></div>';
+    return h;
+  }
+
+  var agenda = computeAgenda();
+  html += '<div class="agenda">';
+  html += '<div class="agenda-head"><span class="agenda-title">Today & Overdue</span><button class="add-task-btn" id="add-task-btn">+ Add task</button></div>';
+  if(agenda.overdue.length === 0 && agenda.today.length === 0){
+    html += '<div class="agenda-empty">Nothing due today and nothing overdue. Click any task\'s date badge to schedule it here.</div>';
+  } else {
+    if(agenda.overdue.length){
+      html += '<div class="agenda-group-label overdue">Overdue ('+agenda.overdue.length+')</div>';
+      agenda.overdue.forEach(function(e){ html += agendaRow(e); });
+    }
+    if(agenda.today.length){
+      html += '<div class="agenda-group-label">Due today ('+agenda.today.length+')</div>';
+      agenda.today.forEach(function(e){ html += agendaRow(e); });
+    }
+  }
+  html += '</div>';
 
   function cardHtml(mid){
     var m = MEETINGS[mid];
@@ -1212,6 +1369,19 @@ function renderLanding(app){
       currentView = 'meeting';
       render();
     });
+  });
+
+  var addBtn = document.getElementById('add-task-btn');
+  if(addBtn){ addBtn.addEventListener('click', showAddTask); }
+
+  app.querySelectorAll('.agenda-row .cb').forEach(function(cb){
+    cb.addEventListener('click', function(ev){ ev.stopPropagation(); handleTaskClick(cb.getAttribute('data-cb')); });
+  });
+  app.querySelectorAll('.agenda-row .due-badge').forEach(function(b){
+    b.addEventListener('click', function(ev){ ev.stopPropagation(); showDueEditor(b.getAttribute('data-due')); });
+  });
+  app.querySelectorAll('.agenda-row .item-text').forEach(function(t){
+    t.addEventListener('click', function(){ currentMeeting = t.getAttribute('data-nav'); currentView = 'meeting'; render(); });
   });
 }
 
@@ -1266,8 +1436,17 @@ function renderMeeting(app, mid){
       }
       html += '<div class="item'+(checked?' checked':'')+'" data-tid="'+item.id+'">';
       html += '<div class="cb'+(checked?' on':'')+'"><svg width="11" height="8" viewBox="0 0 11 8" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
+      var dst = dueStatus(item, mid);
+      var dueBadge;
+      if(dst.has){
+        var dlbl = dst.state === 'overdue' ? ('Overdue · '+fmtDate(dst.date))
+                 : (dst.state === 'today' ? ('Today · '+fmtDate(dst.date)) : fmtDate(dst.date));
+        dueBadge = '<span class="due-badge '+dst.state+'" data-due="'+item.id+'" title="Click to change date">'+escapeHtml(dlbl)+'</span>';
+      } else {
+        dueBadge = '<span class="badge '+item.c+'" data-due="'+item.id+'" title="Click to set a date" style="cursor:pointer">'+escapeHtml(item.d)+'</span>';
+      }
       html += '<div class="item-body"><div class="item-text">'+escapeHtml(item.t)+'</div>';
-      html += '<div class="item-meta"><span class="badge '+item.c+'">'+escapeHtml(item.d)+'</span>'+linkBadge+'</div>';
+      html += '<div class="item-meta">'+dueBadge+linkBadge+'</div>';
       html += '</div></div>';
     });
 
@@ -1325,6 +1504,10 @@ function renderMeeting(app, mid){
       var tid = row.getAttribute('data-tid');
       handleTaskClick(tid);
     });
+  });
+
+  app.querySelectorAll('.item [data-due]').forEach(function(b){
+    b.addEventListener('click', function(ev){ ev.stopPropagation(); showDueEditor(b.getAttribute('data-due')); });
   });
 }
 
@@ -1414,6 +1597,76 @@ function showLinkedModal(tid, openLinked){
   justThisBtn.addEventListener('click', onJustThis);
   markAllBtn.addEventListener('click', onMarkAll);
   modal.addEventListener('click', onBackdrop);
+}
+
+// ==================== DUE DATE + ADD TASK ====================
+function showDueEditor(tid){
+  var entry = TASK_INDEX[tid];
+  if(!entry) return;
+  var modal = document.getElementById('due-modal');
+  document.getElementById('due-modal-task').textContent = entry.item.t;
+  var cur = getEffectiveDue(entry.item, entry.meetingId);
+  var input = document.getElementById('due-input');
+  input.value = cur ? toISO(cur) : '';
+  modal.classList.add('show');
+  var saveB = document.getElementById('due-save');
+  var cancelB = document.getElementById('due-cancel');
+  var clearB = document.getElementById('due-clear');
+  function close(){
+    modal.classList.remove('show');
+    saveB.removeEventListener('click', onSave);
+    cancelB.removeEventListener('click', close);
+    clearB.removeEventListener('click', onClear);
+    modal.removeEventListener('click', onBd);
+  }
+  function onSave(){ if(input.value){ DUE[tid] = input.value; } else { delete DUE[tid]; } saveDue(); close(); render(); }
+  function onClear(){ delete DUE[tid]; saveDue(); close(); render(); }
+  function onBd(ev){ if(ev.target === modal) close(); }
+  saveB.addEventListener('click', onSave);
+  cancelB.addEventListener('click', close);
+  clearB.addEventListener('click', onClear);
+  modal.addEventListener('click', onBd);
+}
+
+function showAddTask(){
+  var modal = document.getElementById('add-modal');
+  var textI = document.getElementById('add-text');
+  var dateI = document.getElementById('add-date');
+  var selI = document.getElementById('add-meeting');
+  textI.value = ''; dateI.value = '';
+  var opts = '<option value="quick-tasks">Quick Tasks (general)</option>';
+  Object.keys(MEETINGS).filter(function(mid){ return !MEETINGS[mid].archived && mid !== 'quick-tasks'; })
+    .sort(byDateAsc).forEach(function(mid){
+      opts += '<option value="'+mid+'">'+escapeHtml(MEETINGS[mid].label)+'</option>';
+    });
+  selI.innerHTML = opts;
+  modal.classList.add('show');
+  var saveB = document.getElementById('add-save');
+  var cancelB = document.getElementById('add-cancel');
+  function close(){
+    modal.classList.remove('show');
+    saveB.removeEventListener('click', onSave);
+    cancelB.removeEventListener('click', close);
+    modal.removeEventListener('click', onBd);
+  }
+  function onSave(){
+    var txt = textI.value.trim();
+    if(!txt){ textI.focus(); return; }
+    var due = dateI.value || null;
+    var c = 'ongoing', d = 'No date';
+    if(due){
+      var st = dueStatus({ id:'_tmp', due:due }, null);
+      d = fmtDate(st.date);
+      c = (st.state === 'overdue' || st.state === 'today') ? 'urgent' : (st.state === 'soon' ? 'soon' : 'ongoing');
+    }
+    var t = { id:'add-'+Date.now(), t:txt, due:due, d:d, c:c, mid:selI.value };
+    ADDED.push(t); saveAdded(); addTaskToModel(t);
+    close(); render();
+  }
+  function onBd(ev){ if(ev.target === modal) close(); }
+  saveB.addEventListener('click', onSave);
+  cancelB.addEventListener('click', close);
+  modal.addEventListener('click', onBd);
 }
 
 render();
