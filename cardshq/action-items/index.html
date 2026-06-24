@@ -176,6 +176,69 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 <script>
 var MEETINGS = {
+  "campaign-sync-jun-24-2026": {
+    label: "Campaign Sync - June 24, 2026",
+    sections: [
+      {
+        name: "Pre-Order Rollout",
+        i: [
+          { id:"cs-046", t:"Stand up PreProduct in production by end of week - use Austin's hat as test item at ~$1", d:"Fri Jun 27", c:"urgent" },
+          { id:"cs-047", t:"Send preorder test link to team early next week to begin UAT - confirm orders are segmented and not triggering shipments (loop in Collin)", d:"Mon Jun 30", c:"urgent" },
+          { id:"cs-048", t:"Scope full preorder rollout at next week's meeting - define how to release Topps Chrome Black Football preorder (waves, limits, timing)", d:"Next meeting", c:"soon" },
+          { id:"cs-049", t:"Post teaser in community Discord for Star Wars preorder - share link when live, no public merchandising yet", d:"When live", c:"soon" },
+        ]
+      },
+      {
+        name: "Sports Pricing",
+        i: [
+          { id:"cs-050", t:"Build Google Sheet mirroring current pricing watch list - define falloff rules (75% sell-through, 4 weeks post-release)", d:"This week", c:"urgent", linkedTo:["cs-022","cs-041"] },
+          { id:"cs-051", t:"Verify group email alert is working - Kevin changed Google Workspace setting last week, confirm emails are going out", d:"Today", c:"urgent" },
+        ]
+      },
+      {
+        name: "Fourth of July Campaign",
+        i: [
+          { id:"cs-052", t:"Define Fourth of July campaign scope after today's follow-up meeting - confirm $17.76 and $250 price points, giveaway mechanic ($1,776/$250/$25 draw), badge design, bundle selection", d:"Today", c:"urgent" },
+          { id:"cs-053", t:"Request product badges for $17.76 and $250 price points from Nathaniel - first use case for sale/markdown badges", d:"This week", c:"urgent" },
+        ]
+      },
+      {
+        name: "Go-Live SOP",
+        i: [
+          { id:"cs-054", t:"Draft go-live SOP with Jimmy tomorrow - cover online product release communication flow for social and full team", d:"Thu Jun 25", c:"urgent" },
+        ]
+      },
+      {
+        name: "Hero Banners & Releases",
+        i: [
+          { id:"cs-055", t:"Confirm MTG Marvel Super Heroes and Magic the Gathering banners are live for Friday Jun 26 release", d:"Fri Jun 27", c:"urgent" },
+          { id:"cs-056", t:"Request sports category banner for July Topps wave from Digi", d:"This week", c:"urgent" },
+          { id:"cs-057", t:"Star Wars sale hero banner - confirm delivered this week or early next week", d:"This week", c:"soon" },
+        ]
+      },
+      {
+        name: "Analytics & Dashboards",
+        i: [
+          { id:"cs-058", t:"Build GA4 dashboard for Adam - story and X post UTM tracking now in place, dashboard is the next step", d:"Next week", c:"soon" },
+          { id:"cs-059", t:"Set up customer cohort tracking (30/60/90 day return windows) - priority once loyalty build begins", d:"When loyalty build starts", c:"ongoing" },
+        ]
+      },
+      {
+        name: "Project Elevate & PDP",
+        i: [
+          { id:"cs-060", t:"Share PDP redesign staging link with team Friday or Monday - get feedback before rolling to production on Topps products", d:"Fri Jun 27 or Mon Jun 30", c:"urgent" },
+        ]
+      },
+      {
+        name: "Operations",
+        i: [
+          { id:"cs-061", t:"Cancel July 15 Campaign Sync (out Jul 13-17) - front load and back load into adjacent weeks, confirm room is released", d:"This week", c:"urgent" },
+          { id:"cs-062", t:"Get Topps sell sheet folder access to Lei for sports product images - confirm shared", d:"This week", c:"soon" },
+          { id:"cs-063", t:"Follow up with Carter on read-only PO account access (Thrive) for Rich", d:"Next week", c:"soon", linkedTo:["cs-040"] },
+        ]
+      },
+    ]
+  },
   "monthly-review-jun-17-2026": {
     label: "Monthly Numbers Review - June 17, 2026",
     sections: [
@@ -323,13 +386,13 @@ var MEETINGS = {
         name: "Project Elevate - Sell Sheets",
         i: [
           { id:"cs-039", t:"Ask Zach to pull 5-10 Topps sell sheets (including 1-2 live TCG products) and send to digital team", d:"This week", c:"urgent" },
-          { id:"cs-040", t:"Follow up with Jimmy and Kelly/Carter on read-only PO account access for Rich's data workflow", d:"Next week", c:"soon" },
+          { id:"cs-040", t:"Follow up with Jimmy and Kelly/Carter on read-only PO account access for Rich's data workflow", d:"Next week", c:"soon", linkedTo:["cs-063"] },
         ]
       },
       {
         name: "Pricing & Inventory",
         i: [
-          { id:"cs-041", t:"Schedule pricing tier alignment call with team for early next week - confirm Giant Sports Cards as floor is locked in", d:"Mon Jun 15", c:"soon", linkedTo:["cs-022"] },
+          { id:"cs-041", t:"Schedule pricing tier alignment call with team for early next week - confirm Giant Sports Cards as floor is locked in", d:"Mon Jun 15", c:"soon", linkedTo:["cs-022","cs-050"] },
           { id:"cs-042", t:"Confirm Friday evening pricing check logistics with Zach - target 7pm after official store close", d:"This week", c:"soon" },
           { id:"cs-043", t:"Connect with Jimmy at 4:00-4:30 today on dashboard review and low inventory alert options", d:"Today 4pm", c:"urgent" },
         ]
@@ -422,7 +485,7 @@ var MEETINGS = {
         { id:"cs-021", t:"Add One Piece OP16 preorder info to banner description - update existing banner, not a second one", d:"When preorder is live", c:"soon" },
       ]},
       { name: "Sports Pricing", i: [
-        { id:"cs-022", t:"Meet with Zach Monday to build pricing tracking sheet - tie to Nick tier sheet once received, share with team", d:"Mon Jun 8", c:"urgent", linkedTo:["cs-041"] },
+        { id:"cs-022", t:"Meet with Zach Monday to build pricing tracking sheet - tie to Nick tier sheet once received, share with team", d:"Mon Jun 8", c:"urgent", linkedTo:["cs-041","cs-050"] },
         { id:"cs-023", t:"Confirm pricing group email at cardshq.com fully set up with Jarrod, Zach, John, Jimmy", d:"This week", c:"urgent" },
         { id:"cs-024", t:"Work with Jimmy Wednesday to sort weekend pricing coverage - determine who gets added to pricing group", d:"Wed Jun 4", c:"urgent" },
       ]},
