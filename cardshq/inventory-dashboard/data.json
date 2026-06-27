@@ -1,6 +1,6 @@
 {
-  "date": "2026-06-25",
-  "generatedAt": "2026-06-26T14:16:37.090Z",
+  "date": "2026-06-26",
+  "generatedAt": "2026-06-27T13:26:57.059Z",
   "scope": "Cards only - all channels (online + POS)",
   "isSample": false,
   "records": [
@@ -12,7 +12,7 @@
       "onhand": 7,
       "p": {
         "daily": {
-          "in": 6,
+          "in": 0,
           "out": 0
         }
       }
@@ -35,11 +35,11 @@
       "subject": "Baseball",
       "tier": "High",
       "cond": "Graded",
-      "onhand": 16,
+      "onhand": 17,
       "p": {
         "daily": {
-          "in": 0,
-          "out": 0
+          "in": 2,
+          "out": 1
         }
       }
     },
@@ -48,11 +48,11 @@
       "subject": "Baseball",
       "tier": "Low",
       "cond": "Graded",
-      "onhand": 659,
+      "onhand": 654,
       "p": {
         "daily": {
-          "in": 136,
-          "out": 76
+          "in": 51,
+          "out": 52
         }
       }
     },
@@ -61,11 +61,11 @@
       "subject": "Baseball",
       "tier": "Mid",
       "cond": "Graded",
-      "onhand": 135,
+      "onhand": 137,
       "p": {
         "daily": {
-          "in": 24,
-          "out": 12
+          "in": 15,
+          "out": 15
         }
       }
     },
@@ -74,11 +74,11 @@
       "subject": "Baseball",
       "tier": "High",
       "cond": "Raw",
-      "onhand": 12,
+      "onhand": 11,
       "p": {
         "daily": {
           "in": 0,
-          "out": 0
+          "out": 1
         }
       }
     },
@@ -87,11 +87,11 @@
       "subject": "Baseball",
       "tier": "Low",
       "cond": "Raw",
-      "onhand": 1155,
+      "onhand": 1244,
       "p": {
         "daily": {
-          "in": 0,
-          "out": 40
+          "in": 123,
+          "out": 35
         }
       }
     },
@@ -100,10 +100,10 @@
       "subject": "Baseball",
       "tier": "Mid",
       "cond": "Raw",
-      "onhand": 180,
+      "onhand": 185,
       "p": {
         "daily": {
-          "in": 0,
+          "in": 13,
           "out": 8
         }
       }
@@ -113,10 +113,10 @@
       "subject": "Basketball",
       "tier": "High",
       "cond": "Graded",
-      "onhand": 19,
+      "onhand": 17,
       "p": {
         "daily": {
-          "in": 2,
+          "in": 1,
           "out": 3
         }
       }
@@ -126,76 +126,76 @@
       "subject": "Basketball",
       "tier": "Low",
       "cond": "Graded",
-      "onhand": 58,
+      "onhand": 45,
       "p": {
         "daily": {
-          "in": 55,
-          "out": 41
-        }
-      }
-    },
-    {
-      "category": "Sports",
-      "subject": "Basketball",
-      "tier": "Mid",
-      "cond": "Graded",
-      "onhand": 58,
-      "p": {
-        "daily": {
-          "in": 23,
-          "out": 7
-        }
-      }
-    },
-    {
-      "category": "Sports",
-      "subject": "Basketball",
-      "tier": "High",
-      "cond": "Raw",
-      "onhand": 13,
-      "p": {
-        "daily": {
-          "in": 0,
-          "out": 0
-        }
-      }
-    },
-    {
-      "category": "Sports",
-      "subject": "Basketball",
-      "tier": "Low",
-      "cond": "Raw",
-      "onhand": 343,
-      "p": {
-        "daily": {
-          "in": 0,
-          "out": 12
-        }
-      }
-    },
-    {
-      "category": "Sports",
-      "subject": "Basketball",
-      "tier": "Mid",
-      "cond": "Raw",
-      "onhand": 94,
-      "p": {
-        "daily": {
-          "in": 0,
+          "in": 6,
           "out": 10
         }
       }
     },
     {
       "category": "Sports",
+      "subject": "Basketball",
+      "tier": "Mid",
+      "cond": "Graded",
+      "onhand": 58,
+      "p": {
+        "daily": {
+          "in": 5,
+          "out": 6
+        }
+      }
+    },
+    {
+      "category": "Sports",
+      "subject": "Basketball",
+      "tier": "High",
+      "cond": "Raw",
+      "onhand": 16,
+      "p": {
+        "daily": {
+          "in": 3,
+          "out": 0
+        }
+      }
+    },
+    {
+      "category": "Sports",
+      "subject": "Basketball",
+      "tier": "Low",
+      "cond": "Raw",
+      "onhand": 384,
+      "p": {
+        "daily": {
+          "in": 45,
+          "out": 4
+        }
+      }
+    },
+    {
+      "category": "Sports",
+      "subject": "Basketball",
+      "tier": "Mid",
+      "cond": "Raw",
+      "onhand": 95,
+      "p": {
+        "daily": {
+          "in": 2,
+          "out": 1
+        }
+      }
+    },
+    {
+      "category": "Sports",
       "subject": "Boxing",
       "tier": "Low",
       "cond": "Graded",
       "onhand": 2,
       "p": {
         "daily": {
-          "in": 1,
-          "out": 0
+          "in": 2,
+          "out": 2
         }
       }
     },
@@ -204,7 +204,7 @@
       "subject": "Boxing",
       "tier": "Mid",
       "cond": "Graded",
-      "onhand": 1,
+      "onhand": 2,
       "p": {
         "daily": {
           "in": 1,
@@ -228,26 +228,13 @@
     {
       "category": "Sports",
       "subject": "F1",
-      "tier": "Low",
-      "cond": "Graded",
-      "onhand": 0,
-      "p": {
-        "daily": {
-          "in": 1,
-          "out": 1
-        }
-      }
-    },
-    {
-      "category": "Sports",
-      "subject": "F1",
       "tier": "Mid",
       "cond": "Graded",
       "onhand": 2,
       "p": {
         "daily": {
           "in": 0,
-          "out": 1
+          "out": 0
         }
       }
     },
@@ -295,49 +282,10 @@
       "subject": "Football",
       "tier": "High",
       "cond": "Graded",
-      "onhand": 13,
+      "onhand": 18,
       "p": {
         "daily": {
-          "in": 3,
-          "out": 2
-        }
-      }
-    },
-    {
-      "category": "Sports",
-      "subject": "Football",
-      "tier": "Low",
-      "cond": "Graded",
-      "onhand": 39,
-      "p": {
-        "daily": {
-          "in": 47,
-          "out": 43
-        }
-      }
-    },
-    {
-      "category": "Sports",
-      "subject": "Football",
-      "tier": "Mid",
-      "cond": "Graded",
-      "onhand": 39,
-      "p": {
-        "daily": {
-          "in": 35,
-          "out": 18
-        }
-      }
-    },
-    {
-      "category": "Sports",
-      "subject": "Football",
-      "tier": "High",
-      "cond": "Raw",
-      "onhand": 14,
-      "p": {
-        "daily": {
-          "in": 0,
+          "in": 6,
           "out": 1
         }
       }
@@ -346,12 +294,51 @@
       "category": "Sports",
       "subject": "Football",
       "tier": "Low",
-      "cond": "Raw",
-      "onhand": 728,
+      "cond": "Graded",
+      "onhand": 36,
       "p": {
         "daily": {
-          "in": 0,
-          "out": 5
+          "in": 7,
+          "out": 10
+        }
+      }
+    },
+    {
+      "category": "Sports",
+      "subject": "Football",
+      "tier": "Mid",
+      "cond": "Graded",
+      "onhand": 36,
+      "p": {
+        "daily": {
+          "in": 4,
+          "out": 8
+        }
+      }
+    },
+    {
+      "category": "Sports",
+      "subject": "Football",
+      "tier": "High",
+      "cond": "Raw",
+      "onhand": 16,
+      "p": {
+        "daily": {
+          "in": 2,
+          "out": 0
+        }
+      }
+    },
+    {
+      "category": "Sports",
+      "subject": "Football",
+      "tier": "Low",
+      "cond": "Raw",
+      "onhand": 782,
+      "p": {
+        "daily": {
+          "in": 64,
+          "out": 10
         }
       }
     },
@@ -360,11 +347,11 @@
       "subject": "Football",
       "tier": "Mid",
       "cond": "Raw",
-      "onhand": 146,
+      "onhand": 157,
       "p": {
         "daily": {
-          "in": 0,
-          "out": 0
+          "in": 13,
+          "out": 2
         }
       }
     },
@@ -386,10 +373,10 @@
       "subject": "Golf",
       "tier": "Low",
       "cond": "Graded",
-      "onhand": 1,
+      "onhand": 2,
       "p": {
         "daily": {
-          "in": 0,
+          "in": 1,
           "out": 0
         }
       }
@@ -438,11 +425,11 @@
       "subject": "Hockey",
       "tier": "Low",
       "cond": "Graded",
-      "onhand": 11,
+      "onhand": 8,
       "p": {
         "daily": {
-          "in": 10,
-          "out": 0
+          "in": 0,
+          "out": 3
         }
       }
     },
@@ -454,7 +441,7 @@
       "onhand": 5,
       "p": {
         "daily": {
-          "in": 2,
+          "in": 0,
           "out": 0
         }
       }
@@ -464,10 +451,10 @@
       "subject": "Hockey",
       "tier": "Low",
       "cond": "Raw",
-      "onhand": 4,
+      "onhand": 7,
       "p": {
         "daily": {
-          "in": 0,
+          "in": 3,
           "out": 0
         }
       }
@@ -501,26 +488,13 @@
     {
       "category": "Sports",
       "subject": "NASCAR",
-      "tier": "Low",
+      "tier": "Mid",
       "cond": "Graded",
       "onhand": 0,
       "p": {
         "daily": {
-          "in": 1,
+          "in": 0,
           "out": 1
-        }
-      }
-    },
-    {
-      "category": "Sports",
-      "subject": "NASCAR",
-      "tier": "Mid",
-      "cond": "Graded",
-      "onhand": 1,
-      "p": {
-        "daily": {
-          "in": 1,
-          "out": 0
         }
       }
     },
@@ -604,14 +578,27 @@
     },
     {
       "category": "Sports",
-      "subject": "Soccer",
-      "tier": "High",
-      "cond": "Graded",
-      "onhand": 4,
+      "subject": "Other Sports",
+      "tier": "Mid",
+      "cond": "Raw",
+      "onhand": 1,
       "p": {
         "daily": {
           "in": 1,
           "out": 0
+        }
+      }
+    },
+    {
+      "category": "Sports",
+      "subject": "Soccer",
+      "tier": "High",
+      "cond": "Graded",
+      "onhand": 3,
+      "p": {
+        "daily": {
+          "in": 0,
+          "out": 1
         }
       }
     },
@@ -623,8 +610,8 @@
       "onhand": 44,
       "p": {
         "daily": {
-          "in": 6,
-          "out": 7
+          "in": 4,
+          "out": 4
         }
       }
     },
@@ -636,8 +623,8 @@
       "onhand": 24,
       "p": {
         "daily": {
-          "in": 3,
-          "out": 3
+          "in": 1,
+          "out": 1
         }
       }
     },
@@ -662,8 +649,8 @@
       "onhand": 148,
       "p": {
         "daily": {
-          "in": 0,
-          "out": 10
+          "in": 9,
+          "out": 9
         }
       }
     },
@@ -672,76 +659,76 @@
       "subject": "Soccer",
       "tier": "Mid",
       "cond": "Raw",
-      "onhand": 21,
+      "onhand": 23,
+      "p": {
+        "daily": {
+          "in": 2,
+          "out": 0
+        }
+      }
+    },
+    {
+      "category": "Sports",
+      "subject": "Tennis",
+      "tier": "Low",
+      "cond": "Graded",
+      "onhand": 1,
+      "p": {
+        "daily": {
+          "in": 0,
+          "out": 0
+        }
+      }
+    },
+    {
+      "category": "Sports",
+      "subject": "Tennis",
+      "tier": "Low",
+      "cond": "Raw",
+      "onhand": 2,
+      "p": {
+        "daily": {
+          "in": 0,
+          "out": 0
+        }
+      }
+    },
+    {
+      "category": "Sports",
+      "subject": "Tennis",
+      "tier": "Mid",
+      "cond": "Raw",
+      "onhand": 2,
+      "p": {
+        "daily": {
+          "in": 0,
+          "out": 0
+        }
+      }
+    },
+    {
+      "category": "Sports",
+      "subject": "UFC",
+      "tier": "Low",
+      "cond": "Graded",
+      "onhand": 1,
+      "p": {
+        "daily": {
+          "in": 0,
+          "out": 0
+        }
+      }
+    },
+    {
+      "category": "Sports",
+      "subject": "UFC",
+      "tier": "Mid",
+      "cond": "Graded",
+      "onhand": 0,
       "p": {
         "daily": {
           "in": 0,
           "out": 1
-        }
-      }
-    },
-    {
-      "category": "Sports",
-      "subject": "Tennis",
-      "tier": "Low",
-      "cond": "Graded",
-      "onhand": 1,
-      "p": {
-        "daily": {
-          "in": 0,
-          "out": 0
-        }
-      }
-    },
-    {
-      "category": "Sports",
-      "subject": "Tennis",
-      "tier": "Low",
-      "cond": "Raw",
-      "onhand": 2,
-      "p": {
-        "daily": {
-          "in": 0,
-          "out": 0
-        }
-      }
-    },
-    {
-      "category": "Sports",
-      "subject": "Tennis",
-      "tier": "Mid",
-      "cond": "Raw",
-      "onhand": 2,
-      "p": {
-        "daily": {
-          "in": 0,
-          "out": 0
-        }
-      }
-    },
-    {
-      "category": "Sports",
-      "subject": "UFC",
-      "tier": "Low",
-      "cond": "Graded",
-      "onhand": 1,
-      "p": {
-        "daily": {
-          "in": 0,
-          "out": 0
-        }
-      }
-    },
-    {
-      "category": "Sports",
-      "subject": "UFC",
-      "tier": "Mid",
-      "cond": "Graded",
-      "onhand": 1,
-      "p": {
-        "daily": {
-          "in": 0,
-          "out": 0
         }
       }
     },
@@ -776,11 +763,11 @@
       "subject": "Wrestling",
       "tier": "Low",
       "cond": "Graded",
-      "onhand": 24,
+      "onhand": 23,
       "p": {
         "daily": {
-          "in": 2,
-          "out": 0
+          "in": 0,
+          "out": 1
         }
       }
     },
@@ -789,11 +776,11 @@
       "subject": "Wrestling",
       "tier": "Low",
       "cond": "Raw",
-      "onhand": 18,
+      "onhand": 15,
       "p": {
         "daily": {
           "in": 0,
-          "out": 0
+          "out": 3
         }
       }
     },
@@ -831,21 +818,8 @@
       "onhand": 1,
       "p": {
         "daily": {
-          "in": 1,
+          "in": 0,
           "out": 0
-        }
-      }
-    },
-    {
-      "category": "TCG",
-      "subject": "Disney Lorcana",
-      "tier": "Low",
-      "cond": "Graded",
-      "onhand": 0,
-      "p": {
-        "daily": {
-          "in": 1,
-          "out": 1
         }
       }
     },
@@ -857,19 +831,6 @@
       "onhand": 1,
       "p": {
         "daily": {
-          "in": 4,
-          "out": 3
-        }
-      }
-    },
-    {
-      "category": "TCG",
-      "subject": "Disney Lorcana",
-      "tier": "Low",
-      "cond": "Raw",
-      "onhand": 19,
-      "p": {
-        "daily": {
           "in": 0,
           "out": 0
         }
@@ -878,12 +839,25 @@
     {
       "category": "TCG",
       "subject": "Disney Lorcana",
-      "tier": "Mid",
+      "tier": "Low",
       "cond": "Raw",
-      "onhand": 9,
+      "onhand": 17,
       "p": {
         "daily": {
           "in": 0,
+          "out": 2
+        }
+      }
+    },
+    {
+      "category": "TCG",
+      "subject": "Disney Lorcana",
+      "tier": "Mid",
+      "cond": "Raw",
+      "onhand": 12,
+      "p": {
+        "daily": {
+          "in": 3,
           "out": 0
         }
       }
@@ -969,19 +943,6 @@
     {
       "category": "TCG",
       "subject": "Gundam",
-      "tier": "Mid",
-      "cond": "Graded",
-      "onhand": 1,
-      "p": {
-        "daily": {
-          "in": 0,
-          "out": 0
-        }
-      }
-    },
-    {
-      "category": "TCG",
-      "subject": "Gundam",
       "tier": "High",
       "cond": "Raw",
       "onhand": 1,
@@ -1049,11 +1010,11 @@
       "subject": "Magic the Gathering",
       "tier": "Low",
       "cond": "Raw",
-      "onhand": 3974,
+      "onhand": 4121,
       "p": {
         "daily": {
-          "in": 0,
-          "out": 35
+          "in": 221,
+          "out": 74
         }
       }
     },
@@ -1062,11 +1023,11 @@
       "subject": "Magic the Gathering",
       "tier": "Mid",
       "cond": "Raw",
-      "onhand": 95,
+      "onhand": 105,
       "p": {
         "daily": {
-          "in": 0,
-          "out": 0
+          "in": 11,
+          "out": 1
         }
       }
     },
@@ -1118,7 +1079,7 @@
       "p": {
         "daily": {
           "in": 0,
-          "out": 1
+          "out": 0
         }
       }
     },
@@ -1127,10 +1088,10 @@
       "subject": "One Piece",
       "tier": "High",
       "cond": "Graded",
-      "onhand": 10,
+      "onhand": 16,
       "p": {
         "daily": {
-          "in": 0,
+          "in": 6,
           "out": 0
         }
       }
@@ -1140,11 +1101,11 @@
       "subject": "One Piece",
       "tier": "Low",
       "cond": "Graded",
-      "onhand": 5,
+      "onhand": 14,
       "p": {
         "daily": {
-          "in": 1,
-          "out": 2
+          "in": 9,
+          "out": 0
         }
       }
     },
@@ -1153,11 +1114,11 @@
       "subject": "One Piece",
       "tier": "Mid",
       "cond": "Graded",
-      "onhand": 35,
+      "onhand": 61,
       "p": {
         "daily": {
-          "in": 10,
-          "out": 5
+          "in": 30,
+          "out": 4
         }
       }
     },
@@ -1166,10 +1127,10 @@
       "subject": "One Piece",
       "tier": "High",
       "cond": "Raw",
-      "onhand": 8,
+      "onhand": 9,
       "p": {
         "daily": {
-          "in": 0,
+          "in": 1,
           "out": 0
         }
       }
@@ -1179,11 +1140,11 @@
       "subject": "One Piece",
       "tier": "Low",
       "cond": "Raw",
-      "onhand": 754,
+      "onhand": 761,
       "p": {
         "daily": {
-          "in": 0,
-          "out": 9
+          "in": 19,
+          "out": 12
         }
       }
     },
@@ -1195,8 +1156,8 @@
       "onhand": 83,
       "p": {
         "daily": {
-          "in": 0,
-          "out": 2
+          "in": 4,
+          "out": 4
         }
       }
     },
@@ -1205,11 +1166,11 @@
       "subject": "Pokemon",
       "tier": "High",
       "cond": "Graded",
-      "onhand": 35,
+      "onhand": 44,
       "p": {
         "daily": {
-          "in": 5,
-          "out": 6
+          "in": 12,
+          "out": 2
         }
       }
     },
@@ -1218,11 +1179,11 @@
       "subject": "Pokemon",
       "tier": "Low",
       "cond": "Graded",
-      "onhand": 254,
+      "onhand": 263,
       "p": {
         "daily": {
-          "in": 63,
-          "out": 16
+          "in": 79,
+          "out": 67
         }
       }
     },
@@ -1231,11 +1192,11 @@
       "subject": "Pokemon",
       "tier": "Mid",
       "cond": "Graded",
-      "onhand": 194,
+      "onhand": 223,
       "p": {
         "daily": {
-          "in": 29,
-          "out": 5
+          "in": 49,
+          "out": 20
         }
       }
     },
@@ -1247,8 +1208,8 @@
       "onhand": 21,
       "p": {
         "daily": {
-          "in": 0,
-          "out": 0
+          "in": 1,
+          "out": 1
         }
       }
     },
@@ -1257,11 +1218,11 @@
       "subject": "Pokemon",
       "tier": "Low",
       "cond": "Raw",
-      "onhand": 11057,
+      "onhand": 11367,
       "p": {
         "daily": {
-          "in": 130,
-          "out": 400
+          "in": 621,
+          "out": 311
         }
       }
     },
@@ -1270,11 +1231,11 @@
       "subject": "Pokemon",
       "tier": "Mid",
       "cond": "Raw",
-      "onhand": 389,
+      "onhand": 433,
       "p": {
         "daily": {
-          "in": 5,
-          "out": 19
+          "in": 50,
+          "out": 6
         }
       }
     },
@@ -1322,11 +1283,11 @@
       "subject": "Riftbound",
       "tier": "Low",
       "cond": "Raw",
-      "onhand": 129,
+      "onhand": 126,
       "p": {
         "daily": {
           "in": 0,
-          "out": 0
+          "out": 3
         }
       }
     },
@@ -1348,11 +1309,11 @@
       "subject": "Star Wars Topps",
       "tier": "Low",
       "cond": "Raw",
-      "onhand": 18,
+      "onhand": 17,
       "p": {
         "daily": {
           "in": 0,
-          "out": 0
+          "out": 1
         }
       }
     },
@@ -1413,11 +1374,11 @@
       "subject": "Yu-Gi-Oh",
       "tier": "Low",
       "cond": "Graded",
-      "onhand": 5,
+      "onhand": 7,
       "p": {
         "daily": {
-          "in": 5,
-          "out": 2
+          "in": 2,
+          "out": 0
         }
       }
     },
@@ -1439,10 +1400,10 @@
       "subject": "Yu-Gi-Oh",
       "tier": "Low",
       "cond": "Raw",
-      "onhand": 10,
+      "onhand": 15,
       "p": {
         "daily": {
-          "in": 0,
+          "in": 5,
           "out": 0
         }
       }
