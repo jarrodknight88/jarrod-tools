@@ -227,6 +227,37 @@ var MEETINGS = {
       ]},
     ]
   },
+  "nathaniel-sync-jul-1-2026": {
+    label: "Nathaniel Weekly Sync - July 1, 2026",
+    sections: [
+      {
+        name: "Project Elevate - Metafields",
+        i: [
+          { id:"nt-001", t:"Complete metafield entries using Nathaniel's SOP", d:"By noon today", c:"urgent", linkedTo:["jt28-005"] },
+          { id:"nt-002", t:"Get Zach to review Rich's PDFs; stage 1-2 approved products per category (baseball, esports, soccer/football) and share staging link with Jack and others for feedback", d:"Today", c:"urgent", linkedTo:["sl-002"] },
+        ]
+      },
+      {
+        name: "Affirm & Checkout",
+        i: [
+          { id:"nt-003", t:"Ask Affirm rep whether a dedicated express checkout block can be added to surface Affirm more prominently in the logged-in checkout flow", d:"Today", c:"urgent" },
+        ]
+      },
+      {
+        name: "Detroit Landing Page",
+        i: [
+          { id:"nt-004", t:"Finalize Detroit landing page copy and raise ticket - include video, testimonials, all copy, and Mailchimp segmentation confirmed with Nick; page target live Friday, email out Tuesday Jul 7", d:"Today/Tomorrow", c:"urgent", linkedTo:["dlp-001"] },
+        ]
+      },
+      {
+        name: "Follow-ups",
+        i: [
+          { id:"nt-005", t:"Loop Nathaniel in on the RISE email reply to Itay", d:"Today", c:"urgent" },
+          { id:"nt-006", t:"Confirm SOP storage location with Kelly - uniform location wanted across both sides", d:"This week", c:"soon" },
+        ]
+      }
+    ]
+  },
   "slabber-elevate-standup-jun-24-2026": {
     label: "Slabber & Elevate Standup - June 24, 2026",
     sections: [
@@ -234,7 +265,7 @@ var MEETINGS = {
         name: "Slabber & Elevate",
         i: [
           { id:"sl-001", t:"Share Pokemon backend credentials and sales sheet in Slack for Rich", d:"Today", c:"urgent" },
-          { id:"sl-002", t:"Follow up with Zach today on TOPS data - request 10-15 more pulls as a stopgap", d:"Today", c:"urgent" },
+          { id:"sl-002", t:"Follow up with Zach today on TOPS data - request 10-15 more pulls as a stopgap", d:"Today", c:"urgent", linkedTo:["nt-002"] },
           { id:"sl-003", t:"Record a walkthrough of the product add flow on staging with Jimmy to confirm description/metafield sync behavior before switching production; share recording with team", d:"This week", c:"soon" },
         ]
       }
@@ -398,7 +429,7 @@ var MEETINGS = {
     label: "Detroit Landing Page - June 18, 2026",
     sections: [
       { name: "Build Kickoff", i: [
-        { id:"dlp-001", t:"Put together the high-level text template with the top 3 must-haves so dev can start the Detroit page", d:"This week", c:"urgent" },
+        { id:"dlp-001", t:"Put together the high-level text template with the top 3 must-haves so dev can start the Detroit page", d:"This week", c:"urgent", linkedTo:["nt-004"] },
         { id:"dlp-002", t:"Set up a brief weekly sync with dev on workflow and loyalty-program visibility", d:"This week", c:"soon" }
       ]}
     ]
@@ -623,7 +654,7 @@ var MEETINGS = {
         {id:"jt28-004",t:"Rotate generic Thrive password by end of day Friday",d:"Friday",c:"urgent"},
       ]},
       {g:"Technical Investigation",i:[
-        {id:"jt28-005",t:"Test that Thrive does not overwrite Shopify metafields - confirm via quantity-limit field or a non-critical test metafield",d:"This week",c:"urgent"},
+        {id:"jt28-005",t:"Test that Thrive does not overwrite Shopify metafields - confirm via quantity-limit field or a non-critical test metafield",d:"This week",c:"urgent",linkedTo:["nt-001"]},
         {id:"jt28-006",t:"Investigate whether Thrive sync direction is configurable - disable description sync while preserving sales sync",d:"This week",c:"urgent"},
         {id:"jt28-007",t:"Reach out to Thrive for vendor relations or customer support contact for API and webhook documentation",d:"This week",c:"urgent"},
       ]},
