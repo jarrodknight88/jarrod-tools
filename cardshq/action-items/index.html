@@ -176,6 +176,69 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 <script>
 var MEETINGS = {
+  "campaign-sync-jul-1-2026": {
+    label: "Campaign Sync - July 1, 2026",
+    sections: [
+      {
+        name: "Fourth of July - Jul 3-5",
+        i: [
+          { id:"cs-064", t:"Build Fourth of July landing page today and share URL with John and Brandon for traffic", d:"Today", c:"urgent" },
+          { id:"cs-065", t:"Build carousel post with each bundle and pricing - done by end of day today", d:"Today", c:"urgent" },
+          { id:"cs-066", t:"Send email banner to John for campaign push", d:"Today", c:"urgent" },
+          { id:"cs-067", t:"Set up the 4 bundles as sellable SKUs - test with a live order and refund to confirm flow", d:"Today", c:"urgent" },
+          { id:"cs-068", t:"Verify bundle inventory counts - system sets qty to lowest variant; confirm ~30-40 per bundle is accurate and flag any issues", d:"Today", c:"urgent" },
+          { id:"cs-069", t:"Arrange inventory transfer of Contenders Football stock to store for in-store fulfillment", d:"Today", c:"urgent" },
+          { id:"cs-070", t:"Brief Mike Dean on bundle retail process tomorrow - cheat sheet, barcodes, and POS button setup", d:"Thu Jul 2", c:"urgent" },
+          { id:"cs-071", t:"Star Wars Unlimited supplies banner: leave live over the weekend, swap to Fourth of July sales banner Monday Jul 7", d:"Mon Jul 7", c:"soon" },
+        ]
+      },
+      {
+        name: "Pre-Order",
+        i: [
+          { id:"cs-072", t:"Send staging URL to full team on Jul 7 for Austin hat test - confirm orders are not triggering shipments, loop in Collin on testing", d:"Mon Jul 7", c:"urgent", linkedTo:["cs-047"] },
+          { id:"cs-073", t:"Go live with Star Wars preorder Jul 10-11 after UAT passes - community Discord gets first access to link", d:"Jul 10-11", c:"urgent", linkedTo:["cs-049"] },
+        ]
+      },
+      {
+        name: "July Hero Banner Submissions",
+        i: [
+          { id:"cs-074", t:"Submit all July banner requests today: PKMN Pitch Black, Lorcana Attack of the Vine, Gundam 1st Anniversary, Riftbound Vendetta, Chrome Baseball, Chrome Black Football", d:"Today", c:"urgent", linkedTo:["cs-056"] },
+        ]
+      },
+      {
+        name: "Sports Pricing",
+        i: [
+          { id:"cs-075", t:"Set up inbox rule so pricing alert emails auto-filter out of spam", d:"Today", c:"urgent", linkedTo:["cs-051"] },
+          { id:"cs-076", t:"Talk with Carter on WaxStat watch list - align on items to track; falloff rules (75% sell-through or 4-6 weeks post-release) to standardize over time", d:"This week", c:"soon", linkedTo:["cs-050"] },
+        ]
+      },
+      {
+        name: "Project Elevate - PDP",
+        i: [
+          { id:"cs-077", t:"Push PDP staging SKUs to team starting Monday Jul 7 - get feedback on accuracy, readability, and anything missing from AI copy", d:"Mon Jul 7", c:"urgent", linkedTo:["cs-060"] },
+          { id:"cs-078", t:"Send sell sheets to Lei via Monday report link - Tuesday-to-Tuesday cadence covering Monday releases via Adam's team", d:"Mon Jul 7", c:"urgent", linkedTo:["cs-062"] },
+        ]
+      },
+      {
+        name: "Campaign & Analytics",
+        i: [
+          { id:"cs-079", t:"Revisit purchase-level filtering with John and Brandon - Meta removed the breakdown feature, worth re-exploring to attribute what's being bought through ads", d:"Next week", c:"soon" },
+        ]
+      },
+      {
+        name: "Stale / Sale Products",
+        i: [
+          { id:"cs-080", t:"After Fourth of July weekend, add sale products for July - wait until after the holiday to put more emphasis on bundles first", d:"Mon Jul 7", c:"soon" },
+        ]
+      },
+      {
+        name: "Operations",
+        i: [
+          { id:"cs-081", t:"July 8 meeting to cover two weeks (Jul 8 and Jul 22) since out Jul 15 - prepare accordingly", d:"Jul 8", c:"soon", linkedTo:["cs-061"] },
+        ]
+      },
+    ]
+  },
   "kelly-touchbase-jul-01-2026": {
     label: "Jarrod + Kelly - July 1, 2026",
     sections: [
@@ -312,16 +375,16 @@ var MEETINGS = {
         name: "Pre-Order Rollout",
         i: [
           { id:"cs-046", t:"Stand up PreProduct in production by end of week - use Austin's hat as test item at ~$1", d:"Fri Jun 27", c:"urgent" },
-          { id:"cs-047", t:"Send preorder test link to team early next week to begin UAT - confirm orders are segmented and not triggering shipments (loop in Collin)", d:"Mon Jun 30", c:"urgent" },
+          { id:"cs-047", t:"Send preorder test link to team early next week to begin UAT - confirm orders are segmented and not triggering shipments (loop in Collin)", d:"Mon Jun 30", c:"urgent", linkedTo:["cs-072"] },
           { id:"cs-048", t:"Scope full preorder rollout at next week's meeting - define how to release Topps Chrome Black Football preorder (waves, limits, timing)", d:"Next meeting", c:"soon" },
-          { id:"cs-049", t:"Post teaser in community Discord for Star Wars preorder - share link when live, no public merchandising yet", d:"When live", c:"soon" },
+          { id:"cs-049", t:"Post teaser in community Discord for Star Wars preorder - share link when live, no public merchandising yet", d:"When live", c:"soon", linkedTo:["cs-073"] },
         ]
       },
       {
         name: "Sports Pricing",
         i: [
-          { id:"cs-050", t:"Build Google Sheet mirroring current pricing watch list - define falloff rules (75% sell-through, 4 weeks post-release)", d:"This week", c:"urgent", linkedTo:["cs-022","cs-041"] },
-          { id:"cs-051", t:"Verify group email alert is working - Kevin changed Google Workspace setting last week, confirm emails are going out", d:"Today", c:"urgent" },
+          { id:"cs-050", t:"Build Google Sheet mirroring current pricing watch list - define falloff rules (75% sell-through, 4 weeks post-release)", d:"This week", c:"urgent", linkedTo:["cs-022","cs-041","cs-076"] },
+          { id:"cs-051", t:"Verify group email alert is working - Kevin changed Google Workspace setting last week, confirm emails are going out", d:"Today", c:"urgent", linkedTo:["cs-075"] },
         ]
       },
       {
@@ -341,7 +404,7 @@ var MEETINGS = {
         name: "Hero Banners & Releases",
         i: [
           { id:"cs-055", t:"Confirm MTG Marvel Super Heroes and Magic the Gathering banners are live for Friday Jun 26 release", d:"Fri Jun 27", c:"urgent" },
-          { id:"cs-056", t:"Request sports category banner for July Topps wave from Digi", d:"This week", c:"urgent" },
+          { id:"cs-056", t:"Request sports category banner for July Topps wave from Digi", d:"This week", c:"urgent", linkedTo:["cs-074"] },
           { id:"cs-057", t:"Star Wars sale hero banner - confirm delivered this week or early next week", d:"This week", c:"soon" },
         ]
       },
@@ -355,14 +418,14 @@ var MEETINGS = {
       {
         name: "Project Elevate & PDP",
         i: [
-          { id:"cs-060", t:"Share PDP redesign staging link with team Friday or Monday - get feedback before rolling to production on Topps products", d:"Fri Jun 27 or Mon Jun 30", c:"urgent" },
+          { id:"cs-060", t:"Share PDP redesign staging link with team Friday or Monday - get feedback before rolling to production on Topps products", d:"Fri Jun 27 or Mon Jun 30", c:"urgent", linkedTo:["cs-077"] },
         ]
       },
       {
         name: "Operations",
         i: [
-          { id:"cs-061", t:"Cancel July 15 Campaign Sync (out Jul 13-17) - front load and back load into adjacent weeks, confirm room is released", d:"This week", c:"urgent" },
-          { id:"cs-062", t:"Get Topps sell sheet folder access to Lei for sports product images - confirm shared", d:"This week", c:"soon" },
+          { id:"cs-061", t:"Cancel July 15 Campaign Sync (out Jul 13-17) - front load and back load into adjacent weeks, confirm room is released", d:"This week", c:"urgent", linkedTo:["cs-081"] },
+          { id:"cs-062", t:"Get Topps sell sheet folder access to Lei for sports product images - confirm shared", d:"This week", c:"soon", linkedTo:["cs-078"] },
           { id:"cs-063", t:"Follow up with Carter on read-only PO account access (Thrive) for Rich", d:"Next week", c:"soon", linkedTo:["cs-040"] },
         ]
       },
