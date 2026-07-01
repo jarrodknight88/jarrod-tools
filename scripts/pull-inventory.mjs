@@ -103,12 +103,38 @@ function classifyTier(price) {
 /* ---------- Aggregation store ---------- */
 const recs = new Map(); // key -> record
 const keyOf = (r) => `${r.category}|${r.subject}|${r.cond}|${r.tier}`;
-function bump(slice, field, amount) {
+const money = (v) => Math.round((Number(v) || 0) * 100) / 100; // 2dp, avoids float drift
+function ensure(slice) {
   const k = keyOf(slice);
-  if (!recs.has(k)) recs.set(k, { category: slice.category, subject: slice.subject, tier: slice.tier, cond: slice.cond, onhand: 0, p: { daily: { in: 0, out: 0 } } });
-  const rec = recs.get(k);
-  if (field === "onhand") rec.onhand += amount;       // current units on hand
-  else rec.p.daily[field] += amount;                  // "in" (intake) | "out" (sold), yesterday
+  if (!recs.has(k)) recs.set(k, {
+    category: slice.category, subject: slice.subject, tier: slice.tier, cond: slice.cond,
+    onhand: 0,
+    // on-hand valuation: what the shelf is worth at cost vs retail
+    val: { cost: 0, retail: 0 },
+    p: { daily: {
+      in: 0, out: 0,
+      // sold-side money moved yesterday
+      soldCost: 0, soldRevenue: 0,
+    }},
+  });
+  return recs.get(k);
+}
+// units on hand + on-hand valuation, in one call
+function bumpOnhand(slice, units, unitCost, unitPrice) {
+  const rec = ensure(slice);
+  rec.onhand += units;
+  rec.val.cost = money(rec.val.cost + units * (Number(unitCost) || 0));
+  rec.val.retail = money(rec.val.retail + units * (Number(unitPrice) || 0));
+}
+// intake ("in") or sold ("out") unit counts
+function bumpFlow(slice, field, units) {
+  ensure(slice).p.daily[field] += units;
+}
+// sold-side money for margin (revenue and cost of what sold yesterday)
+function bumpSold(slice, units, unitCost, unitPrice) {
+  const rec = ensure(slice);
+  rec.p.daily.soldCost = money(rec.p.daily.soldCost + units * (Number(unitCost) || 0));
+  rec.p.daily.soldRevenue = money(rec.p.daily.soldRevenue + units * (Number(unitPrice) || 0));
 }
 
 /* ---------- 1) On-hand + intake from products ---------- */
@@ -119,7 +145,7 @@ query Cards($cursor: String) {
     pageInfo { hasNextPage endCursor }
     edges { node {
       id productType tags createdAt
-      variants(first: 10) { edges { node { price inventoryQuantity } } }
+      variants(first: 10) { edges { node { price inventoryQuantity inventoryItem { unitCost { amount } } } } }
     }}
   }
 }`;
@@ -134,14 +160,16 @@ async function pullProducts(win) {
       if (!cond) continue; // not a card
       const subj = classifySubject(node.tags);
       const variants = node.variants.edges.map((e) => e.node);
+      const price = variants[0] ? Number(variants[0].price) || 0 : 0;
+      const unitCost = variants[0] && variants[0].inventoryItem && variants[0].inventoryItem.unitCost
+        ? Number(variants[0].inventoryItem.unitCost.amount) || 0 : 0;
       const onhand = variants.reduce((a, v) => a + (v.inventoryQuantity || 0), 0);
-      const price = variants[0] ? variants[0].price : 0;
       const tier = classifyTier(price);
       const slice = { category: subj.category, subject: subj.name, cond, tier };
-      if (onhand > 0) bump(slice, "onhand", onhand);
+      if (onhand > 0) bumpOnhand(slice, onhand, unitCost, price);
       // Intake: each single created yesterday counts as 1 unit in (one-of-one model).
       // NOTE v1 assumption: 1 unit per new single. Multi-qty intake/restocks refine later.
-      if (node.createdAt >= toISO(win.start) && node.createdAt < toISO(win.end)) bump(slice, "in", 1);
+      if (node.createdAt >= toISO(win.start) && node.createdAt < toISO(win.end)) bumpFlow(slice, "in", 1);
       products++;
     }
     cursor = conn.pageInfo.hasNextPage ? conn.pageInfo.endCursor : null;
@@ -161,7 +189,7 @@ query Sold($cursor: String, $q: String!) {
       lineItems(first: 100) { edges { node {
         quantity
         product { productType tags }
-        variant { price }
+        variant { price inventoryItem { unitCost { amount } } }
       }}}
     }}
   }
@@ -179,9 +207,14 @@ async function pullSold(win) {
         const cond = classifyCondition(li.product.productType);
         if (!cond) continue; // not a card (wax, supplies, etc.)
         const subj = classifySubject(li.product.tags);
-        const tier = classifyTier(li.variant ? li.variant.price : 0);
-        bump({ category: subj.category, subject: subj.name, cond, tier }, "out", li.quantity || 0);
-        units += li.quantity || 0;
+        const price = li.variant ? Number(li.variant.price) || 0 : 0;
+        const unitCost = li.variant && li.variant.inventoryItem && li.variant.inventoryItem.unitCost
+          ? Number(li.variant.inventoryItem.unitCost.amount) || 0 : 0;
+        const qty = li.quantity || 0;
+        const slice = { category: subj.category, subject: subj.name, cond, tier: classifyTier(price) };
+        bumpFlow(slice, "out", qty);
+        bumpSold(slice, qty, unitCost, price);
+        units += qty;
       }
       orders++;
     }
@@ -212,7 +245,14 @@ async function pullSold(win) {
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
   fs.writeFileSync(OUT, JSON.stringify(out, null, 2));
 
-  const tot = records.reduce((a, r) => (a.onhand += r.onhand, a.in += r.p.daily.in, a.out += r.p.daily.out, a), { onhand: 0, in: 0, out: 0 });
+  const tot = records.reduce((a, r) => (
+    a.onhand += r.onhand, a.cost += r.val.cost, a.retail += r.val.retail,
+    a.in += r.p.daily.in, a.out += r.p.daily.out,
+    a.soldCost += r.p.daily.soldCost, a.soldRev += r.p.daily.soldRevenue, a
+  ), { onhand: 0, cost: 0, retail: 0, in: 0, out: 0, soldCost: 0, soldRev: 0 });
+  const usd = (n) => "$" + Math.round(n).toLocaleString("en-US");
   console.error(`Done. ${p.products} card products across ${p.pages} pages, ${s.orders} orders / ${s.units} units sold.`);
-  console.error(`Totals -> on hand ${tot.onhand}, in ${tot.in}, out ${tot.out}. Wrote ${records.length} buckets to ${OUT}`);
+  console.error(`On hand -> ${tot.onhand} units | cost ${usd(tot.cost)} | retail ${usd(tot.retail)} | margin ${usd(tot.retail - tot.cost)}`);
+  console.error(`Yesterday -> in ${tot.in}, out ${tot.out} | sold revenue ${usd(tot.soldRev)} | sold cost ${usd(tot.soldCost)} | sold margin ${usd(tot.soldRev - tot.soldCost)}`);
+  console.error(`Wrote ${records.length} buckets to ${OUT}`);
 })().catch((e) => { console.error(e); process.exit(1); });

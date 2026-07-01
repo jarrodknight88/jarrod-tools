@@ -267,6 +267,24 @@
 
   .footnote{font-size:12px;color:var(--faint);text-align:center;margin-top:30px;line-height:1.6;}
 
+  /* Category drill-down */
+  .cat-section{margin-top:34px;}
+  .cat-head{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;}
+  .cat-title{font-size:18px;font-weight:bold;letter-spacing:-0.3px;}
+  .cat-desc{font-size:12.5px;color:var(--muted);}
+  .cat-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line-soft);border-radius:12px;overflow:hidden;}
+  .cat-table th{font-size:10.5px;font-weight:bold;letter-spacing:0.6px;text-transform:uppercase;color:#fff;background:var(--ink);text-align:right;padding:9px 14px;}
+  .cat-table th.l{text-align:left;}
+  .cat-table td{font-size:14px;padding:9px 14px;text-align:right;border-top:1px solid var(--line-soft);color:var(--ink);}
+  .cat-table td.l{text-align:left;font-weight:bold;letter-spacing:-0.2px;}
+  .cat-table tr:hover td{background:#F9FAFB;}
+  .cat-table tr.cat-total td{background:#F3F4F6;font-weight:bold;border-top:2px solid var(--line);}
+  .cat-table tr.cat-total td.l{color:var(--ink);}
+  .cat-sub{font-size:11.5px;color:var(--faint);font-weight:normal;}
+  .cat-m{font-weight:bold;color:var(--teal);}
+  .cat-flow-pos{color:var(--teal);font-weight:bold;}
+  .cat-flow-neg{color:var(--blue);font-weight:bold;}
+
   @media (max-width:880px){
     .totals{grid-template-columns:repeat(2,1fr);}
     .grid{grid-template-columns:1fr;}
@@ -404,8 +422,20 @@ function buildRecords(){
           monthly = { in:Math.round(wIn*mMul*mN), out:Math.round(wOut*mMul*mN) };
         }
 
+        // ---- Sample valuation: tier-typical unit price + ~62% cost ratio ----
+        // Real data.json carries val{} + sold fields from the Shopify pull; this
+        // only backfills the sample fallback so value/margin render before first pull.
+        const UNIT_PRICE = { High:{Raw:1600,Graded:2200}, Mid:{Raw:320,Graded:410}, Low:{Raw:9,Graded:32} };
+        const px = UNIT_PRICE[t.key][cond];
+        const costRatio = 0.55 + rng()*0.14; // 55-69% of retail
+        const retail = Math.round(onhand * px);
+        const cost = Math.round(retail * costRatio);
+        const soldRevenue = Math.round(out * px);
+        const soldCost = Math.round(soldRevenue * costRatio);
+
         recs.push({ category:s.c, subject:s.n, tier:t.key, cond, onhand,
-          p:{ daily:{in:inn,out:out}, weekly, monthly } });
+          val:{ cost, retail },
+          p:{ daily:{in:inn,out:out,soldCost,soldRevenue}, weekly, monthly } });
       });
     });
   });
@@ -456,8 +486,20 @@ function reconcile(next, touched){
    AGGREGATION + READS
    ============================================================ */
 function aggregate(records){
-  return records.reduce((a,r)=>{ const f=r.p.daily; a.in+=f.in; a.out+=f.out; a.onhand+=r.onhand; return a; },{in:0,out:0,onhand:0});
+  return records.reduce((a,r)=>{
+    const f=r.p.daily;
+    a.in+=f.in; a.out+=f.out; a.onhand+=r.onhand;
+    // value fields (guard for older/sample records without them)
+    const v = r.val || {};
+    a.cost   += v.cost   || 0;
+    a.retail += v.retail || 0;
+    a.soldCost    += f.soldCost    || 0;
+    a.soldRevenue += f.soldRevenue || 0;
+    return a;
+  },{in:0,out:0,onhand:0,cost:0,retail:0,soldCost:0,soldRevenue:0});
 }
+const usd = n => '$' + Math.round(n||0).toLocaleString('en-US');
+const marginPct = (rev,cost) => rev>0 ? Math.round(((rev-cost)/rev)*100) : 0;
 function readOf(inv){
   const i=inv.in, o=inv.out;
   if(o<=0 && i<=0) return { label:'No movement yesterday', tone:'neutral' };
@@ -528,13 +570,13 @@ function InfoButton(){
 }
 
 function Totals({ totals }){
-  const net = totals.in - totals.out;
-  const netPos = net >= 0;
+  const marginDollars = totals.retail - totals.cost;
+  const mPct = marginPct(totals.retail, totals.cost);
   const cards = [
     { label:'Total On Hand', value:fmt(totals.onhand), sub:'units across all buckets', accent:COLORS.black, color:COLORS.ink },
-    { label:SNAPSHOT.added, value:'+'+fmt(totals.in), sub:'units in', accent:COLORS.teal, color:COLORS.teal },
-    { label:SNAPSHOT.sold, value:'−'+fmt(totals.out), sub:'units out', accent:COLORS.blue, color:COLORS.blue },
-    { label:'Net Change', value:(netPos?'+':'−')+fmt(Math.abs(net)), sub:netPos?'building overall':'drawing down overall', accent:netPos?COLORS.teal:COLORS.amber, color:netPos?COLORS.teal:COLORS.amber },
+    { label:'On-Hand Value (Cost)', value:usd(totals.cost), sub:'what we have tied up', accent:COLORS.black, color:COLORS.ink },
+    { label:'Retail Value', value:usd(totals.retail), sub:'value if it all sells', accent:COLORS.blue, color:COLORS.blue },
+    { label:'Unrealized Margin', value:usd(marginDollars), sub:mPct+'% of retail', accent:COLORS.teal, color:COLORS.teal },
   ];
   return (
     <div className="totals">
@@ -747,6 +789,91 @@ function ConditionSection({ cond, desc, records }){
   );
 }
 
+/* ============================================================
+   CATEGORY DRILL-DOWN
+   Every subject in a category, at a glance — units, value, margin,
+   and yesterday's flow. Replaces the manual click-through count.
+   ============================================================ */
+function CategoryBreakdown({ records }){
+  // group by category -> subject
+  const byCat = useMemo(()=>{
+    const cats = new Map();
+    for(const r of records){
+      if(!cats.has(r.category)) cats.set(r.category, new Map());
+      const subs = cats.get(r.category);
+      if(!subs.has(r.subject)) subs.set(r.subject, []);
+      subs.get(r.subject).push(r);
+    }
+    return cats;
+  }, [records]);
+
+  if(byCat.size===0) return null;
+
+  return (
+    <React.Fragment>
+      {[...byCat.entries()].map(([cat, subs])=>{
+        const rows = [...subs.entries()].map(([subject, recs])=>({ subject, agg:aggregate(recs) }))
+          .filter(r=>r.agg.onhand>0 || r.agg.out>0 || r.agg.in>0)
+          .sort((a,b)=> b.agg.retail - a.agg.retail);
+        if(rows.length===0) return null;
+        const tot = aggregate([...subs.values()].flat());
+        return (
+          <div className="cat-section" key={cat}>
+            <div className="cat-head">
+              <span className="cat-title">{cat}</span>
+              <span className="cat-desc">All {rows.length} {rows.length===1?'category':'categories'} at a glance</span>
+            </div>
+            <table className="cat-table">
+              <thead>
+                <tr>
+                  <th className="l">Category</th>
+                  <th>On Hand</th>
+                  <th>Value (Cost)</th>
+                  <th>Retail</th>
+                  <th>Margin</th>
+                  <th>In / Out</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map(({subject, agg})=>{
+                  const m = agg.retail - agg.cost;
+                  const mp = marginPct(agg.retail, agg.cost);
+                  return (
+                    <tr key={subject}>
+                      <td className="l">{subject}</td>
+                      <td>{fmt(agg.onhand)}</td>
+                      <td>{usd(agg.cost)}</td>
+                      <td>{usd(agg.retail)}</td>
+                      <td className="cat-m">{usd(m)} <span className="cat-sub">{mp}%</span></td>
+                      <td>
+                        <span className="cat-flow-pos">+{fmt(agg.in)}</span>
+                        {' / '}
+                        <span className="cat-flow-neg">−{fmt(agg.out)}</span>
+                      </td>
+                    </tr>
+                  );
+                })}
+                <tr className="cat-total">
+                  <td className="l">{cat} total</td>
+                  <td>{fmt(tot.onhand)}</td>
+                  <td>{usd(tot.cost)}</td>
+                  <td>{usd(tot.retail)}</td>
+                  <td>{usd(tot.retail - tot.cost)} <span className="cat-sub">{marginPct(tot.retail,tot.cost)}%</span></td>
+                  <td>
+                    <span className="cat-flow-pos">+{fmt(tot.in)}</span>
+                    {' / '}
+                    <span className="cat-flow-neg">−{fmt(tot.out)}</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        );
+      })}
+    </React.Fragment>
+  );
+}
+
 function App(){
   const [selected, setSelected] = useState(()=>new Set());
   const [data, setData] = useState(null);
@@ -786,6 +913,7 @@ function App(){
       <ActiveFilters selected={selected} setSelected={setSelected}/>
       <ConditionSection cond="Raw" desc="Ungraded singles, sealed & loose" records={filtered.filter(r=>r.cond==='Raw')}/>
       <ConditionSection cond="Graded" desc="Slabbed by PSA · BGS · SGC" records={filtered.filter(r=>r.cond==='Graded')}/>
+      <CategoryBreakdown records={filtered}/>
       <div className="footnote">
         {data.isSample
           ? 'Showing sample data — figures are illustrative, not yet pulled from live systems.'
