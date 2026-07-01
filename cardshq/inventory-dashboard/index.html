@@ -285,6 +285,34 @@
   .cat-flow-pos{color:var(--teal);font-weight:bold;}
   .cat-flow-neg{color:var(--blue);font-weight:bold;}
 
+  /* Graded rollup strip + condition split */
+  .cond-rollup{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:26px;}
+  .rollup-card{background:var(--ink);border-radius:12px;padding:16px 18px;color:#fff;}
+  .rollup-card.graded{background:var(--ink);}
+  .rollup-card.raw{background:#1F2937;}
+  .rollup-label{font-size:11px;font-weight:bold;letter-spacing:0.7px;text-transform:uppercase;color:#9CA3AF;}
+  .rollup-units{font-size:30px;font-weight:bold;letter-spacing:-1px;margin-top:4px;line-height:1;}
+  .rollup-row{display:flex;gap:22px;margin-top:12px;}
+  .rollup-metric .k{font-size:10px;font-weight:bold;letter-spacing:0.5px;text-transform:uppercase;color:#9CA3AF;}
+  .rollup-metric .v{font-size:15px;font-weight:bold;margin-top:2px;}
+  .rollup-metric .v.teal{color:#34D399;}
+  .rollup-metric .v.blue{color:#60A5FA;}
+
+  /* Sold-side daily view */
+  .sold-section{margin-top:34px;}
+  .sold-head{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;}
+  .sold-title{font-size:18px;font-weight:bold;letter-spacing:-0.3px;}
+  .sold-desc{font-size:12.5px;color:var(--muted);}
+  .sold-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line-soft);border-radius:12px;overflow:hidden;}
+  .sold-table th{font-size:10.5px;font-weight:bold;letter-spacing:0.6px;text-transform:uppercase;color:#fff;background:var(--blue);text-align:right;padding:9px 14px;}
+  .sold-table th.l{text-align:left;}
+  .sold-table td{font-size:14px;padding:9px 14px;text-align:right;border-top:1px solid var(--line-soft);color:var(--ink);}
+  .sold-table td.l{text-align:left;font-weight:bold;letter-spacing:-0.2px;}
+  .sold-table tr:hover td{background:#F9FAFB;}
+  .sold-table tr.sold-total td{background:#EFF6FF;font-weight:bold;border-top:2px solid var(--blue);}
+  .sold-empty{padding:18px 14px;font-size:13px;color:var(--faint);text-align:center;}
+  .sold-m{font-weight:bold;color:var(--teal);}
+
   @media (max-width:880px){
     .totals{grid-template-columns:repeat(2,1fr);}
     .grid{grid-template-columns:1fr;}
@@ -790,6 +818,100 @@ function ConditionSection({ cond, desc, records }){
 }
 
 /* ============================================================
+   GRADED ROLLUP
+   Surfaces the graded (and raw) totals directly — no manual summing.
+   ============================================================ */
+function GradedRollup({ records }){
+  const graded = useMemo(()=>aggregate(records.filter(r=>r.cond==='Graded')), [records]);
+  const raw    = useMemo(()=>aggregate(records.filter(r=>r.cond==='Raw')),    [records]);
+  const Card = ({cls, label, agg})=>(
+    <div className={"rollup-card "+cls}>
+      <div className="rollup-label">{label}</div>
+      <div className="rollup-units">{fmt(agg.onhand)} <span style={{fontSize:'14px',fontWeight:'normal',color:'#9CA3AF'}}>units</span></div>
+      <div className="rollup-row">
+        <div className="rollup-metric"><div className="k">Value (Cost)</div><div className="v">{usd(agg.cost)}</div></div>
+        <div className="rollup-metric"><div className="k">Retail</div><div className="v blue">{usd(agg.retail)}</div></div>
+        <div className="rollup-metric"><div className="k">Margin</div><div className="v teal">{usd(agg.retail-agg.cost)} · {marginPct(agg.retail,agg.cost)}%</div></div>
+      </div>
+    </div>
+  );
+  return (
+    <div className="cond-rollup">
+      <Card cls="graded" label="Graded — Total on Hand" agg={graded}/>
+      <Card cls="raw"    label="Raw — Total on Hand"    agg={raw}/>
+    </div>
+  );
+}
+
+/* ============================================================
+   SOLD-SIDE DAILY VIEW
+   What sold yesterday, by category — revenue, cost, and margin.
+   Serves the revenue meeting and the cost meeting from one source.
+   ============================================================ */
+function SoldSide({ records }){
+  const cats = useMemo(()=>{
+    const m = new Map();
+    for(const r of records){
+      if((r.p.daily.out||0)<=0) continue;
+      if(!m.has(r.category)) m.set(r.category, []);
+      m.get(r.category).push(r);
+    }
+    return m;
+  }, [records]);
+
+  const rows = [...cats.entries()].map(([category, recs])=>({ category, agg:aggregate(recs) }))
+    .sort((a,b)=> b.agg.soldRevenue - a.agg.soldRevenue);
+  const tot = aggregate([...cats.values()].flat());
+
+  return (
+    <div className="sold-section">
+      <div className="sold-head">
+        <span className="sold-title">Sold Yesterday</span>
+        <span className="sold-desc">Revenue, cost, and margin on what moved</span>
+      </div>
+      <table className="sold-table">
+        <thead>
+          <tr>
+            <th className="l">Category</th>
+            <th>Units Sold</th>
+            <th>Revenue</th>
+            <th>Cost</th>
+            <th>Margin</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.length===0 ? (
+            <tr><td className="sold-empty" colSpan={5}>No sales recorded yesterday in the current filter.</td></tr>
+          ) : (
+            <React.Fragment>
+              {rows.map(({category, agg})=>{
+                const m = agg.soldRevenue - agg.soldCost;
+                return (
+                  <tr key={category}>
+                    <td className="l">{category}</td>
+                    <td>{fmt(agg.out)}</td>
+                    <td>{usd(agg.soldRevenue)}</td>
+                    <td>{usd(agg.soldCost)}</td>
+                    <td className="sold-m">{usd(m)} <span className="cat-sub">{marginPct(agg.soldRevenue,agg.soldCost)}%</span></td>
+                  </tr>
+                );
+              })}
+              <tr className="sold-total">
+                <td className="l">Total</td>
+                <td>{fmt(tot.out)}</td>
+                <td>{usd(tot.soldRevenue)}</td>
+                <td>{usd(tot.soldCost)}</td>
+                <td>{usd(tot.soldRevenue - tot.soldCost)} <span className="cat-sub">{marginPct(tot.soldRevenue,tot.soldCost)}%</span></td>
+              </tr>
+            </React.Fragment>
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+/* ============================================================
    CATEGORY DRILL-DOWN
    Every subject in a category, at a glance — units, value, margin,
    and yesterday's flow. Replaces the manual click-through count.
@@ -910,10 +1032,12 @@ function App(){
         <FilterBar selected={selected} setSelected={setSelected}/>
       </div>
       <Totals totals={totals}/>
+      <GradedRollup records={filtered}/>
       <ActiveFilters selected={selected} setSelected={setSelected}/>
       <ConditionSection cond="Raw" desc="Ungraded singles, sealed & loose" records={filtered.filter(r=>r.cond==='Raw')}/>
       <ConditionSection cond="Graded" desc="Slabbed by PSA · BGS · SGC" records={filtered.filter(r=>r.cond==='Graded')}/>
       <CategoryBreakdown records={filtered}/>
+      <SoldSide records={filtered}/>
       <div className="footnote">
         {data.isSample
           ? 'Showing sample data — figures are illustrative, not yet pulled from live systems.'
