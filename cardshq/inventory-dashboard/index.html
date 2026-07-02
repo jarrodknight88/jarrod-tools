@@ -323,6 +323,20 @@
   .hist-to{font-size:11.5px;color:var(--faint);}
   .hist-clear{font-size:11.5px;font-weight:bold;padding:5px 10px;border-radius:8px;border:1px solid var(--line-soft);background:#fff;color:var(--blue);cursor:pointer;}
   @media(max-width:640px){.hist-controls{flex-wrap:wrap;}.hist-custom{margin-left:0;}}
+  /* Trend range bar - top of page, by the filter */
+  .trend-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 18px;padding:10px 12px;background:#F9FAFB;border:1px solid var(--line-soft);border-radius:10px;}
+  .tr-label{font-size:12px;font-weight:bold;color:var(--ink);margin-right:2px;}
+  .tr-note{margin-left:auto;font-size:11px;color:var(--faint);}
+  @media(max-width:640px){.tr-note{margin-left:0;width:100%;}}
+  /* Interactive chart tooltip */
+  .hc-wrap{position:relative;}
+  .hc-tip{position:absolute;top:2px;pointer-events:none;background:#111111;color:#fff;border-radius:8px;padding:7px 9px;font-size:11px;font-family:Arial;box-shadow:0 4px 14px rgba(17,17,17,0.18);white-space:nowrap;z-index:5;transform:translateX(8px);}
+  .hc-tip.flip{transform:translateX(-8px) translateX(-100%);}
+  .hc-tip-date{font-weight:bold;font-size:11px;margin-bottom:4px;color:#fff;}
+  .hc-tip-row{display:flex;align-items:center;gap:6px;line-height:1.55;}
+  .hc-tip-dot{width:8px;height:8px;border-radius:50%;flex:none;}
+  .hc-tip-name{color:#D1D5DB;}
+  .hc-tip-val{margin-left:auto;font-weight:bold;color:#fff;padding-left:14px;}
 
   /* Graded rollup strip + condition split */
   .cond-rollup{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:26px;}
@@ -991,50 +1005,85 @@ function SoldSide({ records }){
    ============================================================ */
 function LineChart({ series, height=170 }){
   // series: [{name, color, points:[{x:dateStr, y:number|null}]}] - shared x domain
-  const W=460, H=height, PAD={t:10,r:12,b:22,l:52};
+  const [hover, setHover] = useState(null); // index into allDates
+  const W=460, H=height, PAD={t:10,r:12,b:26,l:52};
   const allDates=[...new Set(series.flatMap(s=>s.points.map(p=>p.x)))].sort();
   const vals=series.flatMap(s=>s.points.map(p=>p.y)).filter(v=>v!=null);
   if(allDates.length===0||vals.length===0) return <div className="sold-empty">No data in range yet.</div>;
   const yMax=Math.max(...vals)*1.06||1, yMin=Math.min(0,...vals);
-  const x=(d)=>{const i=allDates.indexOf(d);return PAD.l+(allDates.length===1?(W-PAD.l-PAD.r)/2:(i/(allDates.length-1))*(W-PAD.l-PAD.r));};
+  const plotW=W-PAD.l-PAD.r;
+  const xi=(i)=>PAD.l+(allDates.length===1?plotW/2:(i/(allDates.length-1))*plotW);
+  const x=(d)=>xi(allDates.indexOf(d));
   const y=(v)=>H-PAD.b-((v-yMin)/(yMax-yMin))*(H-PAD.t-PAD.b);
   const short=(d)=>{const dt=new Date(d+'T12:00:00');return dt.toLocaleDateString('en-US',{month:'short',day:'numeric'});};
   const kfmt=(v)=>v>=1000?'$'+Math.round(v/1000)+'K':'$'+Math.round(v);
+  const dfmt=(v)=>'$'+Math.round(v).toLocaleString('en-US');
+  // x-axis ticks: up to 7 evenly spaced labels, always including first and last
+  const nTicks=Math.min(allDates.length,7);
+  const tickIdx=[...new Set(nTicks<=1?[0]:Array.from({length:nTicks},(_,k)=>Math.round(k*(allDates.length-1)/(nTicks-1))))];
+  const onMove=(e)=>{
+    const rect=e.currentTarget.getBoundingClientRect();
+    const relX=(e.clientX-rect.left)/rect.width*W;
+    const t=allDates.length<2?0:Math.max(0,Math.min(1,(relX-PAD.l)/plotW));
+    setHover(Math.round(t*(allDates.length-1)));
+  };
+  const hoverDate=hover!=null?allDates[hover]:null;
+  const hx=hover!=null?xi(hover):null;
   return (
-    <svg viewBox={'0 0 '+W+' '+H} style={{width:'100%',height:'auto'}}>
-      {[0,0.5,1].map(f=>{const v=yMin+f*(yMax-yMin);return (
-        <g key={f}>
-          <line x1={PAD.l} x2={W-PAD.r} y1={y(v)} y2={y(v)} stroke="#E5E7EB" strokeWidth="1"/>
-          <text x={PAD.l-6} y={y(v)+3} textAnchor="end" fontSize="9" fill="#9CA3AF" fontFamily="Arial">{kfmt(v)}</text>
-        </g>);})}
-      <text x={PAD.l} y={H-6} fontSize="9" fill="#9CA3AF" fontFamily="Arial">{short(allDates[0])}</text>
-      <text x={W-PAD.r} y={H-6} textAnchor="end" fontSize="9" fill="#9CA3AF" fontFamily="Arial">{short(allDates[allDates.length-1])}</text>
-      {series.map(s=>{
-        const pts=s.points.filter(p=>p.y!=null);
-        const dAttr=pts.map((p,i)=>(i===0?'M':'L')+x(p.x).toFixed(1)+' '+y(p.y).toFixed(1)).join(' ');
-        return (
-          <g key={s.name}>
-            {pts.length>1 && <path d={dAttr} fill="none" stroke={s.color} strokeWidth="2"/>}
-            {pts.map(p=>(<circle key={p.x} cx={x(p.x)} cy={y(p.y)} r={pts.length>20?1.6:2.6} fill={s.color}><title>{short(p.x)+' - '+s.name+': $'+Math.round(p.y).toLocaleString('en-US')}</title></circle>))}
+    <div className="hc-wrap">
+      <svg viewBox={'0 0 '+W+' '+H} style={{width:'100%',height:'auto',display:'block'}}
+           onMouseMove={onMove} onMouseLeave={()=>setHover(null)}>
+        {[0,0.5,1].map(f=>{const v=yMin+f*(yMax-yMin);return (
+          <g key={f}>
+            <line x1={PAD.l} x2={W-PAD.r} y1={y(v)} y2={y(v)} stroke="#E5E7EB" strokeWidth="1"/>
+            <text x={PAD.l-6} y={y(v)+3} textAnchor="end" fontSize="9" fill="#9CA3AF" fontFamily="Arial">{kfmt(v)}</text>
+          </g>);})}
+        {tickIdx.map(i=>(
+          <g key={'t'+i}>
+            <line x1={xi(i)} x2={xi(i)} y1={H-PAD.b} y2={H-PAD.b+3} stroke="#D1D5DB" strokeWidth="1"/>
+            <text x={xi(i)} y={H-PAD.b+13} textAnchor={i===0?'start':(i===allDates.length-1?'end':'middle')} fontSize="9" fill="#9CA3AF" fontFamily="Arial">{short(allDates[i])}</text>
           </g>
+        ))}
+        {hx!=null && <line x1={hx} x2={hx} y1={PAD.t} y2={H-PAD.b} stroke="#9CA3AF" strokeWidth="1" strokeDasharray="3 3"/>}
+        {series.map(s=>{
+          const pts=s.points.filter(p=>p.y!=null);
+          const dAttr=pts.map((p,i)=>(i===0?'M':'L')+x(p.x).toFixed(1)+' '+y(p.y).toFixed(1)).join(' ');
+          return (
+            <g key={s.name}>
+              {pts.length>1 && <path d={dAttr} fill="none" stroke={s.color} strokeWidth="2"/>}
+              {pts.map(p=>(<circle key={p.x} cx={x(p.x)} cy={y(p.y)} r={hoverDate===p.x?3.6:(pts.length>20?1.6:2.6)} fill={s.color}/>))}
+            </g>
+          );
+        })}
+      </svg>
+      {hoverDate && (()=>{
+        const rows=series.map(s=>{const pt=s.points.find(p=>p.x===hoverDate);return pt&&pt.y!=null?{name:s.name,color:s.color,y:pt.y}:null;}).filter(Boolean);
+        if(!rows.length) return null;
+        const leftPct=(hx/W)*100, flip=leftPct>62;
+        return (
+          <div className={'hc-tip'+(flip?' flip':'')} style={{left:leftPct+'%'}}>
+            <div className="hc-tip-date">{short(hoverDate)}</div>
+            {rows.map(r=>(
+              <div className="hc-tip-row" key={r.name}>
+                <span className="hc-tip-dot" style={{background:r.color}}></span>
+                <span className="hc-tip-name">{r.name}</span>
+                <span className="hc-tip-val">{dfmt(r.y)}</span>
+              </div>
+            ))}
+          </div>
         );
-      })}
-    </svg>
+      })()}
+    </div>
   );
 }
 
-function HistoricalView({ history }){
-  const [open, setOpen] = useState(false);
-  const [range, setRange] = useState(30);
-  const [custom, setCustom] = useState({ from:'', to:'' });
+function HistoricalView({ history, range, custom }){
+  const [open, setOpen] = useState(true);
   if(!history || history.length===0) return null;
-  const minDate = history[0].date, maxDate = history[history.length-1].date;
   const usingCustom = custom.from || custom.to;
   const cut = usingCustom
     ? history.filter(h => (!custom.from || h.date >= custom.from) && (!custom.to || h.date <= custom.to))
     : (range==null ? history : history.slice(-range));
-  const setCustomField = (k,v)=>{ setCustom(c=>({...c,[k]:v})); };
-  const pickPreset = (v)=>{ setRange(v); setCustom({from:'',to:''}); };
   const sold = [
     { name:'Revenue', color:COLORS.blue, points:cut.map(h=>({x:h.date,y:h.totals.soldRevenue})) },
     { name:'Cost',    color:COLORS.muted, points:cut.map(h=>({x:h.date,y:h.totals.soldCost})) },
@@ -1058,19 +1107,6 @@ function HistoricalView({ history }){
       </div>
       {open && (
         <React.Fragment>
-          <div className="hist-controls">
-            {[[7,'7D'],[14,'14D'],[30,'30D'],[null,'All']].map(([v,label])=>(
-              <button key={label} className={'hist-range-btn'+(!usingCustom&&range===v?' active':'')} onClick={()=>pickPreset(v)}>{label}</button>
-            ))}
-            <span className="hist-custom">
-              <input type="date" className="hist-date" value={custom.from} min={minDate} max={custom.to||maxDate}
-                onChange={e=>setCustomField('from',e.target.value)} aria-label="From date"/>
-              <span className="hist-to">to</span>
-              <input type="date" className="hist-date" value={custom.to} min={custom.from||minDate} max={maxDate}
-                onChange={e=>setCustomField('to',e.target.value)} aria-label="To date"/>
-              {usingCustom && <button className="hist-clear" onClick={()=>setCustom({from:'',to:''})}>Clear</button>}
-            </span>
-          </div>
           <div className="hist-charts">
             <div className="hist-chart">
               <h4>Sold per Day</h4>
@@ -1210,9 +1246,32 @@ function CategoryBreakdown({ records }){
   );
 }
 
+function TrendRange({ range, custom, setRange, setCustom, minDate, maxDate }){
+  const usingCustom = custom.from || custom.to;
+  const pickPreset=(v)=>{ setRange(v); setCustom({from:'',to:''}); };
+  const setField=(k,v)=>setCustom(c=>({...c,[k]:v}));
+  return (
+    <div className="trend-bar">
+      <span className="tr-label">Trends</span>
+      {[[7,'7D'],[14,'14D'],[30,'30D'],[null,'All']].map(([v,label])=>(
+        <button key={label} className={'hist-range-btn'+(!usingCustom&&range===v?' active':'')} onClick={()=>pickPreset(v)}>{label}</button>
+      ))}
+      <span className="hist-custom">
+        <input type="date" className="hist-date" value={custom.from} min={minDate} max={custom.to||maxDate} onChange={e=>setField('from',e.target.value)} aria-label="From date"/>
+        <span className="hist-to">to</span>
+        <input type="date" className="hist-date" value={custom.to} min={custom.from||minDate} max={maxDate} onChange={e=>setField('to',e.target.value)} aria-label="To date"/>
+        {usingCustom && <button className="hist-clear" onClick={()=>setCustom({from:'',to:''})}>Clear</button>}
+      </span>
+      <span className="tr-note">Controls the trend charts below</span>
+    </div>
+  );
+}
+
 function App(){
   const [selected, setSelected] = useState(()=>new Set());
   const [data, setData] = useState(null);
+  const [histRange, setHistRange] = useState(30);
+  const [histCustom, setHistCustom] = useState({ from:'', to:'' });
 
   React.useEffect(()=>{
     fetch('./data.json', { cache:'no-store' })
@@ -1235,6 +1294,9 @@ function App(){
 
   if(!data) return <div style={{padding:'60px 20px', textAlign:'center', color:'#6B7280', fontFamily:'Arial'}}>Loading inventory…</div>;
 
+  const histMin = data.history && data.history.length ? data.history[0].date : '';
+  const histMax = data.history && data.history.length ? data.history[data.history.length-1].date : '';
+
   return (
     <React.Fragment>
       <Banner isSample={data.isSample} dateLabel={data.dateLabel} stampLabel={data.stampLabel}/>
@@ -1245,12 +1307,13 @@ function App(){
         </div>
         <FilterBar selected={selected} setSelected={setSelected}/>
       </div>
+      {histMax && <TrendRange range={histRange} custom={histCustom} setRange={setHistRange} setCustom={setHistCustom} minDate={histMin} maxDate={histMax}/>}
       <Totals totals={totals}/>
       <SoldSide records={filtered}/>
       <GradedRollup records={filtered}/>
       <ActiveFilters selected={selected} setSelected={setSelected}/>
       <CategoryBreakdown records={filtered}/>
-      <HistoricalView history={data.history}/>
+      <HistoricalView history={data.history} range={histRange} custom={histCustom}/>
       <div className="footnote">
         {data.isSample
           ? 'Showing sample data — figures are illustrative, not yet pulled from live systems.'
