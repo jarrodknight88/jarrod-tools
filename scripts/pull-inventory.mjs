@@ -302,7 +302,7 @@ query Intake($cursor: String, $q: String!) {
   products(first: 250, after: $cursor, query: $q) {
     pageInfo { hasNextPage endCursor }
     edges { node {
-      productType createdAt
+      productType tags createdAt
       variants(first: 1) { edges { node { price inventoryItem { unitCost { amount } } } } }
     }}
   }
@@ -323,10 +323,15 @@ async function intakeByDay(startDay, endDayExclusive) {
       const price = v ? Number(v.price) || 0 : 0;
       const unitCost = v && v.inventoryItem && v.inventoryItem.unitCost ? Number(v.inventoryItem.unitCost.amount) || 0 : 0;
       const day = dayOf(node.createdAt);
-      const b = (days[day] = days[day] || { units: 0, cost: 0, retail: 0 });
+      const b = (days[day] = days[day] || { units: 0, cost: 0, retail: 0, byCategory: {} });
       b.units += 1; // one-of-one intake model, matches the daily "in" metric
       b.cost = money(b.cost + unitCost);
       b.retail = money(b.retail + price);
+      const cat = classifySubject(node.tags).category;
+      const cb = (b.byCategory[cat] = b.byCategory[cat] || { units: 0, cost: 0, retail: 0 });
+      cb.units += 1;
+      cb.cost = money(cb.cost + unitCost);
+      cb.retail = money(cb.retail + price);
     }
     cursor = conn.pageInfo.hasNextPage ? conn.pageInfo.endCursor : null;
     pages++;
@@ -335,11 +340,15 @@ async function intakeByDay(startDay, endDayExclusive) {
 }
 
 // Fill derived on-hand values for all pre-anchor days lacking them. Idempotent.
+// Runs two passes off one intake pull: totals (skipped if already derived) and
+// per-category (gated separately so it backfills days derived before this existed).
 async function deriveOnhandHistory(history) {
   const anchorIdx = history.findIndex((h) => h.onhandKnown);
   if (anchorIdx <= 0) return 0; // no anchor or nothing before it
-  const pending = history.slice(0, anchorIdx).filter((h) => !h.onhandDerived);
-  if (pending.length === 0) return 0;
+  const pre = history.slice(0, anchorIdx);
+  const pendingTotals = pre.filter((h) => !h.onhandDerived);
+  const pendingCats = pre.filter((h) => !h.catDerived);
+  if (pendingTotals.length === 0 && pendingCats.length === 0) return 0;
 
   const startDay = history[0].date;
   const anchor = history[anchorIdx];
@@ -347,23 +356,51 @@ async function deriveOnhandHistory(history) {
   const { days: intake, pages } = await intakeByDay(startDay, anchor.date);
   console.error(`Intake bucketed across ${pages} pages.`);
 
-  // Walk backward from the anchor. V(D) = V(D+1) + soldCost(D+1) - intakeCost(D+1)
-  let next = anchor;
-  for (let i = anchorIdx - 1; i >= 0; i--) {
-    const h = history[i];
-    const inNext = intake[next.date] || { units: 0, cost: 0, retail: 0 };
-    h.totals.onhand = (next.totals.onhand || 0) + (next.totals.out || 0) - inNext.units;
-    h.totals.cost = money((next.totals.cost || 0) + (next.totals.soldCost || 0) - inNext.cost);
-    h.totals.retail = money((next.totals.retail || 0) + (next.totals.soldRevenue || 0) - inNext.retail);
-    h.totals.in = (intake[h.date] || { units: 0 }).units;
-    h.onhandDerived = true;
-    next = h;
+  // ---- Pass 1: totals. V(D) = V(D+1) + soldCost(D+1) - intakeCost(D+1) ----
+  if (pendingTotals.length > 0) {
+    let next = anchor;
+    for (let i = anchorIdx - 1; i >= 0; i--) {
+      const h = history[i];
+      const inNext = intake[next.date] || { units: 0, cost: 0, retail: 0 };
+      h.totals.onhand = (next.totals.onhand || 0) + (next.totals.out || 0) - inNext.units;
+      h.totals.cost = money((next.totals.cost || 0) + (next.totals.soldCost || 0) - inNext.cost);
+      h.totals.retail = money((next.totals.retail || 0) + (next.totals.soldRevenue || 0) - inNext.retail);
+      h.totals.in = (intake[h.date] || { units: 0 }).units;
+      h.onhandDerived = true;
+      next = h;
+    }
   }
+
+  // ---- Pass 2: per-category, same walk per category ----
+  if (pendingCats.length > 0) {
+    const catSet = new Set(Object.keys(anchor.byCategory));
+    for (const h of pre) for (const c of Object.keys(h.byCategory)) catSet.add(c);
+    for (const day of Object.values(intake)) for (const c of Object.keys(day.byCategory || {})) catSet.add(c);
+    const zeroSold = () => ({ onhand: null, cost: null, retail: null, in: null, out: 0, soldCost: 0, soldRevenue: 0 });
+    for (const cat of catSet) {
+      // anchor values for a category absent at anchor = zero on hand
+      let next = anchor;
+      let nextVals = anchor.byCategory[cat] || { onhand: 0, cost: 0, retail: 0 };
+      for (let i = anchorIdx - 1; i >= 0; i--) {
+        const h = history[i];
+        const nextSold = next.byCategory[cat] || zeroSold();
+        const inNextC = ((intake[next.date] || {}).byCategory || {})[cat] || { units: 0, cost: 0, retail: 0 };
+        const cur = (h.byCategory[cat] = h.byCategory[cat] || zeroSold());
+        cur.onhand = (nextVals.onhand || 0) + (nextSold.out || 0) - inNextC.units;
+        cur.cost = money((nextVals.cost || 0) + (nextSold.soldCost || 0) - inNextC.cost);
+        cur.retail = money((nextVals.retail || 0) + (nextSold.soldRevenue || 0) - inNextC.retail);
+        cur.in = (((intake[h.date] || {}).byCategory || {})[cat] || { units: 0 }).units;
+        next = h; nextVals = cur;
+      }
+    }
+    for (const h of pre) h.catDerived = true;
+  }
+
   const first = history[0];
   if (first.totals.cost < 0 || first.totals.onhand < 0) {
     console.error(`WARNING: derived history went negative at ${first.date} (onhand ${first.totals.onhand}, cost ${first.totals.cost}). Raw-intake approximation likely off - flag for review.`);
   }
-  return pending.length;
+  return pendingTotals.length + pendingCats.length;
 }
 
 /* ---------- Run ---------- */
