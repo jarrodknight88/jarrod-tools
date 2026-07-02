@@ -306,6 +306,19 @@
   .rollup-tier-row .rt-cell.teal{color:#34D399;}
   .rollup-tier-row .rt-cell.flow{margin-left:auto;color:#9CA3AF;}
 
+  /* Historical view */
+  .hist-controls{display:flex;gap:8px;margin:14px 0;}
+  .hist-range-btn{font-size:12px;font-weight:bold;padding:6px 14px;border-radius:8px;border:1px solid var(--line-soft);background:#fff;color:var(--muted);cursor:pointer;}
+  .hist-range-btn.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .hist-charts{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:900px){.hist-charts{grid-template-columns:1fr;}}
+  .hist-chart{background:#fff;border:1px solid var(--line-soft);border-radius:12px;padding:16px;}
+  .hist-chart h4{margin:0 0 4px;font-size:13px;font-weight:bold;color:var(--ink);}
+  .hist-chart .hc-sub{font-size:11.5px;color:var(--faint);margin-bottom:10px;}
+  .hist-legend{display:flex;gap:14px;font-size:11px;color:var(--muted);margin-top:8px;}
+  .hist-legend .dot{display:inline-block;width:8px;height:8px;border-radius:4px;margin-right:5px;vertical-align:middle;}
+  .hist-note{font-size:11.5px;color:var(--faint);margin-top:12px;}
+
   /* Graded rollup strip + condition split */
   .cond-rollup{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:26px;}
   .rollup-card{background:var(--ink);border-radius:12px;padding:16px 18px;color:#fff;}
@@ -966,6 +979,106 @@ function SoldSide({ records }){
    Every subject in a category, at a glance — units, value, margin,
    and yesterday's flow. Replaces the manual click-through count.
    ============================================================ */
+/* ============================================================
+   HISTORICAL VIEW
+   Daily trend lines from data.history. Sold-side backfilled to
+   June 1; on-hand value accumulates from July 1, 2026 forward.
+   ============================================================ */
+function LineChart({ series, height=170 }){
+  // series: [{name, color, points:[{x:dateStr, y:number|null}]}] - shared x domain
+  const W=460, H=height, PAD={t:10,r:12,b:22,l:52};
+  const allDates=[...new Set(series.flatMap(s=>s.points.map(p=>p.x)))].sort();
+  const vals=series.flatMap(s=>s.points.map(p=>p.y)).filter(v=>v!=null);
+  if(allDates.length===0||vals.length===0) return <div className="sold-empty">No data in range yet.</div>;
+  const yMax=Math.max(...vals)*1.06||1, yMin=Math.min(0,...vals);
+  const x=(d)=>{const i=allDates.indexOf(d);return PAD.l+(allDates.length===1?(W-PAD.l-PAD.r)/2:(i/(allDates.length-1))*(W-PAD.l-PAD.r));};
+  const y=(v)=>H-PAD.b-((v-yMin)/(yMax-yMin))*(H-PAD.t-PAD.b);
+  const short=(d)=>{const dt=new Date(d+'T12:00:00');return dt.toLocaleDateString('en-US',{month:'short',day:'numeric'});};
+  const kfmt=(v)=>v>=1000?'$'+Math.round(v/1000)+'K':'$'+Math.round(v);
+  return (
+    <svg viewBox={'0 0 '+W+' '+H} style={{width:'100%',height:'auto'}}>
+      {[0,0.5,1].map(f=>{const v=yMin+f*(yMax-yMin);return (
+        <g key={f}>
+          <line x1={PAD.l} x2={W-PAD.r} y1={y(v)} y2={y(v)} stroke="#E5E7EB" strokeWidth="1"/>
+          <text x={PAD.l-6} y={y(v)+3} textAnchor="end" fontSize="9" fill="#9CA3AF" fontFamily="Arial">{kfmt(v)}</text>
+        </g>);})}
+      <text x={PAD.l} y={H-6} fontSize="9" fill="#9CA3AF" fontFamily="Arial">{short(allDates[0])}</text>
+      <text x={W-PAD.r} y={H-6} textAnchor="end" fontSize="9" fill="#9CA3AF" fontFamily="Arial">{short(allDates[allDates.length-1])}</text>
+      {series.map(s=>{
+        const pts=s.points.filter(p=>p.y!=null);
+        const dAttr=pts.map((p,i)=>(i===0?'M':'L')+x(p.x).toFixed(1)+' '+y(p.y).toFixed(1)).join(' ');
+        return (
+          <g key={s.name}>
+            {pts.length>1 && <path d={dAttr} fill="none" stroke={s.color} strokeWidth="2"/>}
+            {pts.map(p=>(<circle key={p.x} cx={x(p.x)} cy={y(p.y)} r={pts.length>20?1.6:2.6} fill={s.color}><title>{short(p.x)+' - '+s.name+': $'+Math.round(p.y).toLocaleString('en-US')}</title></circle>))}
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
+function HistoricalView({ history }){
+  const [open, setOpen] = useState(false);
+  const [range, setRange] = useState(30);
+  if(!history || history.length===0) return null;
+  const cut = range==null ? history : history.slice(-range);
+  const sold = [
+    { name:'Revenue', color:COLORS.blue, points:cut.map(h=>({x:h.date,y:h.totals.soldRevenue})) },
+    { name:'Cost',    color:COLORS.muted, points:cut.map(h=>({x:h.date,y:h.totals.soldCost})) },
+    { name:'Margin',  color:COLORS.teal, points:cut.map(h=>({x:h.date,y:(h.totals.soldRevenue||0)-(h.totals.soldCost||0)})) },
+  ];
+  const onhandCut = cut.filter(h=>h.onhandKnown);
+  const onhand = [
+    { name:'On-Hand Value (Cost)', color:COLORS.black, points:onhandCut.map(h=>({x:h.date,y:h.totals.cost})) },
+    { name:'Retail', color:COLORS.blue, points:onhandCut.map(h=>({x:h.date,y:h.totals.retail})) },
+  ];
+  const totSold = cut.reduce((a,h)=>(a.rev+=h.totals.soldRevenue||0,a.cost+=h.totals.soldCost||0,a),{rev:0,cost:0});
+  return (
+    <div className="cat-section">
+      <div className="cat-collapse-head" onClick={()=>setOpen(o=>!o)}>
+        <span className="cat-caret">{open?'▾':'▸'}</span>
+        <span className="cat-title">History &amp; Trends</span>
+        <span className="cat-desc">{cut.length} {cut.length===1?'day':'days'}</span>
+        <span className="cat-head-summary">
+          sold {usd(totSold.rev)} rev · {usd(totSold.cost)} cost · <span className="cat-m">{usd(totSold.rev-totSold.cost)} ({marginPct(totSold.rev,totSold.cost)}%)</span>
+        </span>
+      </div>
+      {open && (
+        <React.Fragment>
+          <div className="hist-controls">
+            {[[7,'7D'],[14,'14D'],[30,'30D'],[null,'All']].map(([v,label])=>(
+              <button key={label} className={'hist-range-btn'+(range===v?' active':'')} onClick={()=>setRange(v)}>{label}</button>
+            ))}
+          </div>
+          <div className="hist-charts">
+            <div className="hist-chart">
+              <h4>Sold per Day</h4>
+              <div className="hc-sub">Revenue, cost, and margin on cards sold</div>
+              <LineChart series={sold}/>
+              <div className="hist-legend">
+                <span><span className="dot" style={{background:COLORS.blue}}></span>Revenue</span>
+                <span><span className="dot" style={{background:COLORS.muted}}></span>Cost</span>
+                <span><span className="dot" style={{background:COLORS.teal}}></span>Margin</span>
+              </div>
+            </div>
+            <div className="hist-chart">
+              <h4>On-Hand Value</h4>
+              <div className="hc-sub">Inventory value at cost and retail</div>
+              <LineChart series={onhand}/>
+              <div className="hist-legend">
+                <span><span className="dot" style={{background:COLORS.black}}></span>Cost</span>
+                <span><span className="dot" style={{background:COLORS.blue}}></span>Retail</span>
+              </div>
+            </div>
+          </div>
+          <div className="hist-note">Sold-side history backfilled to June 1, 2026. On-hand value history begins July 1, 2026 and builds with each daily pull.</div>
+        </React.Fragment>
+      )}
+    </div>
+  );
+}
+
 function FlowCell({agg}){
   return (
     <td>
@@ -1091,9 +1204,9 @@ function App(){
         const stampLabel = d.generatedAt
           ? ('As of ' + new Date(d.generatedAt).toLocaleString('en-US',{hour:'numeric',minute:'2-digit'}) + ' ET · yesterday')
           : SNAPSHOT.stamp;
-        setData({ records:d.records||[], isSample:!!d.isSample, dateLabel, stampLabel });
+        setData({ records:d.records||[], history:d.history||[], isSample:!!d.isSample, dateLabel, stampLabel });
       })
-      .catch(()=> setData({ records:SAMPLE_RECORDS, isSample:true, dateLabel:SNAPSHOT.range, stampLabel:SNAPSHOT.stamp }));
+      .catch(()=> setData({ records:SAMPLE_RECORDS, history:[], isSample:true, dateLabel:SNAPSHOT.range, stampLabel:SNAPSHOT.stamp }));
   }, []);
 
   const records = data ? data.records : null;
@@ -1117,6 +1230,7 @@ function App(){
       <GradedRollup records={filtered}/>
       <ActiveFilters selected={selected} setSelected={setSelected}/>
       <CategoryBreakdown records={filtered}/>
+      <HistoricalView history={data.history}/>
       <div className="footnote">
         {data.isSample
           ? 'Showing sample data — figures are illustrative, not yet pulled from live systems.'

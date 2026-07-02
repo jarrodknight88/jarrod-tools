@@ -223,6 +223,73 @@ async function pullSold(win) {
   return { orders, units };
 }
 
+/* ---------- 3) History: daily rollups + June sold-side backfill ---------- */
+const HISTORY_BACKFILL_START = "2026-06-01"; // sold-side history begins here
+const BACKFILL_MAX_PER_RUN = 40;             // bound runtime on first run
+
+// Rollup a records array into totals + per-category summaries.
+function rollupRecords(records) {
+  const zero = () => ({ onhand: 0, cost: 0, retail: 0, in: 0, out: 0, soldCost: 0, soldRevenue: 0 });
+  const totals = zero(), byCategory = {};
+  for (const r of records) {
+    const c = (byCategory[r.category] = byCategory[r.category] || zero());
+    for (const t of [totals, c]) {
+      t.onhand += r.onhand;
+      t.cost = money(t.cost + (r.val ? r.val.cost : 0));
+      t.retail = money(t.retail + (r.val ? r.val.retail : 0));
+      t.in += r.p.daily.in; t.out += r.p.daily.out;
+      t.soldCost = money(t.soldCost + (r.p.daily.soldCost || 0));
+      t.soldRevenue = money(t.soldRevenue + (r.p.daily.soldRevenue || 0));
+    }
+  }
+  return { totals, byCategory };
+}
+
+// Sold-side only, for one past day - own accumulator, does not touch `recs`.
+async function soldSummaryForDay(dayStr) {
+  const next = new Date(`${dayStr}T00:00:00`); next.setDate(next.getDate() + 1);
+  const f = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  const q = `created_at:>='${dayStr}T00:00:00' created_at:<'${f(next)}T00:00:00'`;
+  const zero = () => ({ onhand: null, cost: null, retail: null, in: null, out: 0, soldCost: 0, soldRevenue: 0 });
+  const totals = zero(), byCategory = {};
+  let cursor = null;
+  do {
+    const data = await gql(SOLD_QUERY, { cursor, q });
+    const conn = data.orders;
+    for (const { node } of conn.edges) {
+      for (const { node: li } of node.lineItems.edges) {
+        if (!li.product) continue;
+        const cond = classifyCondition(li.product.productType);
+        if (!cond) continue; // cards only - matches dashboard scope
+        const subj = classifySubject(li.product.tags);
+        const price = li.variant ? Number(li.variant.price) || 0 : 0;
+        const unitCost = li.variant && li.variant.inventoryItem && li.variant.inventoryItem.unitCost
+          ? Number(li.variant.inventoryItem.unitCost.amount) || 0 : 0;
+        const qty = li.quantity || 0;
+        const c = (byCategory[subj.category] = byCategory[subj.category] || zero());
+        for (const t of [totals, c]) {
+          t.out += qty;
+          t.soldCost = money(t.soldCost + qty * unitCost);
+          t.soldRevenue = money(t.soldRevenue + qty * price);
+        }
+      }
+    }
+    cursor = conn.pageInfo.hasNextPage ? conn.pageInfo.endCursor : null;
+  } while (cursor);
+  return { totals, byCategory };
+}
+
+// All dates from start (inclusive) to end (exclusive), as YYYY-MM-DD.
+function dateRange(startStr, endStr) {
+  const out = [];
+  const d = new Date(`${startStr}T00:00:00`), end = new Date(`${endStr}T00:00:00`);
+  while (d < end) {
+    out.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`);
+    d.setDate(d.getDate() + 1);
+  }
+  return out;
+}
+
 /* ---------- Run ---------- */
 (async () => {
   const win = yesterdayWindow();
@@ -234,12 +301,36 @@ async function pullSold(win) {
     a.category.localeCompare(b.category) || a.subject.localeCompare(b.subject) ||
     a.cond.localeCompare(b.cond) || a.tier.localeCompare(b.tier));
 
+  // ---- History: carry forward, backfill missing days, upsert today ----
+  let history = [];
+  try {
+    const prev = JSON.parse(fs.readFileSync(OUT, "utf8"));
+    if (Array.isArray(prev.history)) history = prev.history;
+  } catch { /* first run or unreadable - start fresh */ }
+  const have = new Set(history.map((h) => h.date));
+
+  // Backfill sold-side for any missing day from HISTORY_BACKFILL_START to yesterday-of-window
+  const missing = dateRange(HISTORY_BACKFILL_START, win.day).filter((d) => !have.has(d)).slice(0, BACKFILL_MAX_PER_RUN);
+  for (const day of missing) {
+    console.error(`Backfilling sold-side for ${day}...`);
+    const { totals, byCategory } = await soldSummaryForDay(day);
+    history.push({ date: day, onhandKnown: false, totals, byCategory });
+    await sleep(400); // be polite to the API across a long backfill
+  }
+
+  // Upsert today's full entry (on-hand + sold) from the live records
+  const todayRollup = rollupRecords(records);
+  history = history.filter((h) => h.date !== win.day);
+  history.push({ date: win.day, onhandKnown: true, totals: todayRollup.totals, byCategory: todayRollup.byCategory });
+  history.sort((a, b) => a.date.localeCompare(b.date));
+
   const out = {
     date: win.day,
     generatedAt: new Date().toISOString(),
     scope: "Cards only - all channels (online + POS)",
     isSample: false,
     records,
+    history,
   };
 
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
@@ -255,4 +346,5 @@ async function pullSold(win) {
   console.error(`On hand -> ${tot.onhand} units | cost ${usd(tot.cost)} | retail ${usd(tot.retail)} | margin ${usd(tot.retail - tot.cost)}`);
   console.error(`Yesterday -> in ${tot.in}, out ${tot.out} | sold revenue ${usd(tot.soldRev)} | sold cost ${usd(tot.soldCost)} | sold margin ${usd(tot.soldRev - tot.soldCost)}`);
   console.error(`Wrote ${records.length} buckets to ${OUT}`);
+  console.error(`History: ${history.length} days (${history[0].date} -> ${history[history.length - 1].date}), backfilled ${missing.length} this run.`);
 })().catch((e) => { console.error(e); process.exit(1); });

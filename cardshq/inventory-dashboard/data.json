@@ -2037,5 +2037,49 @@
         }
       }
     }
+  ],
+  "history": [
+    {
+      "date": "2026-07-01",
+      "onhandKnown": true,
+      "totals": {
+        "onhand": 24000,
+        "cost": 1275861.24,
+        "retail": 1668182,
+        "in": 977,
+        "out": 474,
+        "soldCost": 26780.43,
+        "soldRevenue": 34819
+      },
+      "byCategory": {
+        "Other": {
+          "onhand": 8,
+          "cost": 855,
+          "retail": 1080,
+          "in": 0,
+          "out": 0,
+          "soldCost": 0,
+          "soldRevenue": 0
+        },
+        "Sports": {
+          "onhand": 4624,
+          "cost": 570974.3,
+          "retail": 702424,
+          "in": 158,
+          "out": 195,
+          "soldCost": 14769.92,
+          "soldRevenue": 18880
+        },
+        "TCG": {
+          "onhand": 19368,
+          "cost": 704031.94,
+          "retail": 964678,
+          "in": 819,
+          "out": 279,
+          "soldCost": 12010.51,
+          "soldRevenue": 15939
+        }
+      }
+    }
   ]
 }
