@@ -327,6 +327,7 @@
   .trend-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 18px;padding:10px 12px;background:#F9FAFB;border:1px solid var(--line-soft);border-radius:10px;}
   .tr-label{font-size:12px;font-weight:bold;color:var(--ink);margin-right:2px;}
   .tr-note{margin-left:auto;font-size:11px;color:var(--faint);}
+  .asof-banner{margin:14px 0 4px;padding:10px 16px;background:#EFF6FF;border:1px solid #BFDBFE;border-left:3px solid var(--blue);border-radius:10px;font-size:12.5px;color:var(--ink);}
   @media(max-width:640px){.tr-note{margin-left:0;width:100%;}}
   /* Interactive chart tooltip */
   .hc-wrap{position:relative;}
@@ -1262,7 +1263,99 @@ function TrendRange({ range, custom, setRange, setCustom, minDate, maxDate }){
         <input type="date" className="hist-date" value={custom.to} min={custom.from||minDate} max={maxDate} onChange={e=>setField('to',e.target.value)} aria-label="To date"/>
         {usingCustom && <button className="hist-clear" onClick={()=>setCustom({from:'',to:''})}>Clear</button>}
       </span>
-      <span className="tr-note">Controls the trend charts below</span>
+      <span className="tr-note">Sets the dashboard view - end date drives the sections below; range sums the sold side</span>
+    </div>
+  );
+}
+
+/* ============================================================
+   AS-OF REWIND
+   Custom range's end date rewinds the dashboard: snapshot days get
+   full detail; June days render category-level derived values.
+   ============================================================ */
+function AsOfBanner({ snap, latestDate }){
+  const nice=(d)=>new Date(d+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+  let msg;
+  if(snap.mode==='snapshot') msg = 'Viewing dashboard as of '+nice(snap.date)+' (recorded snapshot). Tag filters apply.';
+  else if(snap.mode==='derived' && snap.entry.totals.cost!=null) msg = 'Viewing '+nice(snap.date)+' - derived values at category level. Graded/Raw split, tier, and tag-filter detail are only available from July 1, 2026 forward.';
+  else if(snap.mode==='derived') msg = nice(snap.date)+' selected - derived values for this date land after the next data pull. Showing latest live data below.';
+  else msg = 'No data for '+nice(snap.date)+' - showing latest live data ('+nice(latestDate)+').';
+  return <div className="asof-banner">{msg}</div>;
+}
+
+function RangeSold({ history, from, to }){
+  const lo = from || (history[0] && history[0].date) || '';
+  const hi = to || (history[history.length-1] && history[history.length-1].date) || '';
+  const cut = history.filter(h=>h.date>=lo && h.date<=hi);
+  const zero=()=>({out:0,soldCost:0,soldRevenue:0});
+  const tot=zero(), byCat={};
+  for(const h of cut){
+    for(const [c,v] of Object.entries(h.byCategory)){
+      const b=(byCat[c]=byCat[c]||zero());
+      for(const t of [tot,b]){ t.out+=v.out||0; t.soldCost+=v.soldCost||0; t.soldRevenue+=v.soldRevenue||0; }
+    }
+  }
+  const rows=Object.entries(byCat).map(([category,a])=>({category,a})).filter(r=>r.a.out>0).sort((x,y)=>y.a.soldRevenue-x.a.soldRevenue);
+  const nice=(d)=>new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  return (
+    <div className="sold-section">
+      <div className="cat-collapse-head sold" style={{cursor:'default'}}>
+        <span className="cat-title">Sold {nice(lo)} - {nice(hi)}</span>
+        <span className="cat-desc">{cut.length} days summed</span>
+        <span className="cat-head-summary">
+          {fmt(tot.out)} units · {usd(tot.soldRevenue)} rev · {usd(tot.soldCost)} cost · <span className="cat-m">{usd(tot.soldRevenue-tot.soldCost)} ({marginPct(tot.soldRevenue,tot.soldCost)}%)</span>
+        </span>
+      </div>
+      <table className="sold-table">
+        <thead><tr><th className="l">Category</th><th>Units Sold</th><th>Revenue</th><th>Cost</th><th>Margin</th></tr></thead>
+        <tbody>
+          {rows.length===0 ? <tr><td className="sold-empty" colSpan={5}>No sales in this range.</td></tr> : (
+            <React.Fragment>
+              {rows.map(({category,a})=>(
+                <tr key={category}>
+                  <td className="l">{category}</td><td>{fmt(a.out)}</td><td>{usd(a.soldRevenue)}</td><td>{usd(a.soldCost)}</td>
+                  <td className="sold-m">{usd(a.soldRevenue-a.soldCost)} <span className="cat-sub">{marginPct(a.soldRevenue,a.soldCost)}%</span></td>
+                </tr>
+              ))}
+              <tr className="sold-total">
+                <td className="l">Total</td><td>{fmt(tot.out)}</td><td>{usd(tot.soldRevenue)}</td><td>{usd(tot.soldCost)}</td>
+                <td>{usd(tot.soldRevenue-tot.soldCost)} <span className="cat-sub">{marginPct(tot.soldRevenue,tot.soldCost)}%</span></td>
+              </tr>
+            </React.Fragment>
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function DerivedAsOf({ entry }){
+  const rows=Object.entries(entry.byCategory).map(([category,v])=>({category,v}))
+    .filter(r=>r.v.cost!=null && (r.v.onhand>0||r.v.cost>0))
+    .sort((x,y)=>(y.v.retail||0)-(x.v.retail||0));
+  if(rows.length===0) return null;
+  const t=entry.totals;
+  return (
+    <div className="cat-section">
+      <div className="cat-collapse-head" style={{cursor:'default'}}>
+        <span className="cat-title">On Hand by Category</span>
+        <span className="cat-desc">derived for this date</span>
+      </div>
+      <table className="cat-table">
+        <thead><tr><th className="l">Category</th><th>On Hand</th><th>Value (Cost)</th><th>Retail</th><th>Margin</th></tr></thead>
+        <tbody>
+          {rows.map(({category,v})=>(
+            <tr key={category}>
+              <td className="l">{category}</td><td>{fmt(v.onhand)}</td><td>{usd(v.cost)}</td><td>{usd(v.retail)}</td>
+              <td className="cat-m">{usd((v.retail||0)-(v.cost||0))} <span className="cat-sub">{marginPct(v.retail,v.cost)}%</span></td>
+            </tr>
+          ))}
+          <tr className="cat-total">
+            <td className="l">Total</td><td>{fmt(t.onhand)}</td><td>{usd(t.cost)}</td><td>{usd(t.retail)}</td>
+            <td>{usd((t.retail||0)-(t.cost||0))} <span className="cat-sub">{marginPct(t.retail,t.cost)}%</span></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   );
 }
@@ -1283,14 +1376,38 @@ function App(){
         const stampLabel = d.generatedAt
           ? ('As of ' + new Date(d.generatedAt).toLocaleString('en-US',{hour:'numeric',minute:'2-digit'}) + ' ET · yesterday')
           : SNAPSHOT.stamp;
-        setData({ records:d.records||[], history:d.history||[], isSample:!!d.isSample, dateLabel, stampLabel });
+        setData({ records:d.records||[], history:d.history||[], snapshots:d.snapshots||[], date:d.date||'', isSample:!!d.isSample, dateLabel, stampLabel });
       })
-      .catch(()=> setData({ records:SAMPLE_RECORDS, history:[], isSample:true, dateLabel:SNAPSHOT.range, stampLabel:SNAPSHOT.stamp }));
+      .catch(()=> setData({ records:SAMPLE_RECORDS, history:[], snapshots:[], date:'', isSample:true, dateLabel:SNAPSHOT.range, stampLabel:SNAPSHOT.stamp }));
   }, []);
 
   const records = data ? data.records : null;
-  const filtered = useMemo(()=> records ? records.filter(r=>matches(r, selected)) : [], [records, selected]);
-  const totals = useMemo(()=>aggregate(filtered), [filtered]);
+
+  // ---- As-of resolver: custom range's end date rewinds the whole dashboard ----
+  const customActive = !!(histCustom.from || histCustom.to);
+  const latestDate = data ? data.date : '';
+  const asOf = customActive ? (histCustom.to || latestDate) : latestDate;
+  const [snap, setSnap] = useState(null); // {mode:'snapshot'|'derived'|'missing', date, records?, entry?}
+  React.useEffect(()=>{
+    if(!data || !asOf || asOf===latestDate){ setSnap(null); return; }
+    if(data.snapshots.includes(asOf)){
+      let live=true;
+      fetch('./snapshots/'+asOf+'.json', { cache:'no-store' })
+        .then(r=>{ if(!r.ok) throw new Error('missing'); return r.json(); })
+        .then(s=>{ if(live) setSnap({ mode:'snapshot', date:asOf, records:s.records||[] }); })
+        .catch(()=>{ if(live){ const e=data.history.find(h=>h.date===asOf); setSnap(e?{mode:'derived',date:asOf,entry:e}:{mode:'missing',date:asOf}); } });
+      return ()=>{ live=false; };
+    }
+    const e = data.history.find(h=>h.date===asOf);
+    setSnap(e ? { mode:'derived', date:asOf, entry:e } : { mode:'missing', date:asOf });
+  }, [data, asOf, latestDate]);
+
+  const derivedMode = snap && snap.mode==='derived';
+  const derivedReady = derivedMode && snap.entry.totals.cost!=null;
+  const viewRecords = snap && snap.mode==='snapshot' ? snap.records : records;
+  const filtered = useMemo(()=> viewRecords ? viewRecords.filter(r=>matches(r, selected)) : [], [viewRecords, selected]);
+  const liveTotals = useMemo(()=>aggregate(filtered), [filtered]);
+  const totals = derivedReady ? snap.entry.totals : liveTotals;
 
   if(!data) return <div style={{padding:'60px 20px', textAlign:'center', color:'#6B7280', fontFamily:'Arial'}}>Loading inventory…</div>;
 
@@ -1308,11 +1425,18 @@ function App(){
         <FilterBar selected={selected} setSelected={setSelected}/>
       </div>
       {histMax && <TrendRange range={histRange} custom={histCustom} setRange={setHistRange} setCustom={setHistCustom} minDate={histMin} maxDate={histMax}/>}
+      {snap && <AsOfBanner snap={snap} latestDate={latestDate}/>}
       <Totals totals={totals}/>
-      <SoldSide records={filtered}/>
-      <GradedRollup records={filtered}/>
-      <ActiveFilters selected={selected} setSelected={setSelected}/>
-      <CategoryBreakdown records={filtered}/>
+      {customActive
+        ? <RangeSold history={data.history} from={histCustom.from} to={histCustom.to}/>
+        : <SoldSide records={filtered}/>}
+      {derivedReady
+        ? <DerivedAsOf entry={snap.entry}/>
+        : <React.Fragment>
+            <GradedRollup records={filtered}/>
+            <ActiveFilters selected={selected} setSelected={setSelected}/>
+            <CategoryBreakdown records={filtered}/>
+          </React.Fragment>}
       <HistoricalView history={data.history} range={histRange} custom={histCustom}/>
       <div className="footnote">
         {data.isSample
