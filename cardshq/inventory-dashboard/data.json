@@ -1,6 +1,6 @@
 {
   "date": "2026-07-01",
-  "generatedAt": "2026-07-02T18:42:46.926Z",
+  "generatedAt": "2026-07-02T18:58:47.539Z",
   "scope": "Cards only - all channels (online + POS)",
   "isSample": false,
   "records": [
@@ -9,10 +9,10 @@
       "subject": "Other",
       "tier": "Low",
       "cond": "Graded",
-      "onhand": 19,
+      "onhand": 18,
       "val": {
-        "cost": 769,
-        "retail": 1055
+        "cost": 709,
+        "retail": 975
       },
       "p": {
         "daily": {
@@ -28,10 +28,10 @@
       "subject": "Other",
       "tier": "Mid",
       "cond": "Graded",
-      "onhand": 3,
+      "onhand": 2,
       "val": {
-        "cost": 1085,
-        "retail": 1375
+        "cost": 875,
+        "retail": 1075
       },
       "p": {
         "daily": {
@@ -66,10 +66,10 @@
       "subject": "Baseball",
       "tier": "Low",
       "cond": "Graded",
-      "onhand": 653,
+      "onhand": 649,
       "val": {
-        "cost": 10549.19,
-        "retail": 23260
+        "cost": 10389.19,
+        "retail": 23035
       },
       "p": {
         "daily": {
@@ -180,10 +180,10 @@
       "subject": "Basketball",
       "tier": "Low",
       "cond": "Graded",
-      "onhand": 48,
+      "onhand": 52,
       "val": {
-        "cost": 2423.12,
-        "retail": 3110
+        "cost": 2583.12,
+        "retail": 3335
       },
       "p": {
         "daily": {
@@ -237,10 +237,10 @@
       "subject": "Basketball",
       "tier": "Low",
       "cond": "Raw",
-      "onhand": 431,
+      "onhand": 430,
       "val": {
-        "cost": 15035.59,
-        "retail": 18275
+        "cost": 15011.59,
+        "retail": 18245
       },
       "p": {
         "daily": {
@@ -864,10 +864,10 @@
       "subject": "Soccer",
       "tier": "Low",
       "cond": "Raw",
-      "onhand": 184,
+      "onhand": 183,
       "val": {
-        "cost": 5984.34,
-        "retail": 7502
+        "cost": 5909.23,
+        "retail": 7392
       },
       "p": {
         "daily": {
@@ -1016,10 +1016,10 @@
       "subject": "Wrestling",
       "tier": "Low",
       "cond": "Graded",
-      "onhand": 23,
+      "onhand": 22,
       "val": {
-        "cost": 725,
-        "retail": 690
+        "cost": 660,
+        "retail": 610
       },
       "p": {
         "daily": {
@@ -1035,10 +1035,10 @@
       "subject": "Wrestling",
       "tier": "Low",
       "cond": "Raw",
-      "onhand": 23,
+      "onhand": 19,
       "val": {
-        "cost": 889.64,
-        "retail": 1175
+        "cost": 877.14,
+        "retail": 1135
       },
       "p": {
         "daily": {
@@ -1054,10 +1054,10 @@
       "subject": "Wrestling",
       "tier": "Mid",
       "cond": "Raw",
-      "onhand": 6,
+      "onhand": 5,
       "val": {
-        "cost": 2035.54,
-        "retail": 2475
+        "cost": 1885.54,
+        "retail": 2275
       },
       "p": {
         "daily": {
@@ -1415,10 +1415,10 @@
       "subject": "Magic the Gathering",
       "tier": "Low",
       "cond": "Raw",
-      "onhand": 4146,
+      "onhand": 4140,
       "val": {
-        "cost": 45729.76,
-        "retail": 75152
+        "cost": 45681.46,
+        "retail": 75076
       },
       "p": {
         "daily": {
@@ -2043,9 +2043,9 @@
       "date": "2026-06-01",
       "onhandKnown": false,
       "totals": {
-        "onhand": 19582,
-        "cost": 1168974.83,
-        "retail": 1479035.76,
+        "onhand": 19554,
+        "cost": 1161580.25,
+        "retail": 1464097.76,
         "in": 1281,
         "out": 664,
         "soldCost": 62691.71,
@@ -2053,27 +2053,27 @@
       },
       "byCategory": {
         "TCG": {
-          "onhand": 14527,
-          "cost": 519680.12,
-          "retail": 717382.75,
+          "onhand": 14521,
+          "cost": 519631.82,
+          "retail": 717306.75,
           "in": 209,
           "out": 315,
           "soldCost": 21696.75,
           "soldRevenue": 28233
         },
         "Sports": {
-          "onhand": 5029,
-          "cost": 641546.04,
-          "retail": 746281.01,
+          "onhand": 5021,
+          "cost": 641219.43,
+          "retail": 745821.01,
           "in": 1072,
           "out": 349,
           "soldCost": 40994.96,
           "soldRevenue": 52285
         },
         "Other": {
-          "onhand": 14,
-          "cost": 999,
-          "retail": 1350,
+          "onhand": 12,
+          "cost": 729,
+          "retail": 970,
           "in": 0,
           "out": 0,
           "soldCost": 0,
@@ -2081,15 +2081,16 @@
         }
       },
       "onhandDerived": true,
-      "catDerived": true
+      "catDerived": true,
+      "deriveV": 2
     },
     {
       "date": "2026-06-02",
       "onhandKnown": false,
       "totals": {
-        "onhand": 20086,
-        "cost": 1149612.39,
-        "retail": 1458389.76,
+        "onhand": 20058,
+        "cost": 1142217.81,
+        "retail": 1443451.76,
         "in": 1103,
         "out": 599,
         "soldCost": 64890.06,
@@ -2097,27 +2098,27 @@
       },
       "byCategory": {
         "TCG": {
-          "onhand": 15176,
-          "cost": 525232.36,
-          "retail": 727176.75,
+          "onhand": 15170,
+          "cost": 525184.06,
+          "retail": 727100.75,
           "in": 989,
           "out": 340,
           "soldCost": 25962.75,
           "soldRevenue": 34218
         },
         "Sports": {
-          "onhand": 4883,
-          "cost": 616056.36,
-          "retail": 715141.01,
+          "onhand": 4875,
+          "cost": 615729.75,
+          "retail": 714681.01,
           "in": 113,
           "out": 259,
           "soldCost": 38927.31,
           "soldRevenue": 49105
         },
         "Other": {
-          "onhand": 15,
-          "cost": 1574,
-          "retail": 2050,
+          "onhand": 13,
+          "cost": 1304,
+          "retail": 1670,
           "in": 1,
           "out": 0,
           "soldCost": 0,
@@ -2125,15 +2126,16 @@
         }
       },
       "onhandDerived": true,
-      "catDerived": true
+      "catDerived": true,
+      "deriveV": 2
     },
     {
       "date": "2026-06-03",
       "onhandKnown": false,
       "totals": {
-        "onhand": 20615,
-        "cost": 1129317.83,
-        "retail": 1437026.76,
+        "onhand": 20587,
+        "cost": 1121923.25,
+        "retail": 1422088.76,
         "in": 1080,
         "out": 551,
         "soldCost": 50135.76,
@@ -2141,27 +2143,27 @@
       },
       "byCategory": {
         "TCG": {
-          "onhand": 15893,
-          "cost": 536263.59,
-          "retail": 745698.75,
+          "onhand": 15887,
+          "cost": 536215.29,
+          "retail": 745622.75,
           "in": 1080,
           "out": 363,
           "soldCost": 18809.97,
           "soldRevenue": 25341
         },
         "Sports": {
-          "onhand": 4695,
-          "cost": 584730.57,
-          "retail": 675256.01,
+          "onhand": 4687,
+          "cost": 584403.96,
+          "retail": 674796.01,
           "in": 0,
           "out": 188,
           "soldCost": 31325.79,
           "soldRevenue": 39885
         },
         "Other": {
-          "onhand": 15,
-          "cost": 1574,
-          "retail": 2050,
+          "onhand": 13,
+          "cost": 1304,
+          "retail": 1670,
           "in": 0,
           "out": 0,
           "soldCost": 0,
@@ -2169,15 +2171,16 @@
         }
       },
       "onhandDerived": true,
-      "catDerived": true
+      "catDerived": true,
+      "deriveV": 2
     },
     {
       "date": "2026-06-04",
       "onhandKnown": false,
       "totals": {
-        "onhand": 21270,
-        "cost": 1136052.03,
-        "retail": 1447931.77,
+        "onhand": 21242,
+        "cost": 1128657.45,
+        "retail": 1432968.77,
         "in": 1188,
         "out": 533,
         "soldCost": 39447.86,
@@ -2185,27 +2188,27 @@
       },
       "byCategory": {
         "TCG": {
-          "onhand": 16397,
-          "cost": 543566.44,
-          "retail": 757283.75,
+          "onhand": 16391,
+          "cost": 543518.14,
+          "retail": 757207.75,
           "in": 732,
           "out": 228,
           "soldCost": 12620.1,
           "soldRevenue": 16997
         },
         "Sports": {
-          "onhand": 4846,
-          "cost": 584161.92,
-          "retail": 674551.02,
+          "onhand": 4838,
+          "cost": 583835.31,
+          "retail": 674091.02,
           "in": 456,
           "out": 305,
           "soldCost": 26827.76,
           "soldRevenue": 36748
         },
         "Other": {
-          "onhand": 15,
-          "cost": 1574,
-          "retail": 2050,
+          "onhand": 13,
+          "cost": 1304,
+          "retail": 1670,
           "in": 0,
           "out": 0,
           "soldCost": 0,
@@ -2213,15 +2216,16 @@
         }
       },
       "onhandDerived": true,
-      "catDerived": true
+      "catDerived": true,
+      "deriveV": 2
     },
     {
       "date": "2026-06-05",
       "onhandKnown": false,
       "totals": {
-        "onhand": 21373,
-        "cost": 1128696.78,
-        "retail": 1444143.02,
+        "onhand": 21345,
+        "cost": 1121302.2,
+        "retail": 1429180.02,
         "in": 750,
         "out": 647,
         "soldCost": 48478.15,
@@ -2229,27 +2233,27 @@
       },
       "byCategory": {
         "TCG": {
-          "onhand": 16676,
-          "cost": 559819.13,
-          "retail": 780055,
+          "onhand": 16670,
+          "cost": 559770.83,
+          "retail": 779979,
           "in": 671,
           "out": 392,
           "soldCost": 19342.31,
           "soldRevenue": 26171.75
         },
         "Sports": {
-          "onhand": 4665,
-          "cost": 560548.98,
-          "retail": 647066.02,
+          "onhand": 4657,
+          "cost": 560222.37,
+          "retail": 646606.02,
           "in": 74,
           "out": 255,
           "soldCost": 29135.84,
           "soldRevenue": 35075
         },
         "Other": {
-          "onhand": 20,
-          "cost": 1579,
-          "retail": 2975,
+          "onhand": 18,
+          "cost": 1309,
+          "retail": 2595,
           "in": 5,
           "out": 0,
           "soldCost": 0,
@@ -2257,15 +2261,16 @@
         }
       },
       "onhandDerived": true,
-      "catDerived": true
+      "catDerived": true,
+      "deriveV": 2
     },
     {
       "date": "2026-06-06",
       "onhandKnown": false,
       "totals": {
-        "onhand": 20525,
-        "cost": 1070463.29,
-        "retail": 1368290.02,
+        "onhand": 20497,
+        "cost": 1063068.71,
+        "retail": 1353327.02,
         "in": 0,
         "out": 848,
         "soldCost": 58233.49,
@@ -2273,27 +2278,27 @@
       },
       "byCategory": {
         "TCG": {
-          "onhand": 16305,
-          "cost": 539734.82,
-          "retail": 752737,
+          "onhand": 16299,
+          "cost": 539686.52,
+          "retail": 752661,
           "in": 0,
           "out": 371,
           "soldCost": 20084.31,
           "soldRevenue": 27318
         },
         "Sports": {
-          "onhand": 4188,
-          "cost": 522399.8,
-          "retail": 598531.02,
+          "onhand": 4180,
+          "cost": 522073.19,
+          "retail": 598071.02,
           "in": 0,
           "out": 477,
           "soldCost": 38149.18,
           "soldRevenue": 48535
         },
         "Other": {
-          "onhand": 20,
-          "cost": 1579,
-          "retail": 2975,
+          "onhand": 18,
+          "cost": 1309,
+          "retail": 2595,
           "in": 0,
           "out": 0,
           "soldCost": 0,
@@ -2301,15 +2306,16 @@
         }
       },
       "onhandDerived": true,
-      "catDerived": true
+      "catDerived": true,
+      "deriveV": 2
     },
     {
       "date": "2026-06-07",
       "onhandKnown": false,
       "totals": {
-        "onhand": 20147,
-        "cost": 1041052.36,
-        "retail": 1329197.02,
+        "onhand": 20119,
+        "cost": 1033657.78,
+        "retail": 1314234.02,
         "in": 0,
         "out": 378,
         "soldCost": 29410.93,
@@ -2317,27 +2323,27 @@
       },
       "byCategory": {
         "TCG": {
-          "onhand": 16062,
-          "cost": 523598.86,
-          "retail": 730669,
+          "onhand": 16056,
+          "cost": 523550.56,
+          "retail": 730593,
           "in": 0,
           "out": 243,
           "soldCost": 16135.96,
           "soldRevenue": 22068
         },
         "Sports": {
-          "onhand": 4053,
-          "cost": 509124.83,
-          "retail": 581506.02,
+          "onhand": 4045,
+          "cost": 508798.22,
+          "retail": 581046.02,
           "in": 0,
           "out": 135,
           "soldCost": 13274.97,
           "soldRevenue": 17025
         },
         "Other": {
-          "onhand": 20,
-          "cost": 1579,
-          "retail": 2975,
+          "onhand": 18,
+          "cost": 1309,
+          "retail": 2595,
           "in": 0,
           "out": 0,
           "soldCost": 0,
@@ -2345,15 +2351,16 @@
         }
       },
       "onhandDerived": true,
-      "catDerived": true
+      "catDerived": true,
+      "deriveV": 2
     },
     {
       "date": "2026-06-08",
       "onhandKnown": false,
       "totals": {
-        "onhand": 20607,
-        "cost": 1095346.58,
-        "retail": 1397776.02,
+        "onhand": 20579,
+        "cost": 1087952,
+        "retail": 1382763.02,
         "in": 1134,
         "out": 674,
         "soldCost": 51158.88,
@@ -2361,27 +2368,27 @@
       },
       "byCategory": {
         "TCG": {
-          "onhand": 16071,
-          "cost": 530197.02,
-          "retail": 740823,
+          "onhand": 16065,
+          "cost": 530148.72,
+          "retail": 740747,
           "in": 400,
           "out": 391,
           "soldCost": 23132.23,
           "soldRevenue": 28792
         },
         "Sports": {
-          "onhand": 4505,
-          "cost": 556815.89,
-          "retail": 640291.02,
+          "onhand": 4497,
+          "cost": 556489.28,
+          "retail": 639831.02,
           "in": 733,
           "out": 281,
           "soldCost": 28024.65,
           "soldRevenue": 35485
         },
         "Other": {
-          "onhand": 19,
-          "cost": 1584,
-          "retail": 2565,
+          "onhand": 17,
+          "cost": 1314,
+          "retail": 2185,
           "in": 1,
           "out": 2,
           "soldCost": 2,
@@ -2389,15 +2396,16 @@
         }
       },
       "onhandDerived": true,
-      "catDerived": true
+      "catDerived": true,
+      "deriveV": 2
     },
     {
       "date": "2026-06-09",
       "onhandKnown": false,
       "totals": {
-        "onhand": 21238,
-        "cost": 1101419.6,
-        "retail": 1410804.02,
+        "onhand": 21210,
+        "cost": 1094025.02,
+        "retail": 1395791.02,
         "in": 1261,
         "out": 630,
         "soldCost": 60326.18,
@@ -2405,27 +2413,27 @@
       },
       "byCategory": {
         "TCG": {
-          "onhand": 16855,
-          "cost": 543144.37,
-          "retail": 760601,
+          "onhand": 16849,
+          "cost": 543096.07,
+          "retail": 760525,
           "in": 1189,
           "out": 405,
           "soldCost": 25857.85,
           "soldRevenue": 35593
         },
         "Sports": {
-          "onhand": 4353,
-          "cost": 549948.56,
-          "retail": 633551.02,
+          "onhand": 4345,
+          "cost": 549621.95,
+          "retail": 633091.02,
           "in": 72,
           "out": 224,
           "soldCost": 34461.33,
           "soldRevenue": 42590
         },
         "Other": {
-          "onhand": 18,
-          "cost": 1577,
-          "retail": 2555,
+          "onhand": 16,
+          "cost": 1307,
+          "retail": 2175,
           "in": 0,
           "out": 1,
           "soldCost": 7,
@@ -2433,15 +2441,16 @@
         }
       },
       "onhandDerived": true,
-      "catDerived": true
+      "catDerived": true,
+      "deriveV": 2
     },
     {
       "date": "2026-06-10",
       "onhandKnown": false,
       "totals": {
-        "onhand": 22213,
-        "cost": 1115278.49,
-        "retail": 1434469.02,
+        "onhand": 22185,
+        "cost": 1107883.91,
+        "retail": 1419456.02,
         "in": 1350,
         "out": 375,
         "soldCost": 18178.86,
@@ -2449,27 +2458,27 @@
       },
       "byCategory": {
         "TCG": {
-          "onhand": 17873,
-          "cost": 561337.73,
-          "retail": 789761,
+          "onhand": 17867,
+          "cost": 561289.43,
+          "retail": 789685,
           "in": 1305,
           "out": 287,
           "soldCost": 11354.39,
           "soldRevenue": 15632
         },
         "Sports": {
-          "onhand": 4310,
-          "cost": 545614.09,
-          "retail": 628056.02,
+          "onhand": 4302,
+          "cost": 545287.48,
+          "retail": 627596.02,
           "in": 45,
           "out": 88,
           "soldCost": 6824.47,
           "soldRevenue": 8425
         },
         "Other": {
-          "onhand": 18,
-          "cost": 1577,
-          "retail": 2555,
+          "onhand": 16,
+          "cost": 1307,
+          "retail": 2175,
           "in": 0,
           "out": 0,
           "soldCost": 0,
@@ -2477,15 +2486,16 @@
         }
       },
       "onhandDerived": true,
-      "catDerived": true
+      "catDerived": true,
+      "deriveV": 2
     },
     {
       "date": "2026-06-11",
       "onhandKnown": false,
       "totals": {
-        "onhand": 22712,
-        "cost": 1128530.47,
-        "retail": 1457592.02,
+        "onhand": 22684,
+        "cost": 1121135.89,
+        "retail": 1442129.02,
         "in": 1225,
         "out": 726,
         "soldCost": 49044.89,
@@ -2493,27 +2503,27 @@
       },
       "byCategory": {
         "Sports": {
-          "onhand": 4374,
-          "cost": 535771.47,
-          "retail": 617925.02,
+          "onhand": 4366,
+          "cost": 535444.86,
+          "retail": 617465.02,
           "in": 345,
           "out": 281,
           "soldCost": 26542.09,
           "soldRevenue": 32576
         },
         "TCG": {
-          "onhand": 18308,
-          "cost": 584432.33,
-          "retail": 822565,
+          "onhand": 18302,
+          "cost": 584384.03,
+          "retail": 822489,
           "in": 880,
           "out": 445,
           "soldCost": 22502.8,
           "soldRevenue": 30633
         },
         "Other": {
-          "onhand": 18,
-          "cost": 1577,
-          "retail": 2555,
+          "onhand": 16,
+          "cost": 1307,
+          "retail": 2175,
           "in": 0,
           "out": 0,
           "soldCost": 0,
@@ -2521,15 +2531,16 @@
         }
       },
       "onhandDerived": true,
-      "catDerived": true
+      "catDerived": true,
+      "deriveV": 2
     },
     {
       "date": "2026-06-12",
       "onhandKnown": false,
       "totals": {
-        "onhand": 23295,
-        "cost": 1130621.27,
-        "retail": 1468871.02,
+        "onhand": 23267,
+        "cost": 1123226.69,
+        "retail": 1453088.02,
         "in": 1338,
         "out": 755,
         "soldCost": 66075.79,
@@ -2537,27 +2548,27 @@
       },
       "byCategory": {
         "TCG": {
-          "onhand": 18768,
-          "cost": 590572.67,
-          "retail": 832844,
+          "onhand": 18762,
+          "cost": 590524.37,
+          "retail": 832768,
           "in": 930,
           "out": 470,
           "soldCost": 29332.78,
           "soldRevenue": 39400
         },
         "Sports": {
-          "onhand": 4498,
-          "cost": 531722.93,
-          "retail": 618725.02,
+          "onhand": 4490,
+          "cost": 531396.32,
+          "retail": 618265.02,
           "in": 408,
           "out": 284,
           "soldCost": 36742.01,
           "soldRevenue": 43280
         },
         "Other": {
-          "onhand": 17,
-          "cost": 1576,
-          "retail": 2435,
+          "onhand": 15,
+          "cost": 1306,
+          "retail": 2055,
           "in": 0,
           "out": 1,
           "soldCost": 1,
@@ -2565,15 +2576,16 @@
         }
       },
       "onhandDerived": true,
-      "catDerived": true
+      "catDerived": true,
+      "deriveV": 2
     },
     {
       "date": "2026-06-13",
       "onhandKnown": false,
       "totals": {
-        "onhand": 22639,
-        "cost": 1088306.15,
-        "retail": 1413576.02,
+        "onhand": 22611,
+        "cost": 1080911.57,
+        "retail": 1397793.02,
         "in": 0,
         "out": 656,
         "soldCost": 42315.12,
@@ -2581,27 +2593,27 @@
       },
       "byCategory": {
         "TCG": {
-          "onhand": 18321,
-          "cost": 572284.93,
-          "retail": 807039,
+          "onhand": 18315,
+          "cost": 572236.63,
+          "retail": 806963,
           "in": 0,
           "out": 447,
           "soldCost": 18287.74,
           "soldRevenue": 25805
         },
         "Sports": {
-          "onhand": 4290,
-          "cost": 507696.55,
-          "retail": 589585.02,
+          "onhand": 4282,
+          "cost": 507369.94,
+          "retail": 589125.02,
           "in": 0,
           "out": 208,
           "soldCost": 24026.38,
           "soldRevenue": 29140
         },
         "Other": {
-          "onhand": 16,
-          "cost": 1575,
-          "retail": 2085,
+          "onhand": 14,
+          "cost": 1305,
+          "retail": 1705,
           "in": 0,
           "out": 1,
           "soldCost": 1,
@@ -2609,15 +2621,16 @@
         }
       },
       "onhandDerived": true,
-      "catDerived": true
+      "catDerived": true,
+      "deriveV": 2
     },
     {
       "date": "2026-06-14",
       "onhandKnown": false,
       "totals": {
-        "onhand": 22116,
-        "cost": 1054797.19,
-        "retail": 1369379.02,
+        "onhand": 22088,
+        "cost": 1047402.61,
+        "retail": 1353596.02,
         "in": 0,
         "out": 523,
         "soldCost": 33508.96,
@@ -2625,27 +2638,27 @@
       },
       "byCategory": {
         "TCG": {
-          "onhand": 17928,
-          "cost": 556825.36,
-          "retail": 786150,
+          "onhand": 17922,
+          "cost": 556777.06,
+          "retail": 786074,
           "in": 0,
           "out": 393,
           "soldCost": 15459.57,
           "soldRevenue": 20889
         },
         "Sports": {
-          "onhand": 4161,
-          "cost": 489648.16,
-          "retail": 566312.02,
+          "onhand": 4153,
+          "cost": 489321.55,
+          "retail": 565852.02,
           "in": 0,
           "out": 129,
           "soldCost": 18048.39,
           "soldRevenue": 23273
         },
         "Other": {
-          "onhand": 15,
-          "cost": 1574,
-          "retail": 2050,
+          "onhand": 13,
+          "cost": 1304,
+          "retail": 1670,
           "in": 0,
           "out": 1,
           "soldCost": 1,
@@ -2653,15 +2666,16 @@
         }
       },
       "onhandDerived": true,
-      "catDerived": true
+      "catDerived": true,
+      "deriveV": 2
     },
     {
       "date": "2026-06-15",
       "onhandKnown": false,
       "totals": {
-        "onhand": 23485,
-        "cost": 1153993.43,
-        "retail": 1495225.02,
+        "onhand": 23457,
+        "cost": 1146309.63,
+        "retail": 1479332.02,
         "in": 1877,
         "out": 508,
         "soldCost": 41649.12,
@@ -2669,26 +2683,521 @@
       },
       "byCategory": {
         "TCG": {
-          "onhand": 18968,
-          "cost": 626140.58,
-          "retail": 873077,
+          "onhand": 18962,
+          "cost": 626092.28,
+          "retail": 873001,
           "in": 1319,
           "out": 279,
           "soldCost": 27578.43,
           "soldRevenue": 35606
         },
         "Sports": {
-          "onhand": 4490,
-          "cost": 519239.96,
-          "retail": 605121.02,
+          "onhand": 4482,
+          "cost": 518913.35,
+          "retail": 604661.02,
           "in": 558,
           "out": 229,
           "soldCost": 14070.69,
           "soldRevenue": 18345
         },
         "Other": {
-          "onhand": 15,
-          "cost": 1574,
+          "onhand": 13,
+          "cost": 1304,
+          "retail": 1670,
+          "in": 0,
+          "out": 0,
+          "soldCost": 0,
+          "soldRevenue": 0
+        }
+      },
+      "onhandDerived": true,
+      "catDerived": true,
+      "deriveV": 2
+    },
+    {
+      "date": "2026-06-16",
+      "onhandKnown": false,
+      "totals": {
+        "onhand": 24226,
+        "cost": 1189940.28,
+        "retail": 1541215.02,
+        "in": 1254,
+        "out": 485,
+        "soldCost": 44696.58,
+        "soldRevenue": 55930
+      },
+      "byCategory": {
+        "TCG": {
+          "onhand": 19654,
+          "cost": 667894.66,
+          "retail": 928518,
+          "in": 948,
+          "out": 256,
+          "soldCost": 14091.42,
+          "soldRevenue": 19096
+        },
+        "Sports": {
+          "onhand": 4558,
+          "cost": 520641.62,
+          "retail": 610897.02,
+          "in": 305,
+          "out": 229,
+          "soldCost": 30605.16,
+          "soldRevenue": 36834
+        },
+        "Other": {
+          "onhand": 14,
+          "cost": 1404,
+          "retail": 1800,
+          "in": 1,
+          "out": 0,
+          "soldCost": 0,
+          "soldRevenue": 0
+        }
+      },
+      "onhandDerived": true,
+      "catDerived": true,
+      "deriveV": 2
+    },
+    {
+      "date": "2026-06-17",
+      "onhandKnown": false,
+      "totals": {
+        "onhand": 23766,
+        "cost": 1128776.71,
+        "retail": 1466531.02,
+        "in": 1,
+        "out": 461,
+        "soldCost": 62213.57,
+        "soldRevenue": 76184
+      },
+      "byCategory": {
+        "TCG": {
+          "onhand": 19384,
+          "cost": 641915.57,
+          "retail": 895189,
+          "in": 1,
+          "out": 271,
+          "soldCost": 27029.09,
+          "soldRevenue": 34829
+        },
+        "Sports": {
+          "onhand": 4368,
+          "cost": 485457.14,
+          "retail": 569542.02,
+          "in": 0,
+          "out": 190,
+          "soldCost": 35184.48,
+          "soldRevenue": 41355
+        },
+        "Other": {
+          "onhand": 14,
+          "cost": 1404,
+          "retail": 1800,
+          "in": 0,
+          "out": 0,
+          "soldCost": 0,
+          "soldRevenue": 0
+        }
+      },
+      "onhandDerived": true,
+      "catDerived": true,
+      "deriveV": 2
+    },
+    {
+      "date": "2026-06-18",
+      "onhandKnown": false,
+      "totals": {
+        "onhand": 23906,
+        "cost": 1144783.81,
+        "retail": 1492332.02,
+        "in": 844,
+        "out": 704,
+        "soldCost": 48164.64,
+        "soldRevenue": 61156
+      },
+      "byCategory": {
+        "TCG": {
+          "onhand": 19442,
+          "cost": 664887.79,
+          "retail": 925670,
+          "in": 567,
+          "out": 509,
+          "soldCost": 22479.5,
+          "soldRevenue": 31071
+        },
+        "Sports": {
+          "onhand": 4450,
+          "cost": 478492.02,
+          "retail": 564862.02,
+          "in": 277,
+          "out": 195,
+          "soldCost": 25685.14,
+          "soldRevenue": 30085
+        },
+        "Other": {
+          "onhand": 14,
+          "cost": 1404,
+          "retail": 1800,
+          "in": 0,
+          "out": 0,
+          "soldCost": 0,
+          "soldRevenue": 0
+        }
+      },
+      "onhandDerived": true,
+      "catDerived": true,
+      "deriveV": 2
+    },
+    {
+      "date": "2026-06-19",
+      "onhandKnown": false,
+      "totals": {
+        "onhand": 23917,
+        "cost": 1134088.74,
+        "retail": 1478801.02,
+        "in": 826,
+        "out": 815,
+        "soldCost": 56214.67,
+        "soldRevenue": 74610
+      },
+      "byCategory": {
+        "TCG": {
+          "onhand": 19691,
+          "cost": 671699.6,
+          "retail": 933289,
+          "in": 758,
+          "out": 509,
+          "soldCost": 33799.79,
+          "soldRevenue": 46580
+        },
+        "Sports": {
+          "onhand": 4212,
+          "cost": 460985.14,
+          "retail": 543712.02,
+          "in": 68,
+          "out": 306,
+          "soldCost": 22414.88,
+          "soldRevenue": 28030
+        },
+        "Other": {
+          "onhand": 14,
+          "cost": 1404,
+          "retail": 1800,
+          "in": 0,
+          "out": 0,
+          "soldCost": 0,
+          "soldRevenue": 0
+        }
+      },
+      "onhandDerived": true,
+      "catDerived": true,
+      "deriveV": 2
+    },
+    {
+      "date": "2026-06-20",
+      "onhandKnown": false,
+      "totals": {
+        "onhand": 23075,
+        "cost": 1078682.8,
+        "retail": 1404173.02,
+        "in": 0,
+        "out": 842,
+        "soldCost": 55405.94,
+        "soldRevenue": 74628
+      },
+      "byCategory": {
+        "TCG": {
+          "onhand": 19106,
+          "cost": 634880.33,
+          "retail": 881828,
+          "in": 0,
+          "out": 585,
+          "soldCost": 36819.27,
+          "soldRevenue": 51461
+        },
+        "Sports": {
+          "onhand": 3955,
+          "cost": 442398.47,
+          "retail": 520545.02,
+          "in": 0,
+          "out": 257,
+          "soldCost": 18586.67,
+          "soldRevenue": 23167
+        },
+        "Other": {
+          "onhand": 14,
+          "cost": 1404,
+          "retail": 1800,
+          "in": 0,
+          "out": 0,
+          "soldCost": 0,
+          "soldRevenue": 0
+        }
+      },
+      "onhandDerived": true,
+      "catDerived": true,
+      "deriveV": 2
+    },
+    {
+      "date": "2026-06-21",
+      "onhandKnown": false,
+      "totals": {
+        "onhand": 22494,
+        "cost": 1041363.5,
+        "retail": 1354551.02,
+        "in": 0,
+        "out": 581,
+        "soldCost": 37319.3,
+        "soldRevenue": 49622
+      },
+      "byCategory": {
+        "TCG": {
+          "onhand": 18719,
+          "cost": 616009.62,
+          "retail": 855736,
+          "in": 0,
+          "out": 387,
+          "soldCost": 18870.71,
+          "soldRevenue": 26092
+        },
+        "Sports": {
+          "onhand": 3761,
+          "cost": 423949.88,
+          "retail": 497015.02,
+          "in": 0,
+          "out": 194,
+          "soldCost": 18448.59,
+          "soldRevenue": 23530
+        },
+        "Other": {
+          "onhand": 14,
+          "cost": 1404,
+          "retail": 1800,
+          "in": 0,
+          "out": 0,
+          "soldCost": 0,
+          "soldRevenue": 0
+        }
+      },
+      "onhandDerived": true,
+      "catDerived": true,
+      "deriveV": 2
+    },
+    {
+      "date": "2026-06-22",
+      "onhandKnown": false,
+      "totals": {
+        "onhand": 22844,
+        "cost": 1115685.88,
+        "retail": 1448143.02,
+        "in": 990,
+        "out": 640,
+        "soldCost": 62370.83,
+        "soldRevenue": 79836
+      },
+      "byCategory": {
+        "TCG": {
+          "onhand": 18594,
+          "cost": 607787.35,
+          "retail": 845563,
+          "in": 207,
+          "out": 332,
+          "soldCost": 29402.42,
+          "soldRevenue": 38001
+        },
+        "Sports": {
+          "onhand": 4236,
+          "cost": 506494.53,
+          "retail": 600780.02,
+          "in": 783,
+          "out": 308,
+          "soldCost": 32968.41,
+          "soldRevenue": 41835
+        },
+        "Other": {
+          "onhand": 14,
+          "cost": 1404,
+          "retail": 1800,
+          "in": 0,
+          "out": 0,
+          "soldCost": 0,
+          "soldRevenue": 0
+        }
+      },
+      "onhandDerived": true,
+      "catDerived": true,
+      "deriveV": 2
+    },
+    {
+      "date": "2026-06-23",
+      "onhandKnown": false,
+      "totals": {
+        "onhand": 23480,
+        "cost": 1148715.28,
+        "retail": 1495144.02,
+        "in": 1347,
+        "out": 711,
+        "soldCost": 50661.81,
+        "soldRevenue": 65433
+      },
+      "byCategory": {
+        "Sports": {
+          "onhand": 3938,
+          "cost": 501409.26,
+          "retail": 593190.02,
+          "in": 139,
+          "out": 437,
+          "soldCost": 26210.1,
+          "soldRevenue": 33615
+        },
+        "TCG": {
+          "onhand": 19528,
+          "cost": 645902.02,
+          "retail": 900154,
+          "in": 1208,
+          "out": 274,
+          "soldCost": 24451.71,
+          "soldRevenue": 31818
+        },
+        "Other": {
+          "onhand": 14,
+          "cost": 1404,
+          "retail": 1800,
+          "in": 0,
+          "out": 0,
+          "soldCost": 0,
+          "soldRevenue": 0
+        }
+      },
+      "onhandDerived": true,
+      "catDerived": true,
+      "deriveV": 2
+    },
+    {
+      "date": "2026-06-24",
+      "onhandKnown": false,
+      "totals": {
+        "onhand": 23642,
+        "cost": 1148346.44,
+        "retail": 1496870.02,
+        "in": 585,
+        "out": 423,
+        "soldCost": 27504.94,
+        "soldRevenue": 35396
+      },
+      "byCategory": {
+        "TCG": {
+          "onhand": 19444,
+          "cost": 636805.65,
+          "retail": 888683,
+          "in": 180,
+          "out": 264,
+          "soldCost": 15817.47,
+          "soldRevenue": 21171
+        },
+        "Sports": {
+          "onhand": 4184,
+          "cost": 510136.79,
+          "retail": 606387.02,
+          "in": 405,
+          "out": 159,
+          "soldCost": 11687.47,
+          "soldRevenue": 14225
+        },
+        "Other": {
+          "onhand": 14,
+          "cost": 1404,
+          "retail": 1800,
+          "in": 0,
+          "out": 0,
+          "soldCost": 0,
+          "soldRevenue": 0
+        }
+      },
+      "onhandDerived": true,
+      "catDerived": true,
+      "deriveV": 2
+    },
+    {
+      "date": "2026-06-25",
+      "onhandKnown": false,
+      "totals": {
+        "onhand": 23448,
+        "cost": 1164548.27,
+        "retail": 1517971.02,
+        "in": 614,
+        "out": 808,
+        "soldCost": 57900.08,
+        "soldRevenue": 73722
+      },
+      "byCategory": {
+        "TCG": {
+          "onhand": 19192,
+          "cost": 643117.21,
+          "retail": 894441,
+          "in": 254,
+          "out": 506,
+          "soldCost": 23400.04,
+          "soldRevenue": 30925
+        },
+        "Sports": {
+          "onhand": 4236,
+          "cost": 519847.06,
+          "retail": 621480.02,
+          "in": 354,
+          "out": 302,
+          "soldCost": 34500.04,
+          "soldRevenue": 42797
+        },
+        "Other": {
+          "onhand": 20,
+          "cost": 1584,
+          "retail": 2050,
+          "in": 6,
+          "out": 0,
+          "soldCost": 0,
+          "soldRevenue": 0
+        }
+      },
+      "onhandDerived": true,
+      "catDerived": true,
+      "deriveV": 2
+    },
+    {
+      "date": "2026-06-26",
+      "onhandKnown": false,
+      "totals": {
+        "onhand": 24256,
+        "cost": 1280895.77,
+        "retail": 1666129.02,
+        "in": 1509,
+        "out": 701,
+        "soldCost": 56700.13,
+        "soldRevenue": 69045
+      },
+      "byCategory": {
+        "Sports": {
+          "onhand": 4429,
+          "cost": 549358.79,
+          "retail": 663359.02,
+          "in": 386,
+          "out": 193,
+          "soldCost": 37697.51,
+          "soldRevenue": 42606
+        },
+        "TCG": {
+          "onhand": 19807,
+          "cost": 729952.98,
+          "retail": 1000720,
+          "in": 1123,
+          "out": 508,
+          "soldCost": 19002.62,
+          "soldRevenue": 26439
+        },
+        "Other": {
+          "onhand": 20,
+          "cost": 1584,
           "retail": 2050,
           "in": 0,
           "out": 0,
@@ -2697,499 +3206,16 @@
         }
       },
       "onhandDerived": true,
-      "catDerived": true
-    },
-    {
-      "date": "2026-06-16",
-      "onhandKnown": false,
-      "totals": {
-        "onhand": 24254,
-        "cost": 1197624.08,
-        "retail": 1557108.02,
-        "in": 1254,
-        "out": 485,
-        "soldCost": 44696.58,
-        "soldRevenue": 55930
-      },
-      "byCategory": {
-        "TCG": {
-          "onhand": 19660,
-          "cost": 667942.96,
-          "retail": 928594,
-          "in": 948,
-          "out": 256,
-          "soldCost": 14091.42,
-          "soldRevenue": 19096
-        },
-        "Sports": {
-          "onhand": 4566,
-          "cost": 520968.23,
-          "retail": 611357.02,
-          "in": 305,
-          "out": 229,
-          "soldCost": 30605.16,
-          "soldRevenue": 36834
-        },
-        "Other": {
-          "onhand": 16,
-          "cost": 1674,
-          "retail": 2180,
-          "in": 1,
-          "out": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
-        }
-      },
-      "onhandDerived": true,
-      "catDerived": true
-    },
-    {
-      "date": "2026-06-17",
-      "onhandKnown": false,
-      "totals": {
-        "onhand": 23794,
-        "cost": 1136460.51,
-        "retail": 1482424.02,
-        "in": 1,
-        "out": 461,
-        "soldCost": 62213.57,
-        "soldRevenue": 76184
-      },
-      "byCategory": {
-        "TCG": {
-          "onhand": 19390,
-          "cost": 641963.87,
-          "retail": 895265,
-          "in": 1,
-          "out": 271,
-          "soldCost": 27029.09,
-          "soldRevenue": 34829
-        },
-        "Sports": {
-          "onhand": 4376,
-          "cost": 485783.75,
-          "retail": 570002.02,
-          "in": 0,
-          "out": 190,
-          "soldCost": 35184.48,
-          "soldRevenue": 41355
-        },
-        "Other": {
-          "onhand": 16,
-          "cost": 1674,
-          "retail": 2180,
-          "in": 0,
-          "out": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
-        }
-      },
-      "onhandDerived": true,
-      "catDerived": true
-    },
-    {
-      "date": "2026-06-18",
-      "onhandKnown": false,
-      "totals": {
-        "onhand": 23934,
-        "cost": 1152467.61,
-        "retail": 1508225.02,
-        "in": 844,
-        "out": 704,
-        "soldCost": 48164.64,
-        "soldRevenue": 61156
-      },
-      "byCategory": {
-        "TCG": {
-          "onhand": 19448,
-          "cost": 664936.09,
-          "retail": 925746,
-          "in": 567,
-          "out": 509,
-          "soldCost": 22479.5,
-          "soldRevenue": 31071
-        },
-        "Sports": {
-          "onhand": 4458,
-          "cost": 478818.63,
-          "retail": 565322.02,
-          "in": 277,
-          "out": 195,
-          "soldCost": 25685.14,
-          "soldRevenue": 30085
-        },
-        "Other": {
-          "onhand": 16,
-          "cost": 1674,
-          "retail": 2180,
-          "in": 0,
-          "out": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
-        }
-      },
-      "onhandDerived": true,
-      "catDerived": true
-    },
-    {
-      "date": "2026-06-19",
-      "onhandKnown": false,
-      "totals": {
-        "onhand": 23945,
-        "cost": 1141772.54,
-        "retail": 1494694.02,
-        "in": 826,
-        "out": 815,
-        "soldCost": 56214.67,
-        "soldRevenue": 74610
-      },
-      "byCategory": {
-        "TCG": {
-          "onhand": 19697,
-          "cost": 671747.9,
-          "retail": 933365,
-          "in": 758,
-          "out": 509,
-          "soldCost": 33799.79,
-          "soldRevenue": 46580
-        },
-        "Sports": {
-          "onhand": 4220,
-          "cost": 461311.75,
-          "retail": 544172.02,
-          "in": 68,
-          "out": 306,
-          "soldCost": 22414.88,
-          "soldRevenue": 28030
-        },
-        "Other": {
-          "onhand": 16,
-          "cost": 1674,
-          "retail": 2180,
-          "in": 0,
-          "out": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
-        }
-      },
-      "onhandDerived": true,
-      "catDerived": true
-    },
-    {
-      "date": "2026-06-20",
-      "onhandKnown": false,
-      "totals": {
-        "onhand": 23103,
-        "cost": 1086366.6,
-        "retail": 1420066.02,
-        "in": 0,
-        "out": 842,
-        "soldCost": 55405.94,
-        "soldRevenue": 74628
-      },
-      "byCategory": {
-        "TCG": {
-          "onhand": 19112,
-          "cost": 634928.63,
-          "retail": 881904,
-          "in": 0,
-          "out": 585,
-          "soldCost": 36819.27,
-          "soldRevenue": 51461
-        },
-        "Sports": {
-          "onhand": 3963,
-          "cost": 442725.08,
-          "retail": 521005.02,
-          "in": 0,
-          "out": 257,
-          "soldCost": 18586.67,
-          "soldRevenue": 23167
-        },
-        "Other": {
-          "onhand": 16,
-          "cost": 1674,
-          "retail": 2180,
-          "in": 0,
-          "out": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
-        }
-      },
-      "onhandDerived": true,
-      "catDerived": true
-    },
-    {
-      "date": "2026-06-21",
-      "onhandKnown": false,
-      "totals": {
-        "onhand": 22522,
-        "cost": 1049047.3,
-        "retail": 1370444.02,
-        "in": 0,
-        "out": 581,
-        "soldCost": 37319.3,
-        "soldRevenue": 49622
-      },
-      "byCategory": {
-        "TCG": {
-          "onhand": 18725,
-          "cost": 616057.92,
-          "retail": 855812,
-          "in": 0,
-          "out": 387,
-          "soldCost": 18870.71,
-          "soldRevenue": 26092
-        },
-        "Sports": {
-          "onhand": 3769,
-          "cost": 424276.49,
-          "retail": 497475.02,
-          "in": 0,
-          "out": 194,
-          "soldCost": 18448.59,
-          "soldRevenue": 23530
-        },
-        "Other": {
-          "onhand": 16,
-          "cost": 1674,
-          "retail": 2180,
-          "in": 0,
-          "out": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
-        }
-      },
-      "onhandDerived": true,
-      "catDerived": true
-    },
-    {
-      "date": "2026-06-22",
-      "onhandKnown": false,
-      "totals": {
-        "onhand": 22872,
-        "cost": 1123369.68,
-        "retail": 1464056.02,
-        "in": 990,
-        "out": 640,
-        "soldCost": 62370.83,
-        "soldRevenue": 79836
-      },
-      "byCategory": {
-        "TCG": {
-          "onhand": 18600,
-          "cost": 607835.65,
-          "retail": 845639,
-          "in": 207,
-          "out": 332,
-          "soldCost": 29402.42,
-          "soldRevenue": 38001
-        },
-        "Sports": {
-          "onhand": 4244,
-          "cost": 506821.14,
-          "retail": 601240.02,
-          "in": 783,
-          "out": 308,
-          "soldCost": 32968.41,
-          "soldRevenue": 41835
-        },
-        "Other": {
-          "onhand": 16,
-          "cost": 1674,
-          "retail": 2180,
-          "in": 0,
-          "out": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
-        }
-      },
-      "onhandDerived": true,
-      "catDerived": true
-    },
-    {
-      "date": "2026-06-23",
-      "onhandKnown": false,
-      "totals": {
-        "onhand": 23508,
-        "cost": 1156399.08,
-        "retail": 1511072.02,
-        "in": 1347,
-        "out": 711,
-        "soldCost": 50661.81,
-        "soldRevenue": 65433
-      },
-      "byCategory": {
-        "Sports": {
-          "onhand": 3946,
-          "cost": 501735.87,
-          "retail": 593650.02,
-          "in": 139,
-          "out": 437,
-          "soldCost": 26210.1,
-          "soldRevenue": 33615
-        },
-        "TCG": {
-          "onhand": 19534,
-          "cost": 645950.32,
-          "retail": 900230,
-          "in": 1208,
-          "out": 274,
-          "soldCost": 24451.71,
-          "soldRevenue": 31818
-        },
-        "Other": {
-          "onhand": 16,
-          "cost": 1674,
-          "retail": 2180,
-          "in": 0,
-          "out": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
-        }
-      },
-      "onhandDerived": true,
-      "catDerived": true
-    },
-    {
-      "date": "2026-06-24",
-      "onhandKnown": false,
-      "totals": {
-        "onhand": 23670,
-        "cost": 1156030.24,
-        "retail": 1512798.02,
-        "in": 585,
-        "out": 423,
-        "soldCost": 27504.94,
-        "soldRevenue": 35396
-      },
-      "byCategory": {
-        "TCG": {
-          "onhand": 19450,
-          "cost": 636853.95,
-          "retail": 888759,
-          "in": 180,
-          "out": 264,
-          "soldCost": 15817.47,
-          "soldRevenue": 21171
-        },
-        "Sports": {
-          "onhand": 4192,
-          "cost": 510463.4,
-          "retail": 606847.02,
-          "in": 405,
-          "out": 159,
-          "soldCost": 11687.47,
-          "soldRevenue": 14225
-        },
-        "Other": {
-          "onhand": 16,
-          "cost": 1674,
-          "retail": 2180,
-          "in": 0,
-          "out": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
-        }
-      },
-      "onhandDerived": true,
-      "catDerived": true
-    },
-    {
-      "date": "2026-06-25",
-      "onhandKnown": false,
-      "totals": {
-        "onhand": 23476,
-        "cost": 1172232.07,
-        "retail": 1533899.02,
-        "in": 614,
-        "out": 808,
-        "soldCost": 57900.08,
-        "soldRevenue": 73722
-      },
-      "byCategory": {
-        "TCG": {
-          "onhand": 19198,
-          "cost": 643165.51,
-          "retail": 894517,
-          "in": 254,
-          "out": 506,
-          "soldCost": 23400.04,
-          "soldRevenue": 30925
-        },
-        "Sports": {
-          "onhand": 4244,
-          "cost": 520173.67,
-          "retail": 621940.02,
-          "in": 354,
-          "out": 302,
-          "soldCost": 34500.04,
-          "soldRevenue": 42797
-        },
-        "Other": {
-          "onhand": 22,
-          "cost": 1854,
-          "retail": 2430,
-          "in": 6,
-          "out": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
-        }
-      },
-      "onhandDerived": true,
-      "catDerived": true
-    },
-    {
-      "date": "2026-06-26",
-      "onhandKnown": false,
-      "totals": {
-        "onhand": 24284,
-        "cost": 1288579.57,
-        "retail": 1682057.02,
-        "in": 1509,
-        "out": 701,
-        "soldCost": 56700.13,
-        "soldRevenue": 69045
-      },
-      "byCategory": {
-        "Sports": {
-          "onhand": 4437,
-          "cost": 549685.4,
-          "retail": 663819.02,
-          "in": 386,
-          "out": 193,
-          "soldCost": 37697.51,
-          "soldRevenue": 42606
-        },
-        "TCG": {
-          "onhand": 19813,
-          "cost": 730001.28,
-          "retail": 1000796,
-          "in": 1123,
-          "out": 508,
-          "soldCost": 19002.62,
-          "soldRevenue": 26439
-        },
-        "Other": {
-          "onhand": 22,
-          "cost": 1854,
-          "retail": 2430,
-          "in": 0,
-          "out": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
-        }
-      },
-      "onhandDerived": true,
-      "catDerived": true
+      "catDerived": true,
+      "deriveV": 2
     },
     {
       "date": "2026-06-27",
       "onhandKnown": false,
       "totals": {
-        "onhand": 23721,
-        "cost": 1252980.42,
-        "retail": 1636228.02,
+        "onhand": 23693,
+        "cost": 1245296.62,
+        "retail": 1620300.02,
         "in": 0,
         "out": 563,
         "soldCost": 35599.15,
@@ -3197,27 +3223,27 @@
       },
       "byCategory": {
         "Sports": {
-          "onhand": 4287,
-          "cost": 533419.07,
-          "retail": 643699.02,
+          "onhand": 4279,
+          "cost": 533092.46,
+          "retail": 643239.02,
           "in": 0,
           "out": 150,
           "soldCost": 16266.33,
           "soldRevenue": 20120
         },
         "TCG": {
-          "onhand": 19400,
-          "cost": 710668.46,
-          "retail": 975087,
+          "onhand": 19394,
+          "cost": 710620.16,
+          "retail": 975011,
           "in": 0,
           "out": 413,
           "soldCost": 19332.82,
           "soldRevenue": 25709
         },
         "Other": {
-          "onhand": 22,
-          "cost": 1854,
-          "retail": 2430,
+          "onhand": 20,
+          "cost": 1584,
+          "retail": 2050,
           "in": 0,
           "out": 0,
           "soldCost": 0,
@@ -3225,15 +3251,16 @@
         }
       },
       "onhandDerived": true,
-      "catDerived": true
+      "catDerived": true,
+      "deriveV": 2
     },
     {
       "date": "2026-06-28",
       "onhandKnown": false,
       "totals": {
-        "onhand": 23140,
-        "cost": 1211914.13,
-        "retail": 1582719.02,
+        "onhand": 23112,
+        "cost": 1204230.33,
+        "retail": 1566791.02,
         "in": 0,
         "out": 581,
         "soldCost": 41066.29,
@@ -3241,27 +3268,27 @@
       },
       "byCategory": {
         "TCG": {
-          "onhand": 18947,
-          "cost": 685581.46,
-          "retail": 940858,
+          "onhand": 18941,
+          "cost": 685533.16,
+          "retail": 940782,
           "in": 0,
           "out": 453,
           "soldCost": 25087,
           "soldRevenue": 34229
         },
         "Sports": {
-          "onhand": 4159,
-          "cost": 517439.78,
-          "retail": 624419.02,
+          "onhand": 4151,
+          "cost": 517113.17,
+          "retail": 623959.02,
           "in": 0,
           "out": 128,
           "soldCost": 15979.29,
           "soldRevenue": 19280
         },
         "Other": {
-          "onhand": 22,
-          "cost": 1854,
-          "retail": 2430,
+          "onhand": 20,
+          "cost": 1584,
+          "retail": 2050,
           "in": 0,
           "out": 0,
           "soldCost": 0,
@@ -3269,15 +3296,16 @@
         }
       },
       "onhandDerived": true,
-      "catDerived": true
+      "catDerived": true,
+      "deriveV": 2
     },
     {
       "date": "2026-06-29",
       "onhandKnown": false,
       "totals": {
-        "onhand": 24141,
-        "cost": 1269243.21,
-        "retail": 1663646.02,
+        "onhand": 24113,
+        "cost": 1261559.41,
+        "retail": 1647718.02,
         "in": 1759,
         "out": 758,
         "soldCost": 67468.21,
@@ -3285,27 +3313,27 @@
       },
       "byCategory": {
         "Sports": {
-          "onhand": 4075,
-          "cost": 528729.63,
-          "retail": 642799.02,
+          "onhand": 4067,
+          "cost": 528403.02,
+          "retail": 642339.02,
           "in": 394,
           "out": 478,
           "soldCost": 50953.15,
           "soldRevenue": 63275
         },
         "TCG": {
-          "onhand": 20032,
-          "cost": 731620.69,
-          "retail": 1003405,
+          "onhand": 20026,
+          "cost": 731572.39,
+          "retail": 1003329,
           "in": 1365,
           "out": 280,
           "soldCost": 16515.06,
           "soldRevenue": 20926
         },
         "Other": {
-          "onhand": 22,
-          "cost": 1854,
-          "retail": 2430,
+          "onhand": 20,
+          "cost": 1584,
+          "retail": 2050,
           "in": 0,
           "out": 0,
           "soldCost": 0,
@@ -3313,15 +3341,16 @@
         }
       },
       "onhandDerived": true,
-      "catDerived": true
+      "catDerived": true,
+      "deriveV": 2
     },
     {
       "date": "2026-06-30",
       "onhandKnown": false,
       "totals": {
-        "onhand": 24787,
-        "cost": 1317000.77,
-        "retail": 1727810,
+        "onhand": 24759,
+        "cost": 1309316.97,
+        "retail": 1711882,
         "in": 1137,
         "out": 491,
         "soldCost": 43029.89,
@@ -3329,27 +3358,27 @@
       },
       "byCategory": {
         "Sports": {
-          "onhand": 4899,
-          "cost": 582284.42,
-          "retail": 713479,
+          "onhand": 4891,
+          "cost": 581957.81,
+          "retail": 713019,
           "in": 1033,
           "out": 209,
           "soldCost": 24123.21,
           "soldRevenue": 30455.02
         },
         "TCG": {
-          "onhand": 19854,
-          "cost": 725823.46,
-          "retail": 996889,
+          "onhand": 19848,
+          "cost": 725775.16,
+          "retail": 996813,
           "in": 104,
           "out": 282,
           "soldCost": 18906.68,
           "soldRevenue": 24702
         },
         "Other": {
-          "onhand": 22,
-          "cost": 1854,
-          "retail": 2430,
+          "onhand": 20,
+          "cost": 1584,
+          "retail": 2050,
           "in": 0,
           "out": 0,
           "soldCost": 0,
@@ -3357,15 +3386,16 @@
         }
       },
       "onhandDerived": true,
-      "catDerived": true
+      "catDerived": true,
+      "deriveV": 2
     },
     {
       "date": "2026-07-01",
       "onhandKnown": true,
       "totals": {
-        "onhand": 24301,
-        "cost": 1283181.45,
-        "retail": 1677979,
+        "onhand": 24285,
+        "cost": 1282536.54,
+        "retail": 1677063,
         "in": 977,
         "out": 474,
         "soldCost": 26780.43,
@@ -3373,27 +3403,27 @@
       },
       "byCategory": {
         "Other": {
-          "onhand": 22,
-          "cost": 1854,
-          "retail": 2430,
+          "onhand": 20,
+          "cost": 1584,
+          "retail": 2050,
           "in": 0,
           "out": 0,
           "soldCost": 0,
           "soldRevenue": 0
         },
         "Sports": {
-          "onhand": 4704,
-          "cost": 567514.5,
-          "retail": 694599,
+          "onhand": 4696,
+          "cost": 567187.89,
+          "retail": 694139,
           "in": 158,
           "out": 195,
           "soldCost": 14769.92,
           "soldRevenue": 18880
         },
         "TCG": {
-          "onhand": 19575,
-          "cost": 713812.95,
-          "retail": 980950,
+          "onhand": 19569,
+          "cost": 713764.65,
+          "retail": 980874,
           "in": 819,
           "out": 279,
           "soldCost": 12010.51,
