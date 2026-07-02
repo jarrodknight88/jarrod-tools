@@ -1040,7 +1040,7 @@ function HistoricalView({ history }){
     { name:'Cost',    color:COLORS.muted, points:cut.map(h=>({x:h.date,y:h.totals.soldCost})) },
     { name:'Margin',  color:COLORS.teal, points:cut.map(h=>({x:h.date,y:(h.totals.soldRevenue||0)-(h.totals.soldCost||0)})) },
   ];
-  const onhandCut = cut.filter(h=>h.onhandKnown);
+  const onhandCut = cut.filter(h=>h.totals.cost!=null);
   const onhand = [
     { name:'On-Hand Value (Cost)', color:COLORS.black, points:onhandCut.map(h=>({x:h.date,y:h.totals.cost})) },
     { name:'Retail', color:COLORS.blue, points:onhandCut.map(h=>({x:h.date,y:h.totals.retail})) },
@@ -1092,7 +1092,7 @@ function HistoricalView({ history }){
               </div>
             </div>
           </div>
-          <div className="hist-note">Sold-side history backfilled to June 1, 2026. On-hand value history begins July 1, 2026 and builds with each daily pull.</div>
+          <div className="hist-note">Sold-side history backfilled to June 1, 2026. On-hand values before July 1, 2026 are derived from intake and sales records - graded is near-exact, raw is estimated (restocks and manual adjustments outside product creation are not captured). Recorded snapshots begin July 1, 2026.</div>
         </React.Fragment>
       )}
     </div>

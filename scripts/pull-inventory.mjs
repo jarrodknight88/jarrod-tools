@@ -290,6 +290,81 @@ function dateRange(startStr, endStr) {
   return out;
 }
 
+/* ---------- 4) Derived on-hand history ----------
+ * Cost and price are fixed at intake and graded cards are one-of-one, so
+ * past on-hand value is reconstructable by walking backward from the first
+ * recorded anchor:  V(D) = V(D+1) + soldCost(D+1) - intakeCost(D+1)
+ * Graded is near-exact; raw is estimated (restocks and manual adjustments
+ * outside product-creation are not reconstructable). */
+const INTAKE_QUERY = `
+query Intake($cursor: String, $q: String!) {
+  products(first: 250, after: $cursor, query: $q) {
+    pageInfo { hasNextPage endCursor }
+    edges { node {
+      productType createdAt
+      variants(first: 1) { edges { node { price inventoryItem { unitCost { amount } } } } }
+    }}
+  }
+}`;
+
+// One range query: bucket intake units/cost/retail by creation day (store TZ).
+async function intakeByDay(startDay, endDayExclusive) {
+  const q = `(${CARD_TYPE_FILTER}) AND created_at:>='${startDay}T00:00:00' AND created_at:<'${endDayExclusive}T00:00:00'`;
+  const days = {};
+  const dayOf = (iso) => new Intl.DateTimeFormat("en-CA", { timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(iso));
+  let cursor = null, pages = 0;
+  do {
+    const data = await gql(INTAKE_QUERY, { cursor, q });
+    const conn = data.products;
+    for (const { node } of conn.edges) {
+      if (!classifyCondition(node.productType)) continue; // cards only
+      const v = node.variants.edges[0] ? node.variants.edges[0].node : null;
+      const price = v ? Number(v.price) || 0 : 0;
+      const unitCost = v && v.inventoryItem && v.inventoryItem.unitCost ? Number(v.inventoryItem.unitCost.amount) || 0 : 0;
+      const day = dayOf(node.createdAt);
+      const b = (days[day] = days[day] || { units: 0, cost: 0, retail: 0 });
+      b.units += 1; // one-of-one intake model, matches the daily "in" metric
+      b.cost = money(b.cost + unitCost);
+      b.retail = money(b.retail + price);
+    }
+    cursor = conn.pageInfo.hasNextPage ? conn.pageInfo.endCursor : null;
+    pages++;
+  } while (cursor);
+  return { days, pages };
+}
+
+// Fill derived on-hand values for all pre-anchor days lacking them. Idempotent.
+async function deriveOnhandHistory(history) {
+  const anchorIdx = history.findIndex((h) => h.onhandKnown);
+  if (anchorIdx <= 0) return 0; // no anchor or nothing before it
+  const pending = history.slice(0, anchorIdx).filter((h) => !h.onhandDerived);
+  if (pending.length === 0) return 0;
+
+  const startDay = history[0].date;
+  const anchor = history[anchorIdx];
+  console.error(`Deriving on-hand history ${startDay} -> ${anchor.date} (intake pull)...`);
+  const { days: intake, pages } = await intakeByDay(startDay, anchor.date);
+  console.error(`Intake bucketed across ${pages} pages.`);
+
+  // Walk backward from the anchor. V(D) = V(D+1) + soldCost(D+1) - intakeCost(D+1)
+  let next = anchor;
+  for (let i = anchorIdx - 1; i >= 0; i--) {
+    const h = history[i];
+    const inNext = intake[next.date] || { units: 0, cost: 0, retail: 0 };
+    h.totals.onhand = (next.totals.onhand || 0) + (next.totals.out || 0) - inNext.units;
+    h.totals.cost = money((next.totals.cost || 0) + (next.totals.soldCost || 0) - inNext.cost);
+    h.totals.retail = money((next.totals.retail || 0) + (next.totals.soldRevenue || 0) - inNext.retail);
+    h.totals.in = (intake[h.date] || { units: 0 }).units;
+    h.onhandDerived = true;
+    next = h;
+  }
+  const first = history[0];
+  if (first.totals.cost < 0 || first.totals.onhand < 0) {
+    console.error(`WARNING: derived history went negative at ${first.date} (onhand ${first.totals.onhand}, cost ${first.totals.cost}). Raw-intake approximation likely off - flag for review.`);
+  }
+  return pending.length;
+}
+
 /* ---------- Run ---------- */
 (async () => {
   const win = yesterdayWindow();
@@ -323,6 +398,10 @@ function dateRange(startStr, endStr) {
   history = history.filter((h) => h.date !== win.day);
   history.push({ date: win.day, onhandKnown: true, totals: todayRollup.totals, byCategory: todayRollup.byCategory });
   history.sort((a, b) => a.date.localeCompare(b.date));
+
+  // Derive on-hand values for pre-anchor days (one-time; idempotent)
+  const derived = await deriveOnhandHistory(history);
+  if (derived > 0) console.error(`Derived on-hand values for ${derived} historical days.`);
 
   const out = {
     date: win.day,
