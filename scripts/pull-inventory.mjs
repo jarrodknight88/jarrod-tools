@@ -339,16 +339,17 @@ async function intakeByDay(startDay, endDayExclusive) {
   return { days, pages };
 }
 
-// Fill derived on-hand values for all pre-anchor days lacking them. Idempotent.
-// Runs two passes off one intake pull: totals (skipped if already derived) and
-// per-category (gated separately so it backfills days derived before this existed).
+// Fill derived on-hand values for all pre-anchor days. Idempotent via DERIVE_V.
+// Both passes (totals and per-category) ALWAYS recompute together from the same
+// anchor in the same run - deriving them in separate runs against a moving
+// anchor produces a constant cross-section offset, so coherence requires one run.
+const DERIVE_V = 2;
 async function deriveOnhandHistory(history) {
   const anchorIdx = history.findIndex((h) => h.onhandKnown);
   if (anchorIdx <= 0) return 0; // no anchor or nothing before it
   const pre = history.slice(0, anchorIdx);
-  const pendingTotals = pre.filter((h) => !h.onhandDerived);
-  const pendingCats = pre.filter((h) => !h.catDerived);
-  if (pendingTotals.length === 0 && pendingCats.length === 0) return 0;
+  const pending = pre.filter((h) => h.deriveV !== DERIVE_V);
+  if (pending.length === 0) return 0;
 
   const startDay = history[0].date;
   const anchor = history[anchorIdx];
@@ -357,7 +358,7 @@ async function deriveOnhandHistory(history) {
   console.error(`Intake bucketed across ${pages} pages.`);
 
   // ---- Pass 1: totals. V(D) = V(D+1) + soldCost(D+1) - intakeCost(D+1) ----
-  if (pendingTotals.length > 0) {
+  {
     let next = anchor;
     for (let i = anchorIdx - 1; i >= 0; i--) {
       const h = history[i];
@@ -372,7 +373,7 @@ async function deriveOnhandHistory(history) {
   }
 
   // ---- Pass 2: per-category, same walk per category ----
-  if (pendingCats.length > 0) {
+  {
     const catSet = new Set(Object.keys(anchor.byCategory));
     for (const h of pre) for (const c of Object.keys(h.byCategory)) catSet.add(c);
     for (const day of Object.values(intake)) for (const c of Object.keys(day.byCategory || {})) catSet.add(c);
@@ -393,14 +394,14 @@ async function deriveOnhandHistory(history) {
         next = h; nextVals = cur;
       }
     }
-    for (const h of pre) h.catDerived = true;
+    for (const h of pre) { h.catDerived = true; h.deriveV = DERIVE_V; }
   }
 
   const first = history[0];
   if (first.totals.cost < 0 || first.totals.onhand < 0) {
     console.error(`WARNING: derived history went negative at ${first.date} (onhand ${first.totals.onhand}, cost ${first.totals.cost}). Raw-intake approximation likely off - flag for review.`);
   }
-  return pendingTotals.length + pendingCats.length;
+  return pending.length;
 }
 
 /* ---------- Run ---------- */
