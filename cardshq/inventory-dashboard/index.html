@@ -318,6 +318,11 @@
   .hist-legend{display:flex;gap:14px;font-size:11px;color:var(--muted);margin-top:8px;}
   .hist-legend .dot{display:inline-block;width:8px;height:8px;border-radius:4px;margin-right:5px;vertical-align:middle;}
   .hist-note{font-size:11.5px;color:var(--faint);margin-top:12px;}
+  .hist-custom{display:flex;align-items:center;gap:6px;margin-left:10px;}
+  .hist-date{font-size:12px;font-family:Arial;padding:5px 8px;border-radius:8px;border:1px solid var(--line-soft);color:var(--ink);background:#fff;}
+  .hist-to{font-size:11.5px;color:var(--faint);}
+  .hist-clear{font-size:11.5px;font-weight:bold;padding:5px 10px;border-radius:8px;border:1px solid var(--line-soft);background:#fff;color:var(--blue);cursor:pointer;}
+  @media(max-width:640px){.hist-controls{flex-wrap:wrap;}.hist-custom{margin-left:0;}}
 
   /* Graded rollup strip + condition split */
   .cond-rollup{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:26px;}
@@ -1021,8 +1026,15 @@ function LineChart({ series, height=170 }){
 function HistoricalView({ history }){
   const [open, setOpen] = useState(false);
   const [range, setRange] = useState(30);
+  const [custom, setCustom] = useState({ from:'', to:'' });
   if(!history || history.length===0) return null;
-  const cut = range==null ? history : history.slice(-range);
+  const minDate = history[0].date, maxDate = history[history.length-1].date;
+  const usingCustom = custom.from || custom.to;
+  const cut = usingCustom
+    ? history.filter(h => (!custom.from || h.date >= custom.from) && (!custom.to || h.date <= custom.to))
+    : (range==null ? history : history.slice(-range));
+  const setCustomField = (k,v)=>{ setCustom(c=>({...c,[k]:v})); };
+  const pickPreset = (v)=>{ setRange(v); setCustom({from:'',to:''}); };
   const sold = [
     { name:'Revenue', color:COLORS.blue, points:cut.map(h=>({x:h.date,y:h.totals.soldRevenue})) },
     { name:'Cost',    color:COLORS.muted, points:cut.map(h=>({x:h.date,y:h.totals.soldCost})) },
@@ -1048,8 +1060,16 @@ function HistoricalView({ history }){
         <React.Fragment>
           <div className="hist-controls">
             {[[7,'7D'],[14,'14D'],[30,'30D'],[null,'All']].map(([v,label])=>(
-              <button key={label} className={'hist-range-btn'+(range===v?' active':'')} onClick={()=>setRange(v)}>{label}</button>
+              <button key={label} className={'hist-range-btn'+(!usingCustom&&range===v?' active':'')} onClick={()=>pickPreset(v)}>{label}</button>
             ))}
+            <span className="hist-custom">
+              <input type="date" className="hist-date" value={custom.from} min={minDate} max={custom.to||maxDate}
+                onChange={e=>setCustomField('from',e.target.value)} aria-label="From date"/>
+              <span className="hist-to">to</span>
+              <input type="date" className="hist-date" value={custom.to} min={custom.from||minDate} max={maxDate}
+                onChange={e=>setCustomField('to',e.target.value)} aria-label="To date"/>
+              {usingCustom && <button className="hist-clear" onClick={()=>setCustom({from:'',to:''})}>Clear</button>}
+            </span>
           </div>
           <div className="hist-charts">
             <div className="hist-chart">
