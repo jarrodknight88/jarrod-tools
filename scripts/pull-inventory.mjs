@@ -343,7 +343,7 @@ async function intakeByDay(startDay, endDayExclusive) {
 // Both passes (totals and per-category) ALWAYS recompute together from the same
 // anchor in the same run - deriving them in separate runs against a moving
 // anchor produces a constant cross-section offset, so coherence requires one run.
-const DERIVE_V = 2;
+const DERIVE_V = 3;
 async function deriveOnhandHistory(history) {
   const anchorIdx = history.findIndex((h) => h.onhandKnown);
   if (anchorIdx <= 0) return 0; // no anchor or nothing before it
@@ -353,8 +353,12 @@ async function deriveOnhandHistory(history) {
 
   const startDay = history[0].date;
   const anchor = history[anchorIdx];
+  // Intake range must INCLUDE the anchor day: the first backward step
+  // (anchor -> last pre-anchor day) subtracts the anchor day's intake.
+  const dayAfterAnchor = (() => { const d = new Date(`${anchor.date}T00:00:00`); d.setDate(d.getDate() + 1);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; })();
   console.error(`Deriving on-hand history ${startDay} -> ${anchor.date} (intake pull)...`);
-  const { days: intake, pages } = await intakeByDay(startDay, anchor.date);
+  const { days: intake, pages } = await intakeByDay(startDay, dayAfterAnchor);
   console.error(`Intake bucketed across ${pages} pages.`);
 
   // ---- Pass 1: totals. V(D) = V(D+1) + soldCost(D+1) - intakeCost(D+1) ----
