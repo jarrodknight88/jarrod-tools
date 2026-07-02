@@ -33,6 +33,7 @@ const STORE = (process.env.SHOPIFY_STORE || "").replace(/\.myshopify\.com$/, "")
 const TOKEN = process.env.SHOPIFY_ADMIN_TOKEN;
 const API_VERSION = process.env.API_VERSION || "2025-01";
 const OUT = process.env.OUT || path.join(REPO_ROOT, "cardshq/inventory-dashboard/data.json");
+const SNAP_DIR = process.env.SNAP_DIR || path.join(REPO_ROOT, "cardshq/inventory-dashboard/snapshots");
 const TZ = "America/New_York";
 
 if (!STORE || !TOKEN) {
@@ -403,6 +404,26 @@ async function deriveOnhandHistory(history) {
   const derived = await deriveOnhandHistory(history);
   if (derived > 0) console.error(`Derived on-hand values for ${derived} historical days.`);
 
+  // ---- Full daily snapshot: persist today's per-item records so the dashboard can rewind ----
+  // Each day is written once as its own file, keeping data.json lean and daily git diffs small.
+  // Snapshots accumulate going forward only - past per-item detail cannot be reconstructed.
+  fs.mkdirSync(SNAP_DIR, { recursive: true });
+  fs.writeFileSync(
+    path.join(SNAP_DIR, `${win.day}.json`),
+    JSON.stringify({
+      date: win.day,
+      generatedAt: new Date().toISOString(),
+      scope: "Cards only - all channels (online + POS)",
+      totals: todayRollup.totals,
+      records,
+    })
+  );
+  // Available snapshot dates = every YYYY-MM-DD.json present in the snapshots dir.
+  const snapshots = fs.readdirSync(SNAP_DIR)
+    .filter((f) => /^\d{4}-\d{2}-\d{2}\.json$/.test(f))
+    .map((f) => f.replace(/\.json$/, ""))
+    .sort();
+
   const out = {
     date: win.day,
     generatedAt: new Date().toISOString(),
@@ -410,6 +431,7 @@ async function deriveOnhandHistory(history) {
     isSample: false,
     records,
     history,
+    snapshots,
   };
 
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
@@ -426,4 +448,5 @@ async function deriveOnhandHistory(history) {
   console.error(`Yesterday -> in ${tot.in}, out ${tot.out} | sold revenue ${usd(tot.soldRev)} | sold cost ${usd(tot.soldCost)} | sold margin ${usd(tot.soldRev - tot.soldCost)}`);
   console.error(`Wrote ${records.length} buckets to ${OUT}`);
   console.error(`History: ${history.length} days (${history[0].date} -> ${history[history.length - 1].date}), backfilled ${missing.length} this run.`);
+  console.error(`Snapshots: wrote ${win.day}.json (${records.length} buckets); ${snapshots.length} day(s) available (${snapshots[0]} -> ${snapshots[snapshots.length - 1]}).`);
 })().catch((e) => { console.error(e); process.exit(1); });
