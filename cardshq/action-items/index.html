@@ -176,6 +176,28 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 <script>
 var MEETINGS = {
+  "product-marketing-framework-jul-9-2026": {
+    label: "Product Marketing Framework Intro (Nick) - July 9, 2026",
+    sections: [
+      {
+        name: "E-Merchandising - Pre-Rollout",
+        i: [
+          { id:"pmf-001", t:"Research third-party conditional merchandising solutions - new arrivals weighted first, then best sellers; Shopify Search & Discovery is single-sort only. Global fix beyond the per-collection Nathaniel ticket", d:"Before Aug 4", c:"soon" },
+          { id:"pmf-002", t:"Define the Tier 1 e-merchandising approach with Nick - dedicated collection pages per Tier 1 release and/or a new arrivals page", d:"Functional meeting", c:"soon" },
+          { id:"pmf-003", t:"Update the Shopify tier reporting dashboard for Q3/Q4 tier tracking - framework rollout window Aug 4-7", d:"Aug 4-7", c:"soon", linkedTo:["tt-003"] },
+        ]
+      },
+      {
+        name: "Zach Follow-ups",
+        i: [
+          { id:"pmf-004", t:"Send Zach the updated supply audit - now pulls live from Shopify with category breakdown", d:"Today", c:"urgent" },
+          { id:"pmf-005", t:"Talk with Jimmy on archiving discontinued SKUs surfaced by the supply audit", d:"This week", c:"ongoing" },
+          { id:"pmf-006", t:"Coda (Superhuman) evaluation: play with Zach's Shopify-connected doc next week, then sit down when Zach returns to map Monday-to-Coda scope - migrate vs. sync, calendar first", d:"When Zach returns", c:"soon" },
+          { id:"pmf-007", t:"Coordinate master product image handoff with Zach (original files + existing Google Doc) so the searchable image library can start in Coda - unblocks social's image sourcing", d:"Next 2 weeks", c:"soon" },
+        ]
+      }
+    ]
+  },
   "inventory-tier-tracking-jul-8-2026": {
     label: "Inventory & Tier Tracking (Nick) - July 8, 2026",
     sections: [
@@ -189,7 +211,7 @@ var MEETINGS = {
       {
         name: "Tier Rollout - Post-National",
         i: [
-          { id:"tt-003", t:"Build the tier-based reporting dashboard (Shopify API) once tier labels are added to the Monday board - current price, sell-through, campaign performance per tiered product", d:"Post-National (Aug)", c:"ongoing" },
+          { id:"tt-003", t:"Build the tier-based reporting dashboard (Shopify API) once tier labels are added to the Monday board - current price, sell-through, campaign performance per tiered product", d:"Post-National (Aug)", c:"ongoing", linkedTo:["pmf-003"] },
           { id:"tt-004", t:"Nicholas schedules a functional e-com follow-up after the stakeholder intro - align tier system with ecom workflows", d:"Post-Jul 9", c:"ongoing" },
         ]
       }
