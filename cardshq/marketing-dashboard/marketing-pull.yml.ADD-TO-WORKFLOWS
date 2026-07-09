@@ -1,0 +1,45 @@
+name: Marketing dashboard pull
+
+# Same pattern as inventory-pull: daily Shopify pull, commit data.json, Netlify redeploys.
+# '30 12 * * *' = 12:30 UTC = 8:30 AM EDT (offset 30 min from inventory pull to avoid rebase races).
+
+on:
+  schedule:
+    - cron: '30 12 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: marketing-pull
+  cancel-in-progress: false
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run marketing pull
+        env:
+          SHOPIFY_STORE: ${{ secrets.SHOPIFY_STORE }}
+          SHOPIFY_ADMIN_TOKEN: ${{ secrets.SHOPIFY_ADMIN_TOKEN }}
+        run: node scripts/pull-marketing.mjs
+
+      - name: Commit data.json if changed
+        run: |
+          git config user.name "cardshq-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add cardshq/marketing-dashboard/data.json cardshq/marketing-dashboard/snapshots
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Marketing snapshot $(date -u +%Y-%m-%d)"
+            git pull --rebase origin main
+            git push
+          fi

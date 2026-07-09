@@ -1,0 +1,15 @@
+{
+  "_readme": [
+    "Manual ad spend entry per tiered product. The dashboard divides Shopify revenue by this spend for ROAS.",
+    "Key each entry by Shopify product handle (visible in the dashboard table).",
+    "channels is freeform: meta, google, mailchimp, etc. Amounts in USD, quarter-to-date.",
+    "This file is temporary - replaced by Google Ads / Meta API integrations after the UTM fix ships."
+  ],
+  "entries": [
+    {
+      "handle": "example-product-handle",
+      "channels": { "meta": 0, "google": 0 },
+      "_delete_this_example": true
+    }
+  ]
+}

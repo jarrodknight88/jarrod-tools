@@ -1,0 +1,51 @@
+{
+ "date": "2026-07-09",
+ "generatedAt": "2026-07-09T16:30:00.000Z",
+ "quarter": "Q3 2026",
+ "quarterStart": "2026-07-01",
+ "scope": "Online Store + CardsHQ Headless API (locked ecom definition)",
+ "isSample": true,
+ "products": [
+  {
+   "id": "1000000000001", "title": "2026 Topps Chrome Football Hobby Box", "handle": "sample-topps-chrome-football", "tier": 1,
+   "vendor": "Topps", "productType": "Wax", "status": "ACTIVE", "image": null,
+   "price": 389.99, "onhand": 84, "unitsSold": 46, "revenue": 17939.54, "orders": 41,
+   "daily": { "2026-07-05": { "units": 9, "rev": 3509.91 }, "2026-07-06": { "units": 12, "rev": 4679.88 }, "2026-07-07": { "units": 8, "rev": 3119.92 }, "2026-07-08": { "units": 10, "rev": 3899.9 }, "2026-07-09": { "units": 7, "rev": 2729.93 } }
+  },
+  {
+   "id": "1000000000002", "title": "Pokemon TCG: Phantasmal Flames Booster Box", "handle": "sample-pokemon-phantasmal-flames", "tier": 1,
+   "vendor": "Pokemon", "productType": "Wax", "status": "ACTIVE", "image": null,
+   "price": 161.99, "onhand": 210, "unitsSold": 118, "revenue": 19114.82, "orders": 95,
+   "daily": { "2026-07-05": { "units": 22, "rev": 3563.78 }, "2026-07-06": { "units": 31, "rev": 5021.69 }, "2026-07-07": { "units": 24, "rev": 3887.76 }, "2026-07-08": { "units": 20, "rev": 3239.8 }, "2026-07-09": { "units": 21, "rev": 3401.79 } }
+  },
+  {
+   "id": "1000000000003", "title": "2026 Bowman Chrome Baseball Hobby Box", "handle": "sample-bowman-chrome-baseball", "tier": 2,
+   "vendor": "Topps", "productType": "Wax", "status": "ACTIVE", "image": null,
+   "price": 279.99, "onhand": 62, "unitsSold": 24, "revenue": 6719.76, "orders": 22,
+   "daily": { "2026-07-06": { "units": 8, "rev": 2239.92 }, "2026-07-07": { "units": 7, "rev": 1959.93 }, "2026-07-08": { "units": 5, "rev": 1399.95 }, "2026-07-09": { "units": 4, "rev": 1119.96 } }
+  },
+  {
+   "id": "1000000000004", "title": "Lorcana: Reign of Jafar Booster Box", "handle": "sample-lorcana-reign-of-jafar", "tier": 2,
+   "vendor": "Ravensburger", "productType": "Wax", "status": "ACTIVE", "image": null,
+   "price": 143.99, "onhand": 96, "unitsSold": 31, "revenue": 4463.69, "orders": 27,
+   "daily": { "2026-07-06": { "units": 10, "rev": 1439.9 }, "2026-07-07": { "units": 9, "rev": 1295.91 }, "2026-07-08": { "units": 7, "rev": 1007.93 }, "2026-07-09": { "units": 5, "rev": 719.95 } }
+  },
+  {
+   "id": "1000000000005", "title": "2026 Topps Series 2 Baseball Blaster", "handle": "sample-topps-series-2-blaster", "tier": 3,
+   "vendor": "Topps", "productType": "Wax", "status": "ACTIVE", "image": null,
+   "price": 34.99, "onhand": 340, "unitsSold": 88, "revenue": 3079.12, "orders": 64,
+   "daily": { "2026-07-06": { "units": 25, "rev": 874.75 }, "2026-07-07": { "units": 23, "rev": 804.77 }, "2026-07-08": { "units": 21, "rev": 734.79 }, "2026-07-09": { "units": 19, "rev": 664.81 } }
+  }
+ ],
+ "tier4": { "revenue": 214380.44, "unitsSold": 3162, "orders": 1418 },
+ "attribution": {
+  "onlineOrders": 1667,
+  "ordersWithUtm": 0,
+  "utmCoverage": 0,
+  "channels": [
+   { "label": "Direct / unknown", "orders": 1520, "revenue": 238412.1 },
+   { "label": "Facebook (referrer only)", "orders": 96, "revenue": 12480.33 },
+   { "label": "Google (referrer only)", "orders": 51, "revenue": 14804.94 }
+  ]
+ }
+}

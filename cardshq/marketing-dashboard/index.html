@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CardsHQ Marketing Tier Performance</title>
+<style>
+  :root{
+    --black:#111111;
+    --blue:#3B82F6;
+    --teal:#10B981;
+    --amber:#D97706;
+    --red:#DC2626;
+    --ink:#111827;
+    --muted:#6B7280;
+    --faint:#9CA3AF;
+    --line:#D1D5DB;
+    --line-soft:#E5E7EB;
+    --callout:#F9FAFB;
+    --page:#F3F4F6;
+    --card:#FFFFFF;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{font-family:Arial, Helvetica, sans-serif;background:var(--page);color:var(--ink);-webkit-font-smoothing:antialiased;}
+  #root{max-width:1240px;margin:0 auto;padding:0 20px 64px;}
+
+  /* ---------- Header banner ---------- */
+  .banner{background:var(--black);color:#fff;border-radius:0 0 16px 16px;margin:0 -20px 24px;padding:26px 28px 24px;}
+  .banner-inner{max-width:1240px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap;}
+  .brand-row{display:flex;align-items:center;gap:14px;}
+  .logo-img{height:30px;width:auto;display:block;flex:none;}
+  .brand-divider{width:1px;height:34px;background:rgba(255,255,255,0.22);flex:none;}
+  .brand-name{font-size:22px;font-weight:bold;letter-spacing:-0.4px;line-height:1.05;}
+  .brand-sub{font-size:12.5px;color:#9CA3AF;margin-top:3px;letter-spacing:0.2px;}
+  .banner-right{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
+  .snapshot-date{font-size:15px;font-weight:bold;}
+  .timestamp{font-size:12.5px;color:#9CA3AF;}
+  .sample-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(217,118,6,0.16);border:1px solid rgba(217,118,6,0.5);color:#FBBF77;font-size:11px;font-weight:bold;letter-spacing:1px;padding:5px 11px;border-radius:999px;text-transform:uppercase;}
+
+  /* ---------- Tier ladder (signature) ---------- */
+  .ladder{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+  .rung{background:var(--card);border:1px solid var(--line-soft);border-radius:12px;padding:16px 18px 14px;position:relative;overflow:hidden;}
+  .rung::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;}
+  .rung.t1::before{background:var(--blue);}
+  .rung.t2::before{background:var(--teal);}
+  .rung.t3::before{background:var(--faint);}
+  .rung.t4::before{background:var(--line);}
+  .rung-label{font-size:11px;font-weight:bold;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);}
+  .rung-count{font-size:30px;font-weight:bold;letter-spacing:-1px;margin:6px 0 2px;}
+  .rung-count .cap{font-size:14px;font-weight:normal;color:var(--faint);letter-spacing:0;}
+  .rung-rev{font-size:13px;color:var(--muted);}
+  .rung-rev b{color:var(--ink);}
+  .rung-flag{font-size:11px;font-weight:bold;margin-top:7px;display:inline-block;padding:2px 8px;border-radius:999px;}
+  .flag-ok{background:#ECFDF5;color:#047857;}
+  .flag-warn{background:#FEF3C7;color:#92400E;}
+
+  /* ---------- Cards / sections ---------- */
+  .card{background:var(--card);border:1px solid var(--line-soft);border-radius:12px;padding:20px 22px;margin-bottom:22px;}
+  .card h2{font-size:16px;margin:0 0 4px;letter-spacing:-0.2px;}
+  .card .sub{font-size:12.5px;color:var(--muted);margin:0 0 14px;}
+  .tier-chip{display:inline-block;font-size:10.5px;font-weight:bold;letter-spacing:0.8px;padding:2px 9px;border-radius:999px;color:#fff;vertical-align:2px;margin-left:8px;text-transform:uppercase;}
+  .chip-1{background:var(--blue);} .chip-2{background:var(--teal);} .chip-3{background:var(--faint);}
+
+  /* ---------- Tables ---------- */
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th{font-size:11px;letter-spacing:0.8px;text-transform:uppercase;color:var(--muted);text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);}
+  td{padding:9px 10px;border-bottom:1px solid var(--line-soft);vertical-align:middle;}
+  tr:last-child td{border-bottom:none;}
+  td.num, th.num{text-align:right;font-variant-numeric:tabular-nums;}
+  .ptitle{font-weight:bold;}
+  .phandle{font-size:11px;color:var(--faint);margin-top:2px;}
+  .empty{padding:26px 10px;text-align:center;color:var(--muted);font-size:13px;}
+  .empty b{color:var(--ink);}
+
+  /* ---------- Callouts ---------- */
+  .callout{background:var(--callout);border:1px solid var(--line-soft);border-left:4px solid var(--amber);border-radius:8px;padding:13px 16px;font-size:13px;color:var(--ink);margin:0 0 16px;line-height:1.5;}
+  .callout b{display:block;margin-bottom:2px;}
+  .callout.blue{border-left-color:var(--blue);}
+
+  /* ---------- Attribution ---------- */
+  .attr-grid{display:grid;grid-template-columns:200px 1fr;gap:22px;align-items:start;}
+  .gauge{background:var(--callout);border:1px solid var(--line-soft);border-radius:10px;padding:16px;text-align:center;}
+  .gauge-num{font-size:34px;font-weight:bold;letter-spacing:-1px;}
+  .gauge-num.bad{color:var(--red);}
+  .gauge-num.good{color:var(--teal);}
+  .gauge-label{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-top:4px;}
+  .bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+  .bar-label{flex:0 0 220px;font-size:12.5px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .bar-track{flex:1;background:var(--line-soft);border-radius:999px;height:12px;overflow:hidden;}
+  .bar-fill{height:100%;background:var(--blue);border-radius:999px;}
+  .bar-val{flex:0 0 110px;text-align:right;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;}
+
+  footer{font-size:11.5px;color:var(--faint);margin-top:8px;line-height:1.6;}
+  @media(max-width:900px){.ladder{grid-template-columns:repeat(2,1fr);}.attr-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div id="root">
+  <div class="banner"><div class="banner-inner">
+    <div class="brand-row">
+      <img class="logo-img" src="assets/cardshq-logo.png" alt="CardsHQ">
+      <div class="brand-divider"></div>
+      <div>
+        <div class="brand-name">Marketing Tier Performance</div>
+        <div class="brand-sub" id="scopeLine">Loading...</div>
+      </div>
+    </div>
+    <div class="banner-right">
+      <div class="snapshot-date" id="quarterLine"></div>
+      <div class="timestamp" id="stampLine"></div>
+      <div id="badgeSlot"></div>
+    </div>
+  </div></div>
+
+  <div id="content"></div>
+  <footer id="foot"></footer>
+</div>
+
+<script>
+const FRAMEWORK = {
+  1: { name: "Tier 1 - Flagship", capLo: 2, capHi: 3, budget: 5000 },
+  2: { name: "Tier 2 - Priority", capLo: 6, capHi: 10, budget: 1000 },
+  3: { name: "Tier 3 - Standard", capLo: 15, capHi: 25, budget: 0 },
+  4: { name: "Tier 4 - Passive", capLo: null, capHi: null, budget: 0 },
+};
+const $ = (s) => document.querySelector(s);
+const fmt$ = (v) => "$" + Number(v || 0).toLocaleString("en-US", { maximumFractionDigits: 0 });
+const fmtN = (v) => Number(v || 0).toLocaleString("en-US");
+
+async function loadJSON(url) {
+  try { const r = await fetch(url + "?v=" + Date.now()); if (!r.ok) return null; return await r.json(); }
+  catch { return null; }
+}
+
+(async function init() {
+  const data = await loadJSON("data.json");
+  if (!data) { $("#content").innerHTML = '<div class="card"><div class="empty">Could not load data.json.</div></div>'; return; }
+  const spendCfg = await loadJSON("spend.config.json");
+  const spendMap = new Map();
+  for (const e of (spendCfg?.entries || [])) {
+    if (e._delete_this_example) continue;
+    const total = Object.values(e.channels || {}).reduce((a, b) => a + (Number(b) || 0), 0);
+    if (total > 0) spendMap.set(e.handle, total);
+  }
+
+  // Banner
+  $("#scopeLine").textContent = data.scope;
+  $("#quarterLine").textContent = data.quarter + " - quarter to date";
+  $("#stampLine").textContent = "Data through " + data.date + " - generated " + new Date(data.generatedAt).toLocaleString("en-US", { timeZone: "America/New_York" }) + " ET";
+  if (data.isSample) $("#badgeSlot").innerHTML = '<span class="sample-badge">Sample data - awaiting tier tags</span>';
+
+  const byTier = { 1: [], 2: [], 3: [] };
+  for (const p of data.products) (byTier[p.tier] || (byTier[p.tier] = [])).push(p);
+  const tierRev = (t) => (byTier[t] || []).reduce((a, p) => a + p.revenue, 0);
+
+  // ---------- Tier ladder ----------
+  let html = '<div class="ladder">';
+  for (const t of [1, 2, 3]) {
+    const f = FRAMEWORK[t], n = (byTier[t] || []).length;
+    let flag = "";
+    if (n === 0) flag = '<span class="rung-flag flag-warn">No products tagged</span>';
+    else if (n > f.capHi) flag = '<span class="rung-flag flag-warn">Over framework cap</span>';
+    else if (n < f.capLo) flag = '<span class="rung-flag flag-warn">Below framework range</span>';
+    else flag = '<span class="rung-flag flag-ok">Within framework</span>';
+    html += `<div class="rung t${t}">
+      <div class="rung-label">${f.name}</div>
+      <div class="rung-count">${n} <span class="cap">/ ${f.capLo}-${f.capHi} per quarter</span></div>
+      <div class="rung-rev">QTD revenue <b>${fmt$(tierRev(t))}</b></div>
+      ${flag}</div>`;
+  }
+  html += `<div class="rung t4">
+    <div class="rung-label">${FRAMEWORK[4].name}</div>
+    <div class="rung-count">All untagged</div>
+    <div class="rung-rev">QTD revenue <b>${fmt$(data.tier4?.revenue)}</b> - ${fmtN(data.tier4?.unitsSold)} units</div>
+    <span class="rung-flag flag-ok">Baseline</span></div></div>`;
+
+  // ---------- Attribution ----------
+  const cov = data.attribution?.utmCoverage ?? 0;
+  const covClass = cov >= 60 ? "good" : "bad";
+  html += `<div class="card">
+    <h2>Channel Attribution</h2>
+    <p class="sub">Order-level source on online orders, quarter to date. Revenue figures are Shopify actuals - never platform-reported conversions.</p>`;
+  if (cov < 60) {
+    html += `<div class="callout"><b>Attribution limited - UTM fix pending on headless storefront</b>
+      UTM parameters are currently dropped at the storefront-to-checkout handoff, so paid and email campaigns report as Direct.
+      Channel and campaign ROAS become measurable once the fix ships (routed to Nathaniel, target before post-Nationals rollout). Data below is referrer-level only.</div>`;
+  }
+  html += '<div class="attr-grid"><div class="gauge">' +
+    `<div class="gauge-num ${covClass}">${cov}%</div><div class="gauge-label">Orders with UTM data</div>` +
+    `<div style="font-size:11.5px;color:var(--muted);margin-top:8px;">${fmtN(data.attribution?.ordersWithUtm)} of ${fmtN(data.attribution?.onlineOrders)} online orders</div></div><div>`;
+  const maxRev = Math.max(...(data.attribution?.channels || []).map((c) => c.revenue), 1);
+  for (const c of (data.attribution?.channels || [])) {
+    html += `<div class="bar-row"><div class="bar-label" title="${c.label}">${c.label}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.max(2, (c.revenue / maxRev) * 100)}%"></div></div>
+      <div class="bar-val">${fmt$(c.revenue)} - ${fmtN(c.orders)}</div></div>`;
+  }
+  html += "</div></div></div>";
+
+  // ---------- Per-tier tables ----------
+  for (const t of [1, 2, 3]) {
+    const f = FRAMEWORK[t], rows = byTier[t] || [];
+    html += `<div class="card"><h2>${f.name}<span class="tier-chip chip-${t}">${f.budget ? fmt$(f.budget) + " / product" : "No paid budget"}</span></h2>
+      <p class="sub">${rows.length} product${rows.length === 1 ? "" : "s"} tagged "Tier ${t}" - QTD sales, online channels only.</p>`;
+    if (!rows.length) {
+      html += `<div class="empty">No products carry the <b>"Tier ${t}"</b> tag in Shopify yet.<br>Once Zach and Jasmine tag their nominations, they appear here automatically on the next daily pull.</div>`;
+    } else {
+      html += `<table><thead><tr><th>Product</th><th class="num">Price</th><th class="num">On hand</th>
+        <th class="num">Units sold</th><th class="num">Revenue QTD</th><th class="num">Sell-through</th>
+        ${f.budget ? '<th class="num">Spend</th><th class="num">ROAS</th>' : ""}</tr></thead><tbody>`;
+      for (const p of rows) {
+        const st = p.unitsSold + p.onhand > 0 ? Math.round((p.unitsSold / (p.unitsSold + p.onhand)) * 100) : 0;
+        const spend = spendMap.get(p.handle);
+        let spendCells = "";
+        if (f.budget) {
+          spendCells = spend
+            ? `<td class="num">${fmt$(spend)}</td><td class="num"><b>${(p.revenue / spend).toFixed(1)}x</b></td>`
+            : '<td class="num" style="color:var(--faint)">-</td><td class="num" style="color:var(--faint)">Add spend</td>';
+        }
+        html += `<tr><td><div class="ptitle">${p.title}</div><div class="phandle">${p.handle} - ${p.vendor}</div></td>
+          <td class="num">${fmt$(p.price)}</td><td class="num">${fmtN(p.onhand)}</td>
+          <td class="num">${fmtN(p.unitsSold)}</td><td class="num"><b>${fmt$(p.revenue)}</b></td>
+          <td class="num">${st}%</td>${spendCells}</tr>`;
+      }
+      html += "</tbody></table>";
+    }
+    html += "</div>";
+  }
+
+  $("#content").innerHTML = html;
+  $("#foot").innerHTML = `Scope: ${data.scope}. Tier 4 = all products without a Tier 1-3 tag.
+    Spend is manual entry via spend.config.json until Google Ads / Meta integrations ship post-UTM-fix.
+    ROAS = Shopify revenue / entered spend. Framework caps per CardsHQ Product Marketing & Merchandising Support Framework 2026.`;
+})();
+</script>
+</body>
+</html>
