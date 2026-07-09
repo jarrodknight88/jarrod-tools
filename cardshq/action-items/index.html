@@ -196,7 +196,7 @@ var MEETINGS = {
         name: "Pre-Order",
         i: [
           { id:"cs-072", t:"Send staging URL to full team on Jul 7 for Austin hat test - confirm orders are not triggering shipments, loop in Collin on testing", d:"Mon Jul 7", c:"urgent", linkedTo:["cs-047"] },
-          { id:"cs-073", t:"Go live with Star Wars preorder Jul 10-11 after UAT passes - community Discord gets first access to link", d:"Jul 10-11", c:"urgent", linkedTo:["cs-049"] },
+          { id:"cs-073", t:"Go live with Star Wars preorder Jul 10-11 after UAT passes - community Discord gets first access to link", d:"Jul 10-11", c:"urgent", linkedTo:["cs-049","w23-003"] },
         ]
       },
       {
@@ -645,6 +645,24 @@ var MEETINGS = {
       ]},
     ]
   },
+  "cc-chq-weekly-sync-jul-8-2026": {
+    label: "CC-CHQ Weekly Sync - July 8, 2026",
+    sections: [
+      { name: "National / Events - Urgent", i: [
+        { id:"w23-001", t:"Sync with Kelly on National landing page - 'stay up to date at the National' combining CardsHQ + SCI content; confirm booth 974 banner", d:"This week", c:"urgent" },
+        { id:"w23-002", t:"PSA submission center closure - confirm exact dates (Wed or Thu through Sun during National) and publish on social + in-store signage", d:"ASAP", c:"urgent", linkedTo:["w22-001"] },
+        { id:"w23-003", t:"Star Wars Unlimited pre-order - publish Monday Jul 13; confirm product releases July 17", d:"Mon Jul 13", c:"urgent", linkedTo:["cs-073"] },
+      ]},
+      { name: "Site & Calendar", i: [
+        { id:"w23-004", t:"Meeting with Steven tomorrow - confirm all in-store events are up to date on site calendar", d:"Tomorrow (Jul 9)", c:"urgent" },
+        { id:"w23-005", t:"Confirm updated August trade night dates are live on site with customer-facing communication", d:"This week", c:"soon", linkedTo:["w20-014"] },
+      ]},
+      { name: "Discovery & Ongoing", i: [
+        { id:"w23-006", t:"Detroit events platform discovery - evaluate multi-location platform options for managing events across Atlanta and Detroit", d:"Early August", c:"soon" },
+        { id:"w23-007", t:"Rise API key deprecation - continue working through fix with Nathaniel", d:"Ongoing", c:"ongoing", linkedTo:["w22-007"] },
+      ]},
+    ]
+  },
   "weekly-ops-sync-jun-3-2026": {
     label: "Weekly Ops Sync - June 3, 2026",
     sections: [
@@ -667,7 +685,7 @@ var MEETINGS = {
     label: "CC-CHQ Sync - June 24, 2026",
     sections: [
       { name: "Site & Comms - Urgent", i: [
-        { id:"w22-001", t:"PSA closure communication - add site notices for July 4 closure and National (July 29 - Aug 2); confirm hours with Adam once PSA confirms", d:"This week", c:"urgent" },
+        { id:"w22-001", t:"PSA closure communication - add site notices for July 4 closure and National (July 29 - Aug 2); confirm hours with Adam once PSA confirms", d:"This week", c:"urgent", linkedTo:["w23-002"] },
         { id:"w22-002", t:"Panini Prizm World Cup hero banner - graphic asset needed before Friday presale goes live; going forward hero banner required before any presale launches", d:"Before Friday", c:"urgent" },
         { id:"w22-003", t:"Trade Night event calendar - update recurring events on site to reflect moved dates (TCG July 10, Sports July 11)", d:"This week", c:"urgent" },
       ]},
@@ -677,7 +695,7 @@ var MEETINGS = {
         { id:"w22-006", t:"About page / One Company rebrand - create ticket for update; connect with Jen Salazar Sims for cross-department conversation on messaging and tone; target live before the National", d:"Before National", c:"soon" },
       ]},
       { name: "Tech & Maintenance", i: [
-        { id:"w22-007", t:"Rise API key - new key being pursued by Nathaniel; reminder: start renewal process by March next year", d:"March 2027", c:"later" },
+        { id:"w22-007", t:"Rise API key - new key being pursued by Nathaniel; reminder: start renewal process by March next year", d:"March 2027", c:"later", linkedTo:["w23-007"] },
       ]},
     ]
   },
@@ -1136,7 +1154,7 @@ var MEETINGS = {
       ]},
       {g:"Trade Show / Events Coordination",i:[
         {id:"w20-013",t:"Confirm Rafael show filming permission - Jeff to send target show dates (June show identified), Kelly to follow up with Rafael on media availability approval",d:"Before June show",c:"soon"},
-        {id:"w20-014",t:"Communicate trade night date shifts: July TCG = Friday July 10, July Sports = Saturday July 11 (July 4 conflict) - August TCG = August 8, August Sports = August 15 (National conflict)",d:"This week",c:"soon"},
+        {id:"w20-014",t:"Communicate trade night date shifts: July TCG = Friday July 10, July Sports = Saturday July 11 (July 4 conflict) - August TCG = August 8, August Sports = August 15 (National conflict)",d:"This week",c:"soon",linkedTo:["w23-005"]},
         {id:"w20-015",t:"Get soccer trade night promotional info out - June 20, ahead of two Sunday World Cup games and Father's Day - draws in traveling fans",d:"Before June 15",c:"soon"},
       ]},
       {g:"Shamrock Press Release",i:[
