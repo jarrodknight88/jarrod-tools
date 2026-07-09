@@ -1254,7 +1254,7 @@ function TrendRange({ range, custom, setRange, setCustom, minDate, maxDate }){
   return (
     <div className="trend-bar">
       <span className="tr-label">Trends</span>
-      {[[7,'7D'],[14,'14D'],[30,'30D'],[null,'All']].map(([v,label])=>(
+      {[[1,'Yesterday'],[7,'7D'],[14,'14D'],[30,'30D'],[null,'All']].map(([v,label])=>(
         <button key={label} className={'hist-range-btn'+(!usingCustom&&range===v?' active':'')} onClick={()=>pickPreset(v)}>{label}</button>
       ))}
       <span className="hist-custom">
@@ -1263,7 +1263,7 @@ function TrendRange({ range, custom, setRange, setCustom, minDate, maxDate }){
         <input type="date" className="hist-date" value={custom.to} min={custom.from||minDate} max={maxDate} onChange={e=>setField('to',e.target.value)} aria-label="To date"/>
         {usingCustom && <button className="hist-clear" onClick={()=>setCustom({from:'',to:''})}>Clear</button>}
       </span>
-      <span className="tr-note">Sets the dashboard view - end date drives the sections below; range sums the sold side</span>
+      <span className="tr-note">Sets the whole dashboard - on-hand shows as of the end date; sold side and trends sum the selected range</span>
     </div>
   );
 }
@@ -1363,7 +1363,7 @@ function DerivedAsOf({ entry }){
 function App(){
   const [selected, setSelected] = useState(()=>new Set());
   const [data, setData] = useState(null);
-  const [histRange, setHistRange] = useState(30);
+  const [histRange, setHistRange] = useState(1); // 1=Yesterday (default view), 7/14/30, null=All
   const [histCustom, setHistCustom] = useState({ from:'', to:'' });
 
   React.useEffect(()=>{
@@ -1387,6 +1387,15 @@ function App(){
   const customActive = !!(histCustom.from || histCustom.to);
   const latestDate = data ? data.date : '';
   const asOf = customActive ? (histCustom.to || latestDate) : latestDate;
+  // Effective range: presets are shorthand for a window ending at the latest date,
+  // so 7D/14D/30D/All drive the sold side exactly like a custom range does.
+  const histMinD = data && data.history && data.history.length ? data.history[0].date : '';
+  const histMaxD = data && data.history && data.history.length ? data.history[data.history.length-1].date : '';
+  const addDays = (d,n)=>{ const x=new Date(d+'T12:00:00'); x.setDate(x.getDate()+n); return x.toISOString().slice(0,10); };
+  const presetFrom = histRange ? (histMaxD ? addDays(histMaxD, -(histRange-1)) : '') : histMinD;
+  const effFrom = customActive ? (histCustom.from || histMinD) : presetFrom;
+  const effTo = customActive ? (histCustom.to || histMaxD) : histMaxD;
+  const rangeActive = customActive || histRange !== 1;
   const [snap, setSnap] = useState(null); // {mode:'snapshot'|'derived'|'missing', date, records?, entry?}
   React.useEffect(()=>{
     if(!data || !asOf || asOf===latestDate){ setSnap(null); return; }
@@ -1427,8 +1436,8 @@ function App(){
       {histMax && <TrendRange range={histRange} custom={histCustom} setRange={setHistRange} setCustom={setHistCustom} minDate={histMin} maxDate={histMax}/>}
       {snap && <AsOfBanner snap={snap} latestDate={latestDate}/>}
       <Totals totals={totals}/>
-      {customActive
-        ? <RangeSold history={data.history} from={histCustom.from} to={histCustom.to}/>
+      {rangeActive
+        ? <RangeSold history={data.history} from={effFrom} to={effTo}/>
         : <SoldSide records={filtered}/>}
       {derivedReady
         ? <DerivedAsOf entry={snap.entry}/>
