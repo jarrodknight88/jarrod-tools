@@ -46,6 +46,14 @@ const CONFIG = JSON.parse(
 );
 const ENDPOINT = `https://${STORE}.myshopify.com/admin/api/${API_VERSION}/graphql.json`;
 
+// Sanity cap on a single sold unit price. No single card CardsHQ sells approaches
+// this; anything above it is corrupt source data (e.g. a barcode scanned into a
+// Shopify price field - the 2026-07-07 incident was a 12-digit catalog price on a
+// graded Pokemon single). Offending lines are excluded from money sums and logged
+// to `anomalies` in data.json so they surface instead of silently blowing up totals.
+const MAX_UNIT_PRICE = 250000;
+const anomalies = [];
+
 /* ---------- Shopify GraphQL helper (with basic retry) ---------- */
 async function gql(query, variables = {}) {
   for (let attempt = 1; attempt <= 5; attempt++) {
@@ -181,6 +189,26 @@ async function pullProducts(win) {
 const toISO = (local) => new Date(local).toISOString();
 
 /* ---------- 2) Sold yesterday from orders ---------- */
+// Revenue price for a sold line: the amount actually charged (net of discounts),
+// falling back to the variant's catalog price only if the charged amount is absent.
+// Returns null (and logs an anomaly) when the price fails the sanity cap; callers
+// still count the unit as physically out but exclude its money from the sums.
+function soldLinePrice(li, day, subj) {
+  const charged = li.discountedUnitPriceSet && li.discountedUnitPriceSet.shopMoney
+    ? Number(li.discountedUnitPriceSet.shopMoney.amount) : NaN;
+  const catalog = li.variant ? Number(li.variant.price) : NaN;
+  const price = Number.isFinite(charged) ? charged : (Number.isFinite(catalog) ? catalog : 0);
+  if (price > MAX_UNIT_PRICE) {
+    anomalies.push({
+      date: day, category: subj.category, subject: subj.name,
+      qty: li.quantity || 0, price,
+      note: "unit price above sanity cap - excluded from revenue; check the product's price in Shopify",
+    });
+    return null;
+  }
+  return price;
+}
+
 const SOLD_QUERY = `
 query Sold($cursor: String, $q: String!) {
   orders(first: 100, after: $cursor, query: $q) {
@@ -189,6 +217,7 @@ query Sold($cursor: String, $q: String!) {
       id
       lineItems(first: 100) { edges { node {
         quantity
+        discountedUnitPriceSet { shopMoney { amount } }
         product { productType tags }
         variant { price inventoryItem { unitCost { amount } } }
       }}}
@@ -208,13 +237,15 @@ async function pullSold(win) {
         const cond = classifyCondition(li.product.productType);
         if (!cond) continue; // not a card (wax, supplies, etc.)
         const subj = classifySubject(li.product.tags);
-        const price = li.variant ? Number(li.variant.price) || 0 : 0;
+        const price = soldLinePrice(li, win.day, subj);
         const unitCost = li.variant && li.variant.inventoryItem && li.variant.inventoryItem.unitCost
           ? Number(li.variant.inventoryItem.unitCost.amount) || 0 : 0;
         const qty = li.quantity || 0;
-        const slice = { category: subj.category, subject: subj.name, cond, tier: classifyTier(price) };
+        // Tier from catalog price (bucketing), capped so a corrupt price cannot mis-tier.
+        const tierPrice = Math.min(li.variant ? Number(li.variant.price) || 0 : 0, MAX_UNIT_PRICE);
+        const slice = { category: subj.category, subject: subj.name, cond, tier: classifyTier(tierPrice) };
         bumpFlow(slice, "out", qty);
-        bumpSold(slice, qty, unitCost, price);
+        bumpSold(slice, qty, unitCost, price === null ? 0 : price);
         units += qty;
       }
       orders++;
@@ -263,7 +294,7 @@ async function soldSummaryForDay(dayStr) {
         const cond = classifyCondition(li.product.productType);
         if (!cond) continue; // cards only - matches dashboard scope
         const subj = classifySubject(li.product.tags);
-        const price = li.variant ? Number(li.variant.price) || 0 : 0;
+        const price = soldLinePrice(li, dayStr, subj);
         const unitCost = li.variant && li.variant.inventoryItem && li.variant.inventoryItem.unitCost
           ? Number(li.variant.inventoryItem.unitCost.amount) || 0 : 0;
         const qty = li.quantity || 0;
@@ -271,7 +302,7 @@ async function soldSummaryForDay(dayStr) {
         for (const t of [totals, c]) {
           t.out += qty;
           t.soldCost = money(t.soldCost + qty * unitCost);
-          t.soldRevenue = money(t.soldRevenue + qty * price);
+          t.soldRevenue = money(t.soldRevenue + qty * (price === null ? 0 : price));
         }
       }
     }
@@ -424,6 +455,16 @@ async function deriveOnhandHistory(history) {
   try {
     const prev = JSON.parse(fs.readFileSync(OUT, "utf8"));
     if (Array.isArray(prev.history)) history = prev.history;
+    // Carry prior anomalies forward (dedupe on date+subject+price, keep last 50).
+    if (Array.isArray(prev.anomalies)) {
+      const seen = new Set(anomalies.map((a) => `${a.date}|${a.subject}|${a.price}`));
+      for (const a of prev.anomalies) {
+        const k = `${a.date}|${a.subject}|${a.price}`;
+        if (!seen.has(k)) { anomalies.push(a); seen.add(k); }
+      }
+      anomalies.sort((a, b) => (a.date || "").localeCompare(b.date || ""));
+      anomalies.splice(0, Math.max(0, anomalies.length - 50));
+    }
   } catch { /* first run or unreadable - start fresh */ }
   const have = new Set(history.map((h) => h.date));
 
@@ -441,6 +482,48 @@ async function deriveOnhandHistory(history) {
   history = history.filter((h) => h.date !== win.day);
   history.push({ date: win.day, onhandKnown: true, totals: todayRollup.totals, byCategory: todayRollup.byCategory });
   history.sort((a, b) => a.date.localeCompare(b.date));
+
+  // ---- One-time sold-side repair ----
+  // 2026-07-07: a graded Pokemon single carried a corrupt 12-digit catalog price,
+  // inflating that day's sold revenue to ~$175B. Recompute the day's sold-side from
+  // orders using the fixed pricing (actual charged amount + sanity cap) and merge
+  // into the existing entry, preserving on-hand fields. Idempotent via soldRepairedAt.
+  const REPAIR_DATES = ["2026-07-07"];
+  for (const day of REPAIR_DATES) {
+    const h = history.find((x) => x.date === day);
+    if (!h || h.soldRepairedAt) continue;
+    console.error(`Repairing sold-side for ${day}...`);
+    const fixed = await soldSummaryForDay(day);
+    h.totals.out = fixed.totals.out;
+    h.totals.soldCost = fixed.totals.soldCost;
+    h.totals.soldRevenue = fixed.totals.soldRevenue;
+    for (const [cat, v] of Object.entries(fixed.byCategory)) {
+      const c = (h.byCategory[cat] = h.byCategory[cat] ||
+        { onhand: null, cost: null, retail: null, in: null, out: 0, soldCost: 0, soldRevenue: 0 });
+      c.out = v.out; c.soldCost = v.soldCost; c.soldRevenue = v.soldRevenue;
+    }
+    h.soldRepairedAt = new Date().toISOString();
+    // Patch the day's snapshot so the rewind view reconciles: each corrupted bucket
+    // gets the exact remainder of its category's repaired revenue after the clean
+    // buckets in that category are summed (exact when one bucket per category is bad).
+    const snapPath = path.join(SNAP_DIR, `${day}.json`);
+    if (fs.existsSync(snapPath)) {
+      const snap = JSON.parse(fs.readFileSync(snapPath, "utf8"));
+      const badRecs = snap.records.filter((r) => (r.p.daily.soldRevenue || 0) > MAX_UNIT_PRICE);
+      for (const r of badRecs) {
+        const cleanSum = snap.records
+          .filter((x) => x.category === r.category && x !== r && (x.p.daily.soldRevenue || 0) <= MAX_UNIT_PRICE)
+          .reduce((a, x) => a + (x.p.daily.soldRevenue || 0), 0);
+        const catTotal = (fixed.byCategory[r.category] || { soldRevenue: 0 }).soldRevenue;
+        r.p.daily.soldRevenue = money(Math.max(0, catTotal - cleanSum));
+      }
+      snap.totals.out = fixed.totals.out;
+      snap.totals.soldCost = fixed.totals.soldCost;
+      snap.totals.soldRevenue = fixed.totals.soldRevenue;
+      snap.soldRepairedAt = h.soldRepairedAt;
+      fs.writeFileSync(snapPath, JSON.stringify(snap));
+    }
+  }
 
   // Derive on-hand values for pre-anchor days (one-time; idempotent)
   const derived = await deriveOnhandHistory(history);
@@ -474,6 +557,7 @@ async function deriveOnhandHistory(history) {
     records,
     history,
     snapshots,
+    anomalies,
   };
 
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
@@ -491,4 +575,5 @@ async function deriveOnhandHistory(history) {
   console.error(`Wrote ${records.length} buckets to ${OUT}`);
   console.error(`History: ${history.length} days (${history[0].date} -> ${history[history.length - 1].date}), backfilled ${missing.length} this run.`);
   console.error(`Snapshots: wrote ${win.day}.json (${records.length} buckets); ${snapshots.length} day(s) available (${snapshots[0]} -> ${snapshots[snapshots.length - 1]}).`);
+  if (anomalies.length) console.error(`ANOMALIES (${anomalies.length}): ${JSON.stringify(anomalies.slice(-5))}`);
 })().catch((e) => { console.error(e); process.exit(1); });
