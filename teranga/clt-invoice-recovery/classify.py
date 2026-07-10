@@ -26,7 +26,6 @@ from datetime import date, datetime
 from pathlib import Path
 
 import clt_config as config
-from clt_auth import verified_services
 
 HERE = Path(__file__).resolve().parent
 
@@ -54,42 +53,65 @@ def parse_recon_date(raw: str) -> date | None:
     return None
 
 
-def load_recon(sheets) -> list[dict]:
-    """Read the CLT recon tab into dicts keyed by configured header names."""
-    sheet_id = config.require("CLT_RECON_SHEET_ID")
-    tab = config.require("CLT_RECON_TAB")
+def parse_recon_values(values: list[list[str]]) -> list[dict]:
+    """Turn raw tab rows into recon dicts keyed by configured headers.
+
+    RECON_COL_INVOICE is optional: some recons (CLT) have no invoice
+    column and keep the reference inside the notes/description text.
+    When the description starts with a date (CLT convention:
+    "M/D/YY - ref"), that date is used as the row's effective date —
+    the Date column there is only a month bucket.
+    """
     header_row = int(config.get("RECON_HEADER_ROW", "1"))
-
-    resp = sheets.spreadsheets().values().get(
-        spreadsheetId=sheet_id, range=tab
-    ).execute()
-    values = resp.get("values", [])
     if len(values) < header_row:
-        sys.exit(f"Recon tab {tab!r} has no header row at row {header_row}.")
+        sys.exit(f"Recon data has no header row at row {header_row}.")
 
-    headers = [h.strip() for h in values[header_row - 1]]
-    required = {key: config.get(key) for key in
-                ("RECON_COL_VENDOR", "RECON_COL_DATE", "RECON_COL_INVOICE",
-                 "RECON_COL_AMOUNT", "RECON_COL_DESC")}
+    headers = [str(h).strip() for h in values[header_row - 1]]
+    cols = {key: config.get(key) for key in
+            ("RECON_COL_VENDOR", "RECON_COL_DATE", "RECON_COL_INVOICE",
+             "RECON_COL_AMOUNT", "RECON_COL_DESC")}
+    required = {k: v for k, v in cols.items() if k != "RECON_COL_INVOICE"}
     missing = [f"{k}={v!r}" for k, v in required.items()
-               if v and v not in headers]
+               if not v or v not in headers]
     if missing:
         sys.exit(
             f"Recon headers {headers} don't contain: {', '.join(missing)}.\n"
             "Fix the RECON_COL_* values in .env to match the actual tab."
         )
+    has_invoice_col = bool(cols["RECON_COL_INVOICE"]) \
+        and cols["RECON_COL_INVOICE"] in headers
 
     rows = []
     for raw in values[header_row:]:
+        raw = [str(c) if c is not None else "" for c in raw]
         row = dict(zip(headers, raw + [""] * (len(headers) - len(raw))))
+        desc = row.get(cols["RECON_COL_DESC"], "")
+        row_date = parse_recon_date(row.get(cols["RECON_COL_DATE"], ""))
+        if m := re.match(r"\s*(\d{1,2}/\d{1,2}/\d{2,4}|\d{4}-\d{2}-\d{2})", desc):
+            row_date = parse_recon_date(m.group(1)) or row_date
         rows.append({
-            "vendor": row.get(required["RECON_COL_VENDOR"], ""),
-            "date": parse_recon_date(row.get(required["RECON_COL_DATE"], "")),
-            "invoice": row.get(required["RECON_COL_INVOICE"], "").strip(),
-            "amount": parse_amount(row.get(required["RECON_COL_AMOUNT"], "")),
-            "desc": row.get(required["RECON_COL_DESC"], ""),
+            "vendor": row.get(cols["RECON_COL_VENDOR"], ""),
+            "date": row_date,
+            "invoice": row.get(cols["RECON_COL_INVOICE"], "").strip()
+            if has_invoice_col else "",
+            "amount": parse_amount(row.get(cols["RECON_COL_AMOUNT"], "")),
+            "desc": desc,
         })
     return rows
+
+
+def load_recon_sheets(sheets) -> list[dict]:
+    sheet_id = config.require("CLT_RECON_SHEET_ID")
+    tab = config.require("CLT_RECON_TAB")
+    resp = sheets.spreadsheets().values().get(
+        spreadsheetId=sheet_id, range=tab
+    ).execute()
+    return parse_recon_values(resp.get("values", []))
+
+
+def load_recon_csv(path: Path) -> list[dict]:
+    with path.open(newline="") as f:
+        return parse_recon_values(list(csv.reader(f)))
 
 
 def vendor_rows(recon: list[dict], vendor: str) -> list[dict]:
@@ -148,11 +170,17 @@ def classify_row(row: dict, recon: list[dict], ctx: dict) -> list[str]:
     amount = parse_amount(row["total"])
     vrows = vendor_rows(recon, vendor) if vendor else []
 
-    # Gate: dedupe — invoice # collision, or same vendor+amount within 3 days.
+    # Gate: dedupe — invoice # collision (in the invoice column OR as a
+    # token inside the notes text, the CLT convention), or same
+    # vendor+amount within 3 days.
     if row["invoice_number"]:
-        inv_norm = norm(row["invoice_number"])
-        if any(inv_norm and norm(r["invoice"]) == inv_norm for r in vrows):
-            reasons.append(f"invoice # {row['invoice_number']} already in recon")
+        inv = row["invoice_number"]
+        inv_norm = norm(inv)
+        token = re.compile(rf"(?<![\w]){re.escape(inv)}(?![\w])", re.I)
+        for r in vrows:
+            if (inv_norm and norm(r["invoice"]) == inv_norm) or token.search(r["desc"] or ""):
+                reasons.append(f"invoice # {inv} already in recon")
+                break
     if amount is not None and inv_date:
         for r in vrows:
             if r["amount"] is not None and abs(r["amount"] - amount) < 0.01 \
@@ -189,14 +217,22 @@ def classify_row(row: dict, recon: list[dict], ctx: dict) -> list[str]:
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--parsed", default=str(HERE / "parsed.csv"))
+    ap.add_argument("--recon", help="CSV export of the recon tab (offline "
+                                    "mode — no Google auth needed)")
+    ap.add_argument("--out-dir", default=str(HERE),
+                    help="directory for to_load.csv / to_review.csv")
     args = ap.parse_args()
 
     parsed_path = Path(args.parsed)
     if not parsed_path.exists():
         sys.exit(f"{parsed_path} not found — run parse_invoices.py first.")
 
-    _, sheets, _ = verified_services()
-    recon = load_recon(sheets)
+    if args.recon:
+        recon = load_recon_csv(Path(args.recon))
+    else:
+        from clt_auth import verified_services
+        _, sheets, _ = verified_services()
+        recon = load_recon_sheets(sheets)
     start, end = config.outage_window()
     ctx = {
         "start": start,
@@ -226,8 +262,9 @@ def main():
             print(f"CLEAN {row['file']}: {row['vendor']} "
                   f"#{row['invoice_number']} {row['invoice_date']} ${row['total']}")
 
+    out_dir = Path(args.out_dir)
     fieldnames = list(parsed[0].keys()) + ["status", "flag_reasons"] if parsed else []
-    for path, rows in ((HERE / "to_load.csv", to_load), (HERE / "to_review.csv", to_review)):
+    for path, rows in ((out_dir / "to_load.csv", to_load), (out_dir / "to_review.csv", to_review)):
         with path.open("w", newline="") as f:
             writer = csv.DictWriter(f, fieldnames=fieldnames)
             writer.writeheader()

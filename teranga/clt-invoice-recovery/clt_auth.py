@@ -24,6 +24,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
 import clt_config as config
+from clt_common import KNOWN_WRONG_MAILBOX_HINTS
 
 HERE = Path(__file__).resolve().parent
 CREDENTIALS_PATH = HERE / "credentials.json"
@@ -37,10 +38,6 @@ SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive.file",
 ]
-
-# Never allow these mailboxes even if someone edits .env carelessly.
-KNOWN_WRONG_MAILBOX_HINTS = ("brookhaven", "atl", "atlanta")
-
 
 def _credentials() -> Credentials:
     creds = None

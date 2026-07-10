@@ -16,13 +16,11 @@ appears there, it aborts before writing a single cell.
 import argparse
 import csv
 import mimetypes
+import shutil
 import sys
 from pathlib import Path
 
-from googleapiclient.http import MediaFileUpload
-
 import clt_config as config
-from clt_auth import verified_services
 
 HERE = Path(__file__).resolve().parent
 INVOICE_DIR = HERE / "clt_invoices"
@@ -69,6 +67,11 @@ def main():
     ap.add_argument("--to-load", default=str(HERE / "to_load.csv"))
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--yes", action="store_true", help="skip confirmation")
+    ap.add_argument("--offline", action="store_true",
+                    help="no Google APIs: write recon_append.csv for manual "
+                         "paste and move loaded files to clt_invoices/loaded/")
+    ap.add_argument("--recon", help="CSV export of the recon tab; required "
+                                    "with --offline to match its column order")
     args = ap.parse_args()
 
     to_load_path = Path(args.to_load)
@@ -89,16 +92,30 @@ def main():
             "FLAG rows must never be auto-loaded. Re-run classify.py."
         )
 
-    _, sheets, drive = verified_services()
-    recon_sheet = config.require("CLT_RECON_SHEET_ID")
-    recon_tab = config.require("CLT_RECON_TAB")
-    processed_sheet = config.get("CLT_PROCESSED_SHEET_ID")
-    processed_tab = config.get("CLT_PROCESSED_TAB")
-    archive_folder = config.require("DRIVE_ARCHIVE_FOLDER_ID")
+    if args.offline:
+        if not args.recon:
+            sys.exit("--offline requires --recon <csv export of the recon "
+                     "tab> so appended rows match its column order.")
+        with open(args.recon, newline="") as f:
+            values = list(csv.reader(f))
+        header_row = int(config.get("RECON_HEADER_ROW", "1"))
+        if len(values) < header_row:
+            sys.exit(f"{args.recon} has no header row at row {header_row}.")
+        headers = [h.strip() for h in values[header_row - 1]]
+        sheets = drive = None
+        recon_sheet = recon_tab = "(offline)"
+        processed_sheet = processed_tab = ""
+    else:
+        from clt_auth import verified_services
+        _, sheets, drive = verified_services()
+        recon_sheet = config.require("CLT_RECON_SHEET_ID")
+        recon_tab = config.require("CLT_RECON_TAB")
+        processed_sheet = config.get("CLT_PROCESSED_SHEET_ID")
+        processed_tab = config.get("CLT_PROCESSED_TAB")
+        # Validate the column mapping against the live sheet up front so
+        # a dry run catches mapping mistakes too.
+        headers = recon_headers(sheets, recon_sheet, recon_tab)
 
-    # Validate the column mapping against the live sheet up front so a
-    # dry run catches mapping mistakes too.
-    headers = recon_headers(sheets, recon_sheet, recon_tab)
     recon_values = [recon_row(r, headers) for r in rows]
 
     total = sum(float(r["total"]) for r in rows)
@@ -115,6 +132,28 @@ def main():
         answer = input("\nProceed? Type 'load' to confirm: ").strip().lower()
         if answer != "load":
             sys.exit("Aborted — nothing written.")
+
+    if args.offline:
+        out = HERE / "recon_append.csv"
+        with out.open("w", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow(headers)
+            writer.writerows(recon_values)
+        loaded_dir = INVOICE_DIR / "loaded"
+        loaded_dir.mkdir(parents=True, exist_ok=True)
+        moved = 0
+        for r in rows:
+            src = INVOICE_DIR / r["file"]
+            if src.exists():
+                shutil.move(str(src), str(loaded_dir / r["file"]))
+                moved += 1
+        print(f"\nOffline load staged:\n"
+              f"  1. Paste the rows from {out} (below the header) into the "
+              f"recon tab.\n"
+              f"  2. Drag the {moved} files in {loaded_dir} into the Drive "
+              f"archive folder.\n"
+              f"to_review.csv still needs Jarrod's eyes.")
+        return
 
     # 1. Append to the recon, positioned under its actual headers.
     sheets.spreadsheets().values().append(
@@ -142,6 +181,8 @@ def main():
         print(f"Appended {len(rows)} rows to processed tab {processed_tab!r}.")
 
     # 3. Archive source files to Drive.
+    from googleapiclient.http import MediaFileUpload
+    archive_folder = config.require("DRIVE_ARCHIVE_FOLDER_ID")
     archived = 0
     for r in rows:
         src = INVOICE_DIR / r["file"]
