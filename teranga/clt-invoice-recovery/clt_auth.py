@@ -17,6 +17,7 @@ ATL run: sweeping the wrong mailbox. Do not weaken this check.
 import sys
 from pathlib import Path
 
+from google.auth.exceptions import RefreshError
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -48,8 +49,16 @@ def _credentials() -> Credentials:
     if creds and creds.valid:
         return creds
     if creds and creds.expired and creds.refresh_token:
-        creds.refresh(Request())
-    else:
+        try:
+            creds.refresh(Request())
+        except RefreshError:
+            # Testing-mode refresh tokens expire after ~7 days for
+            # restricted scopes; fall back to a fresh consent flow.
+            print("Cached token can no longer be refreshed (Testing-mode "
+                  "tokens expire after ~7 days). Re-running the consent "
+                  "flow — sign in as the CHARLOTTE account.")
+            creds = None
+    if not creds or not creds.valid:
         if not CREDENTIALS_PATH.exists():
             sys.exit(
                 f"credentials.json not found at {CREDENTIALS_PATH}.\n"

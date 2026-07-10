@@ -7,10 +7,27 @@ edge cases for Jarrod.
 
 ## One-time setup (Step 1 — do this first, everything gates on it)
 
-1. In Google Cloud Console, create (or reuse) a project and enable the
+The Google Cloud project lives under **jarrod.knight88@gmail.com** (the
+project owner and the scanned mailbox are independent — the account that
+completes the consent flow determines which inbox the token can read).
+
+1. In Google Cloud Console (logged in as jarrod.knight88@gmail.com),
+   create a project (e.g. `teranga-clt-recovery`) and enable the
    **Gmail API**, **Google Sheets API**, and **Google Drive API**.
-2. Create an OAuth client of type **Desktop app**; download the JSON as
-   `credentials.json` into this directory.
+2. On the **OAuth consent screen**: choose **External**, leave the app in
+   **Testing** status, and add every mailbox to be scanned as a
+   **test user** — the Charlotte account now, other locations later.
+   Then create an OAuth client of type **Desktop app** under
+   **Credentials** and download the JSON as `credentials.json` into this
+   directory. One project/client serves all locations; each scanned
+   mailbox gets its own cached token.
+
+   > Testing-status refresh tokens for Gmail scopes expire after ~7 days.
+   > When that happens, the scripts automatically fall back to a fresh
+   > consent flow (a browser window opens) — sign in as the Charlotte
+   > account again and continue. (Publishing to Production removes the
+   > expiry but triggers Google's app-verification review; not worth it
+   > for internal tooling.)
 3. `pip install -r requirements.txt` (Python 3.10+). Also install
    `poppler-utils` and `tesseract-ocr` (e.g. `brew install poppler tesseract`
    or `apt install poppler-utils tesseract-ocr`).
