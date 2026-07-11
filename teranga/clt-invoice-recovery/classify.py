@@ -268,6 +268,7 @@ def main():
                   f"#{row['invoice_number']} {row['invoice_date']} ${row['total']}")
 
     out_dir = Path(args.out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
     fieldnames = list(parsed[0].keys()) + ["status", "flag_reasons"] if parsed else []
     for path, rows in ((out_dir / "to_load.csv", to_load), (out_dir / "to_review.csv", to_review)):
         with path.open("w", newline="") as f:
