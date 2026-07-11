@@ -170,6 +170,11 @@ def classify_row(row: dict, recon: list[dict], ctx: dict) -> list[str]:
     amount = parse_amount(row["total"])
     vrows = vendor_rows(recon, vendor) if vendor else []
 
+    # Gate: a vendor with no recon history is a new vendor — needs a human
+    # to confirm the relationship before anything is booked.
+    if vendor and not vrows:
+        reasons.append(f"vendor {vendor!r} has no history in the recon — new vendor")
+
     # Gate: dedupe — invoice # collision (in the invoice column OR as a
     # token inside the notes text, the CLT convention), or same
     # vendor+amount within 3 days.
