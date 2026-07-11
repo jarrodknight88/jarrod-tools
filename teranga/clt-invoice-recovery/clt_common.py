@@ -17,8 +17,19 @@ KEEP_EXTENSIONS = {
     ".heic", ".bmp",
 }
 
-# Never allow these mailboxes even if someone edits .env carelessly.
-KNOWN_WRONG_MAILBOX_HINTS = ("brookhaven", "atl", "atlanta")
+def wrong_mailbox_hints() -> tuple[str, ...]:
+    """Substrings that must never appear in the authenticated mailbox.
+
+    Belt-and-braces on top of the exact-address check; configure per
+    location profile (e.g. CLT blocks 'atl'/'brookhaven', but the Afro
+    District ATL profile must NOT block 'atl' — its own address
+    contains it).
+    """
+    return tuple(h.lower() for h in config.get_list("WRONG_MAILBOX_HINTS"))
+
+
+# Backwards-compatible alias for existing imports.
+KNOWN_WRONG_MAILBOX_HINTS = wrong_mailbox_hints()
 
 
 def default_query() -> str:
