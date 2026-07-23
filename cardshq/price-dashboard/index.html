@@ -186,9 +186,18 @@
   document.getElementById('searchCurrent').addEventListener('input', function(e){ state.qCurrent = e.target.value; render(); });
   document.getElementById('instockOnly').addEventListener('change', function(e){ state.instock = e.target.checked; render(); });
 
+  var RAW = 'https://raw.githubusercontent.com/jarrodknight88/jarrod-tools/main/cardshq/price-dashboard/data/';
+  var bust = '?t=' + Math.floor(Date.now() / 60000);
+  function getJSON(name){
+    return fetch(RAW + name + bust)
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .catch(function(){
+        return fetch('data/' + name).then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; });
+      });
+  }
   Promise.all([
-    fetch('data/latest.json').then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; }),
-    fetch('data/changes.json').then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; })
+    getJSON('latest.json'),
+    getJSON('changes.json')
   ]).then(function(res){
     state.latest = res[0];
     state.changes = (res[1] && res[1].changes) || [];
