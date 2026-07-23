@@ -1435,7 +1435,9 @@ function MonthlyBuySell({ history, from, to }){
                       <td>{fmt(m.outU)}{m.soldDaysMissing>0 && <span className="cat-sub"> *</span>}</td>
                       <td>{usd(m.soldRev)}</td>
                       <td className="sold-m">{usd(m.soldRev-m.soldCost)} <span className="cat-sub">{marginPct(m.soldRev,m.soldCost)}%</span></td>
-                      <td>{sellThrough(m)}%{partial && <span className="cat-sub" title="No prior-day position in history, so sell-through uses bought only"> *</span>}</td>
+                      {m.soldDaysMissing>0
+                        ? <td className="cat-sub" title="Sales are missing for part of this month, so sell-through would compare a partial numerator against a full month of buying">n/a</td>
+                        : <td>{sellThrough(m)}%{partial && <span className="cat-sub" title="No prior-day position in history, so sell-through uses bought only"> *</span>}</td>}
                     </React.Fragment>
                   )}
                   <td>{m.endOnhand==null?'—':fmt(m.endOnhand)}</td>
