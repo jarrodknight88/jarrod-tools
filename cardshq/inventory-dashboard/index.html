@@ -456,11 +456,28 @@ const SUBJECTS = [
 const COMMON = ['Pokemon','Basketball','Baseball','Football','Magic the Gathering','One Piece','Yu-Gi-Oh','Soccer','Marvel','Disney Lorcana'];
 
 // per-record on-hand base ranges by tier + condition (scaled by subject weight)
+// Keys must track TIERS. Volume falls as price rises, which keeps the sample
+// shaped like the real book. Lookup is defensive so a future bin rename degrades
+// to a sane default instead of throwing at module load and blanking the page.
 const BASE = {
-  High:{ Raw:[0,3],  Graded:[1,6]  },
-  Mid: { Raw:[14,60], Graded:[7,28] },
-  Low: { Raw:[80,400],Graded:[5,22] },
+  '$1K+':     { Raw:[0,2],   Graded:[1,5]  },
+  '$500-1K':  { Raw:[1,6],   Graded:[2,9]  },
+  '$250-500': { Raw:[4,18],  Graded:[4,15] },
+  '$150-250': { Raw:[10,42], Graded:[6,22] },
+  '$50-150':  { Raw:[30,140],Graded:[6,24] },
+  '$25-50':   { Raw:[55,240],Graded:[4,16] },
+  '<$25':     { Raw:[80,400],Graded:[2,10] },
 };
+const BASE_FALLBACK = { Raw:[10,40], Graded:[3,12] };
+
+// Sample-data behaviour bands. The seven bins collapse to three flow patterns:
+// episodic high-value, batch-restocked middle, and high-churn floor.
+const TIER_BAND = {
+  '$1K+':'high', '$500-1K':'high',
+  '$250-500':'mid', '$150-250':'mid', '$50-150':'mid',
+  '$25-50':'low', '<$25':'low',
+};
+const bandOf = (k) => TIER_BAND[k] || 'mid';
 
 function buildRecords(){
   const rng = mulberry32(20260608);
@@ -469,7 +486,7 @@ function buildRecords(){
     const conds = s.conds || CONDS;
     TIERS.forEach(t=>{
       conds.forEach(cond=>{
-        const [lo,hi] = BASE[t.key][cond];
+        const [lo,hi] = (BASE[t.key] || BASE_FALLBACK)[cond] || BASE_FALLBACK[cond] || [0,0];
         const onhand = Math.round((lo + rng()*(hi-lo)) * s.w);
         if(onhand<=0){
           recs.push({ category:s.c, subject:s.n, tier:t.key, cond, onhand:0,
@@ -477,16 +494,16 @@ function buildRecords(){
           return;
         }
         let inn, out;
-        if(t.key==='High'){
+        if(bandOf(t.key)==='high'){
           // high-value acquisitions are episodic — intake usually dried up; steady sales => buy signals
           inn = rng()<0.78 ? 0 : 1;
           const r = rng();
           out = r<0.5 ? 1 : (r<0.78 ? 2 : 0);
-        } else if(t.key==='Mid'){
+        } else if(bandOf(t.key)==='mid'){
           // mid tier is restocked in batches (collection buys) — often building
           inn = Math.round(onhand*(0.045+rng()*0.13));
           out = Math.round(onhand*(0.005+rng()*0.105));
-        } else { // Low — high floor churn, sells a touch faster than it restocks
+        } else { // low band — high floor churn, sells a touch faster than it restocks
           inn = Math.round(onhand*(0.015+rng()*0.105));
           out = Math.round(onhand*(0.02+rng()*0.115));
         }
@@ -495,7 +512,7 @@ function buildRecords(){
         // On-hand is a live snapshot (constant); only the flow accumulates per window.
         const wN = 0.85 + rng()*0.3, mN = 0.85 + rng()*0.3; // per-window lumpiness
         let weekly, monthly;
-        if(t.key==='High'){
+        if(bandOf(t.key)==='high'){
           // sales accrue steadily regardless of yesterday; intake is episodic and "catches up" over time
           const wOut = 1 + Math.round(rng()*3);
           const wIn  = (rng()<0.5?0:1) + (rng()<0.22?1:0);
@@ -514,8 +531,13 @@ function buildRecords(){
         // ---- Sample valuation: tier-typical unit price + ~62% cost ratio ----
         // Real data.json carries val{} + sold fields from the Shopify pull; this
         // only backfills the sample fallback so value/margin render before first pull.
-        const UNIT_PRICE = { High:{Raw:1600,Graded:2200}, Mid:{Raw:320,Graded:410}, Low:{Raw:9,Graded:32} };
-        const px = UNIT_PRICE[t.key][cond];
+        const UNIT_PRICE = {
+          '$1K+':    {Raw:1600,Graded:2200}, '$500-1K': {Raw:690, Graded:740},
+          '$250-500':{Raw:350, Graded:380},  '$150-250':{Raw:190, Graded:205},
+          '$50-150': {Raw:88,  Graded:104},  '$25-50':  {Raw:34,  Graded:39},
+          '<$25':    {Raw:9,   Graded:18},
+        };
+        const px = (UNIT_PRICE[t.key] || {Raw:100,Graded:140})[cond] || 100;
         const costRatio = 0.55 + rng()*0.14; // 55-69% of retail
         const retail = Math.round(onhand * px);
         const cost = Math.round(retail * costRatio);
@@ -603,7 +625,7 @@ const TONE = {
   amber:  { dot:COLORS.amber, bg:'#FFF7ED', fg:'#9A3412' },
   neutral:{ dot:'#9CA3AF',    bg:'#F3F4F6', fg:'#374151' },
 };
-const fmt = n => n.toLocaleString('en-US');
+const fmt = n => (n==null || Number.isNaN(n)) ? '\u2014' : Number(n).toLocaleString('en-US');
 
 // Single daily snapshot for now (weekly/monthly to revisit later).
 const SNAPSHOT = { range:'Mon, Jun 8, 2026', stamp:'As of 8:00 AM ET · yesterday', added:'Added Yesterday', sold:'Sold Yesterday' };
@@ -1085,13 +1107,12 @@ function LineChart({ series, height=170 }){
   );
 }
 
-function HistoricalView({ history, range, custom }){
+function HistoricalView({ history, from, to, note }){
   const [open, setOpen] = useState(true);
   if(!history || history.length===0) return null;
-  const usingCustom = custom.from || custom.to;
-  const cut = usingCustom
-    ? history.filter(h => (!custom.from || h.date >= custom.from) && (!custom.to || h.date <= custom.to))
-    : (range==null ? history : history.slice(-range));
+  // Driven by the same resolved window as every other section, so the chart can
+  // never disagree with the range shown above it.
+  const cut = history.filter(h => (!from || h.date >= from) && (!to || h.date <= to));
   const sold = [
     { name:'Revenue', color:COLORS.blue, points:cut.map(h=>({x:h.date,y:h.totals.soldRevenue})) },
     { name:'Cost',    color:COLORS.muted, points:cut.map(h=>({x:h.date,y:h.totals.soldCost})) },
@@ -1108,7 +1129,7 @@ function HistoricalView({ history, range, custom }){
       <div className="cat-collapse-head" onClick={()=>setOpen(o=>!o)}>
         <span className="cat-caret">{open?'▾':'▸'}</span>
         <span className="cat-title">History &amp; Trends</span>
-        <span className="cat-desc">{cut.length} {cut.length===1?'day':'days'}</span>
+        <span className="cat-desc">{cut.length} {cut.length===1?'day':'days'}{note ? ' · '+note : ''}</span>
         <span className="cat-head-summary">
           sold {usd(totSold.rev)} rev · {usd(totSold.cost)} cost · <span className="cat-m">{usd(totSold.rev-totSold.cost)} ({marginPct(totSold.rev,totSold.cost)}%)</span>
         </span>
@@ -1558,6 +1579,11 @@ function App(){
   // On-hand is a point-in-time measure, so it always reads as of the range's end date.
   // "Last month" therefore rewinds the tiles to that month's close; MTD stays live.
   const asOf = effTo || latestDate;
+  // A one-day selection makes a degenerate trend line, so widen the chart only.
+  const spanDays = (effFrom && effTo)
+    ? Math.round((new Date(effTo+'T12:00:00') - new Date(effFrom+'T12:00:00'))/86400000) + 1 : null;
+  const chartWidened = spanDays != null && spanDays < 14;
+  const chartFrom = chartWidened ? clampLo(addDays(effTo, -13)) : effFrom;
   const [snap, setSnap] = useState(null); // {mode:'snapshot'|'derived'|'missing', date, records?, entry?}
   React.useEffect(()=>{
     if(!data || !asOf || asOf===latestDate){ setSnap(null); return; }
@@ -1609,7 +1635,11 @@ function App(){
             <ActiveFilters selected={selected} setSelected={setSelected}/>
             <CategoryBreakdown records={filtered}/>
           </React.Fragment>}
-      <HistoricalView history={data.history} range={histRange} custom={histCustom}/>
+      <HistoricalView
+        history={data.history}
+        from={chartFrom}
+        to={effTo}
+        note={chartWidened ? 'trailing 14 days for trend context' : null}/>
       <div className="footnote">
         {data.isSample
           ? 'Showing sample data — figures are illustrative, not yet pulled from live systems.'
