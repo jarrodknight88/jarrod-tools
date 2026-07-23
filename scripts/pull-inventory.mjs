@@ -556,6 +556,32 @@ async function deriveOnhandHistory(history) {
     }
   }
 
+  // ---- Orders-access floor ----
+  // Shopify's Admin API only returns orders from roughly the last 60 days unless the
+  // app holds the `read_all_orders` scope. Backfilled days older than that come back
+  // empty, which is "we cannot see it", NOT "nothing sold". Recording zeros there
+  // would understate sell-through catastrophically, so those days carry nulls and a
+  // soldUnavailable flag instead. Buy-side is unaffected: product createdAt has no
+  // such restriction, so intake stays accurate for the full span.
+  {
+    const firstSale = history.find((h) => (h.totals.out || 0) > 0);
+    if (firstSale) {
+      let blanked = 0;
+      for (const h of history) {
+        if (h.date >= firstSale.date) break;
+        if ((h.totals.out || 0) === 0 && (h.totals.soldRevenue || 0) === 0) {
+          h.totals.out = null; h.totals.soldCost = null; h.totals.soldRevenue = null;
+          for (const c of Object.values(h.byCategory)) {
+            c.out = null; c.soldCost = null; c.soldRevenue = null;
+          }
+          h.soldUnavailable = true;
+          blanked++;
+        }
+      }
+      if (blanked) console.error(`Sold data unavailable (orders API 60-day limit) for ${blanked} day(s) before ${firstSale.date}; buy-side retained.`);
+    }
+  }
+
   // ---- One-time sold-side repair ----
   // 2026-07-07: a graded Pokemon single carried a corrupt 12-digit catalog price,
   // inflating that day's sold revenue to ~$175B. Recompute the day's sold-side from

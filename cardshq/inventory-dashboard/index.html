@@ -1361,8 +1361,10 @@ function MonthlyBuySell({ history, from, to }){
       if(h.date < m.firstDate) m.firstDate = h.date;
       if(h.date >= m.lastDate){ m.lastDate = h.date; m.endOnhand = h.totals.onhand; m.endCost = h.totals.cost; }
       m.inU += h.totals.in||0; m.inCost += h.totals.inCost||0;
-      m.outU += h.totals.out||0;
-      m.soldRev += h.totals.soldRevenue||0; m.soldCost += h.totals.soldCost||0;
+      if(h.soldUnavailable || h.totals.out==null) m.soldDaysMissing = (m.soldDaysMissing||0)+1;
+      else { m.soldDays = (m.soldDays||0)+1;
+        m.outU += h.totals.out||0;
+        m.soldRev += h.totals.soldRevenue||0; m.soldCost += h.totals.soldCost||0; }
       for(const [c,v] of Object.entries(h.byCategory||{})){
         const cb = (m.cats[c] = m.cats[c] || { inU:0, inCost:0, outU:0, soldRev:0, soldCost:0, endOnhand:null });
         cb.inU += v.in||0; cb.inCost += v.inCost||0; cb.outU += v.out||0;
@@ -1414,6 +1416,7 @@ function MonthlyBuySell({ history, from, to }){
           {months.map(m=>{
             const isOpen = !!open[m.key];
             const partial = m.openOnhand==null;
+            const noSold = !m.soldDays;
             const cats = Object.entries(m.cats).filter(([,v])=>v.inU>0||v.outU>0)
               .sort((a,b)=>b[1].soldRev-a[1].soldRev);
             return (
@@ -1422,10 +1425,19 @@ function MonthlyBuySell({ history, from, to }){
                   <td className="l">{monthName(m.key)} <span className="cat-sub">{isOpen?'▾':'▸'} {m.days}d</span></td>
                   <td>{fmt(m.inU)}</td>
                   <td>{usd(m.inCost)}</td>
-                  <td>{fmt(m.outU)}</td>
-                  <td>{usd(m.soldRev)}</td>
-                  <td className="sold-m">{usd(m.soldRev-m.soldCost)} <span className="cat-sub">{marginPct(m.soldRev,m.soldCost)}%</span></td>
-                  <td>{sellThrough(m)}%{partial && <span className="cat-sub" title="No prior-day position in history, so sell-through uses bought only"> *</span>}</td>
+                  {noSold ? (
+                    <React.Fragment>
+                      <td className="cat-sub" colSpan={3} title="Shopify's orders API only exposes about 60 days, so sales for this month cannot be retrieved">Sales data not retrievable</td>
+                      <td className="cat-sub">—</td>
+                    </React.Fragment>
+                  ) : (
+                    <React.Fragment>
+                      <td>{fmt(m.outU)}{m.soldDaysMissing>0 && <span className="cat-sub"> *</span>}</td>
+                      <td>{usd(m.soldRev)}</td>
+                      <td className="sold-m">{usd(m.soldRev-m.soldCost)} <span className="cat-sub">{marginPct(m.soldRev,m.soldCost)}%</span></td>
+                      <td>{sellThrough(m)}%{partial && <span className="cat-sub" title="No prior-day position in history, so sell-through uses bought only"> *</span>}</td>
+                    </React.Fragment>
+                  )}
                   <td>{m.endOnhand==null?'—':fmt(m.endOnhand)}</td>
                 </tr>
                 {isOpen && cats.map(([c,v])=>(
@@ -1452,7 +1464,7 @@ function MonthlyBuySell({ history, from, to }){
         </tbody>
       </table>
       <div className="footnote" style={{padding:'8px 2px 0'}}>
-        Sell-through = units sold ÷ (opening on hand + units bought). Buy cost is the cost basis of singles received that month. Click a month for the category split.
+        Sell-through = units sold ÷ (opening on hand + units bought). Buy cost is the cost basis of singles received that month. Click a month for the category split. Months marked “Sales data not retrievable” predate Shopify’s ~60-day orders window - buy figures for those months are complete, sales cannot be recovered without expanded API access. An asterisk marks a partial month.
       </div>
     </div>
   );
