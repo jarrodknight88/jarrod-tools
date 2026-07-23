@@ -122,6 +122,8 @@ function ensure(slice) {
     val: { cost: 0, retail: 0 },
     p: { daily: {
       in: 0, out: 0,
+      // buy-side money received yesterday (cost paid, retail listed)
+      inCost: 0, inRetail: 0,
       // sold-side money moved yesterday
       soldCost: 0, soldRevenue: 0,
     }},
@@ -138,6 +140,13 @@ function bumpOnhand(slice, units, unitCost, unitPrice) {
 // intake ("in") or sold ("out") unit counts
 function bumpFlow(slice, field, units) {
   ensure(slice).p.daily[field] += units;
+}
+// intake money: what we paid (cost) and listed (retail) for units received today.
+// Buy-side dollars for the monthly buy/sell view - previously only units were kept.
+function bumpIntakeValue(slice, unitCost, unitPrice) {
+  const rec = ensure(slice);
+  rec.p.daily.inCost = money((rec.p.daily.inCost || 0) + (Number(unitCost) || 0));
+  rec.p.daily.inRetail = money((rec.p.daily.inRetail || 0) + (Number(unitPrice) || 0));
 }
 // sold-side money for margin (revenue and cost of what sold yesterday)
 function bumpSold(slice, units, unitCost, unitPrice) {
@@ -178,7 +187,10 @@ async function pullProducts(win) {
       if (onhand > 0) bumpOnhand(slice, onhand, unitCost, price);
       // Intake: each single created yesterday counts as 1 unit in (one-of-one model).
       // NOTE v1 assumption: 1 unit per new single. Multi-qty intake/restocks refine later.
-      if (node.createdAt >= toISO(win.start) && node.createdAt < toISO(win.end)) bumpFlow(slice, "in", 1);
+      if (node.createdAt >= toISO(win.start) && node.createdAt < toISO(win.end)) {
+        bumpFlow(slice, "in", 1);
+        bumpIntakeValue(slice, unitCost, price);
+      }
       products++;
     }
     cursor = conn.pageInfo.hasNextPage ? conn.pageInfo.endCursor : null;
@@ -261,7 +273,7 @@ const BACKFILL_MAX_PER_RUN = 40;             // bound runtime on first run
 
 // Rollup a records array into totals + per-category summaries.
 function rollupRecords(records) {
-  const zero = () => ({ onhand: 0, cost: 0, retail: 0, in: 0, out: 0, soldCost: 0, soldRevenue: 0 });
+  const zero = () => ({ onhand: 0, cost: 0, retail: 0, in: 0, inCost: 0, inRetail: 0, out: 0, soldCost: 0, soldRevenue: 0 });
   const totals = zero(), byCategory = {};
   for (const r of records) {
     const c = (byCategory[r.category] = byCategory[r.category] || zero());
@@ -270,6 +282,8 @@ function rollupRecords(records) {
       t.cost = money(t.cost + (r.val ? r.val.cost : 0));
       t.retail = money(t.retail + (r.val ? r.val.retail : 0));
       t.in += r.p.daily.in; t.out += r.p.daily.out;
+      t.inCost = money(t.inCost + (r.p.daily.inCost || 0));
+      t.inRetail = money(t.inRetail + (r.p.daily.inRetail || 0));
       t.soldCost = money(t.soldCost + (r.p.daily.soldCost || 0));
       t.soldRevenue = money(t.soldRevenue + (r.p.daily.soldRevenue || 0));
     }
@@ -374,7 +388,8 @@ async function intakeByDay(startDay, endDayExclusive) {
 // Both passes (totals and per-category) ALWAYS recompute together from the same
 // anchor in the same run - deriving them in separate runs against a moving
 // anchor produces a constant cross-section offset, so coherence requires one run.
-const DERIVE_V = 3;
+// v4: adds buy-side dollars (inCost/inRetail) to derived history days.
+const DERIVE_V = 4;
 async function deriveOnhandHistory(history) {
   const anchorIdx = history.findIndex((h) => h.onhandKnown);
   if (anchorIdx <= 0) return 0; // no anchor or nothing before it
@@ -401,7 +416,10 @@ async function deriveOnhandHistory(history) {
       h.totals.onhand = (next.totals.onhand || 0) + (next.totals.out || 0) - inNext.units;
       h.totals.cost = money((next.totals.cost || 0) + (next.totals.soldCost || 0) - inNext.cost);
       h.totals.retail = money((next.totals.retail || 0) + (next.totals.soldRevenue || 0) - inNext.retail);
-      h.totals.in = (intake[h.date] || { units: 0 }).units;
+      const inToday = intake[h.date] || { units: 0, cost: 0, retail: 0 };
+      h.totals.in = inToday.units;
+      h.totals.inCost = money(inToday.cost);
+      h.totals.inRetail = money(inToday.retail);
       h.onhandDerived = true;
       next = h;
     }
@@ -412,7 +430,7 @@ async function deriveOnhandHistory(history) {
     const catSet = new Set(Object.keys(anchor.byCategory));
     for (const h of pre) for (const c of Object.keys(h.byCategory)) catSet.add(c);
     for (const day of Object.values(intake)) for (const c of Object.keys(day.byCategory || {})) catSet.add(c);
-    const zeroSold = () => ({ onhand: null, cost: null, retail: null, in: null, out: 0, soldCost: 0, soldRevenue: 0 });
+    const zeroSold = () => ({ onhand: null, cost: null, retail: null, in: null, inCost: 0, inRetail: 0, out: 0, soldCost: 0, soldRevenue: 0 });
     for (const cat of catSet) {
       // anchor values for a category absent at anchor = zero on hand
       let next = anchor;
@@ -425,7 +443,10 @@ async function deriveOnhandHistory(history) {
         cur.onhand = (nextVals.onhand || 0) + (nextSold.out || 0) - inNextC.units;
         cur.cost = money((nextVals.cost || 0) + (nextSold.soldCost || 0) - inNextC.cost);
         cur.retail = money((nextVals.retail || 0) + (nextSold.soldRevenue || 0) - inNextC.retail);
-        cur.in = (((intake[h.date] || {}).byCategory || {})[cat] || { units: 0 }).units;
+        const inTodayC = ((intake[h.date] || {}).byCategory || {})[cat] || { units: 0, cost: 0, retail: 0 };
+        cur.in = inTodayC.units;
+        cur.inCost = money(inTodayC.cost);
+        cur.inRetail = money(inTodayC.retail);
         next = h; nextVals = cur;
       }
     }
@@ -482,6 +503,33 @@ async function deriveOnhandHistory(history) {
   history = history.filter((h) => h.date !== win.day);
   history.push({ date: win.day, onhandKnown: true, totals: todayRollup.totals, byCategory: todayRollup.byCategory });
   history.sort((a, b) => a.date.localeCompare(b.date));
+
+  // ---- Buy-side dollars backfill ----
+  // Days pulled live before inCost existed carry units but no purchase cost.
+  // intakeByDay already buckets cost/retail by creation day, so one range query
+  // fills every gap. Idempotent: only days missing inCost are touched.
+  {
+    const needing = history.filter((h) => h.totals.inCost == null);
+    if (needing.length) {
+      const from = needing[0].date, through = needing[needing.length - 1].date;
+      const dayAfter = (() => { const d = new Date(`${through}T00:00:00`); d.setDate(d.getDate() + 1);
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; })();
+      console.error(`Backfilling buy-side dollars ${from} -> ${through} (${needing.length} day(s))...`);
+      const { days: intake } = await intakeByDay(from, dayAfter);
+      for (const h of needing) {
+        const day = intake[h.date] || { units: 0, cost: 0, retail: 0, byCategory: {} };
+        h.totals.inCost = money(day.cost);
+        h.totals.inRetail = money(day.retail);
+        for (const [cat, v] of Object.entries(day.byCategory || {})) {
+          const c = h.byCategory[cat];
+          if (c) { c.inCost = money(v.cost); c.inRetail = money(v.retail); }
+        }
+        for (const c of Object.values(h.byCategory)) {
+          if (c.inCost == null) { c.inCost = 0; c.inRetail = 0; }
+        }
+      }
+    }
+  }
 
   // ---- One-time sold-side repair ----
   // 2026-07-07: a graded Pokemon single carried a corrupt 12-digit catalog price,

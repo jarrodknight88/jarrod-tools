@@ -229,7 +229,7 @@
   .cond-head{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;}
   .cond-title{font-size:18px;font-weight:bold;letter-spacing:-0.3px;}
   .cond-desc{font-size:12.5px;color:var(--muted);}
-  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(196px,1fr));gap:12px;}
 
   .bucket{
     background:var(--card);border:1px solid var(--line-soft);border-radius:14px;
@@ -300,7 +300,7 @@
   .rollup-caret{font-size:11px;color:#9CA3AF;margin-left:6px;}
   .rollup-tiers{margin-top:14px;border-top:1px solid rgba(255,255,255,0.12);padding-top:10px;}
   .rollup-tier-row{display:flex;align-items:baseline;gap:14px;padding:5px 0;font-size:12.5px;}
-  .rollup-tier-row .rt-name{font-weight:bold;color:#D1D5DB;width:76px;flex-shrink:0;}
+  .rollup-tier-row .rt-name{font-weight:bold;color:#D1D5DB;width:104px;flex-shrink:0;}
   .rollup-tier-row .rt-cell{color:#E5E7EB;}
   .rollup-tier-row .rt-cell.blue{color:#60A5FA;}
   .rollup-tier-row .rt-cell.teal{color:#34D399;}
@@ -364,6 +364,7 @@
   .sold-table td.l{text-align:left;font-weight:bold;letter-spacing:-0.2px;}
   .sold-table tr:hover td{background:#F9FAFB;}
   .sold-table tr.sold-total td{background:#EFF6FF;font-weight:bold;border-top:2px solid var(--blue);}
+  .sold-table tr.sub-row td{background:#F9FAFB;color:var(--muted);font-size:12.5px;}
   .sold-empty{padding:18px 14px;font-size:13px;color:var(--faint);text-align:center;}
   .sold-m{font-weight:bold;color:var(--teal);}
 
@@ -396,10 +397,16 @@ const COLORS = { black:'#111111', blue:'#3B82F6', teal:'#10B981', amber:'#D97706
    ============================================================ */
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 
+// Seven buy-report price bins (Jimmy, Jul 23 2026). Lower-bound inclusive:
+// $500 lands in $500-1K, $1,000 lands in $1K+. Keys must match tags.config.json.
 const TIERS = [
-  { key:'High', label:'High Value', range:'$1,000 and up' },
-  { key:'Mid',  label:'Mid Tier',   range:'$150 – $999' },
-  { key:'Low',  label:'Low Tier',   range:'Under $150' },
+  { key:'$1K+',     label:'$1,000+',     range:'$1,000 and up' },
+  { key:'$500-1K',  label:'$500 - $1K',  range:'$500 – $999' },
+  { key:'$250-500', label:'$250 - $500', range:'$250 – $499' },
+  { key:'$150-250', label:'$150 - $250', range:'$150 – $249' },
+  { key:'$50-150',  label:'$50 - $150',  range:'$50 – $149' },
+  { key:'$25-50',   label:'$25 - $50',   range:'$25 – $49' },
+  { key:'<$25',     label:'Under $25',   range:'Below $25' },
 ];
 const CONDS = ['Raw','Graded'];
 
@@ -876,8 +883,8 @@ function ConditionSection({ cond, desc, records }){
    ============================================================ */
 function GradedRollup({ records }){
   const [open, setOpen] = useState({});
-  const TIER_ORDER = ['High','Mid','Low'];
-  const TIER_LABEL = { High:'High Value', Mid:'Mid Tier', Low:'Low Tier' };
+  const TIER_ORDER = TIERS.map(t=>t.key);
+  const TIER_LABEL = TIERS.reduce((m,t)=>{ m[t.key]=t.label; return m; }, {});
   const Card = ({cls, cond, label})=>{
     const condRecs = records.filter(r=>r.cond===cond);
     const agg = aggregate(condRecs);
@@ -1254,7 +1261,7 @@ function TrendRange({ range, custom, setRange, setCustom, minDate, maxDate }){
   return (
     <div className="trend-bar">
       <span className="tr-label">Trends</span>
-      {[[1,'Yesterday'],[7,'7D'],[14,'14D'],[30,'30D'],[null,'All']].map(([v,label])=>(
+      {[[1,'Yesterday'],[7,'7D'],[30,'30D'],['mtd','Month to date'],['lastmo','Last month'],[null,'All']].map(([v,label])=>(
         <button key={label} className={'hist-range-btn'+(!usingCustom&&range===v?' active':'')} onClick={()=>pickPreset(v)}>{label}</button>
       ))}
       <span className="hist-custom">
@@ -1329,6 +1336,128 @@ function RangeSold({ history, from, to }){
   );
 }
 
+/* ============================================================
+   MONTHLY BUY / SELL + SELL-THROUGH  (Jimmy, Jul 23 2026)
+   Bought vs sold vs where we ended, per calendar month. Sell-through
+   is sold units over what was available to sell (opening + bought),
+   so it stays bounded and reads as "how much of what we could move,
+   moved". Expand a month for the category split.
+   ============================================================ */
+function MonthlyBuySell({ history, from, to }){
+  const [open, setOpen] = useState({});
+  const lo = from || (history[0] && history[0].date) || '';
+  const hi = to || (history[history.length-1] && history[history.length-1].date) || '';
+  const months = useMemo(()=>{
+    const cut = history.filter(h=>h.date>=lo && h.date<=hi);
+    const byMonth = {};
+    for(const h of cut){
+      const k = h.date.slice(0,7);
+      const m = (byMonth[k] = byMonth[k] || {
+        key:k, days:0, firstDate:h.date, lastDate:h.date,
+        inU:0, inCost:0, outU:0, soldRev:0, soldCost:0,
+        endOnhand:null, endCost:null, openOnhand:null, cats:{},
+      });
+      m.days++;
+      if(h.date < m.firstDate) m.firstDate = h.date;
+      if(h.date >= m.lastDate){ m.lastDate = h.date; m.endOnhand = h.totals.onhand; m.endCost = h.totals.cost; }
+      m.inU += h.totals.in||0; m.inCost += h.totals.inCost||0;
+      m.outU += h.totals.out||0;
+      m.soldRev += h.totals.soldRevenue||0; m.soldCost += h.totals.soldCost||0;
+      for(const [c,v] of Object.entries(h.byCategory||{})){
+        const cb = (m.cats[c] = m.cats[c] || { inU:0, inCost:0, outU:0, soldRev:0, soldCost:0, endOnhand:null });
+        cb.inU += v.in||0; cb.inCost += v.inCost||0; cb.outU += v.out||0;
+        cb.soldRev += v.soldRevenue||0; cb.soldCost += v.soldCost||0;
+        if(h.date === m.lastDate) cb.endOnhand = v.onhand;
+      }
+    }
+    // Opening position = closing position of the day before the month's first day.
+    const byDate = {}; for(const h of history) byDate[h.date] = h;
+    const list = Object.values(byMonth).sort((a,b)=>a.key.localeCompare(b.key));
+    for(const m of list){
+      const prev = new Date(m.firstDate+'T12:00:00'); prev.setDate(prev.getDate()-1);
+      const pk = prev.toISOString().slice(0,10);
+      m.openOnhand = byDate[pk] ? byDate[pk].totals.onhand : null;
+    }
+    return list;
+  }, [history, lo, hi]);
+
+  if(months.length===0) return null;
+  const monthName = (k)=>new Date(k+'-15T12:00:00').toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  // Available to sell = opening on-hand + bought. Null opening (no prior day in
+  // history) falls back to bought only, and the month is marked partial.
+  const sellThrough = (m)=>{
+    const avail = (m.openOnhand==null ? 0 : m.openOnhand) + m.inU;
+    return avail>0 ? Math.round(m.outU/avail*1000)/10 : 0;
+  };
+  const grand = months.reduce((a,m)=>({
+    inU:a.inU+m.inU, inCost:a.inCost+m.inCost, outU:a.outU+m.outU,
+    soldRev:a.soldRev+m.soldRev, soldCost:a.soldCost+m.soldCost,
+  }), {inU:0,inCost:0,outU:0,soldRev:0,soldCost:0});
+  const last = months[months.length-1];
+
+  return (
+    <div className="sold-section">
+      <div className="cat-collapse-head sold" style={{cursor:'default'}}>
+        <span className="cat-title">Buy vs Sell by Month</span>
+        <span className="cat-desc">{months.length} month{months.length===1?'':'s'} · bought, sold, and where we ended</span>
+        <span className="cat-head-summary">
+          Bought {fmt(grand.inU)} u · {usd(grand.inCost)} &nbsp;|&nbsp; Sold {fmt(grand.outU)} u · <span className="cat-m">{usd(grand.soldRev)}</span>
+        </span>
+      </div>
+      <table className="sold-table">
+        <thead><tr>
+          <th className="l">Month</th><th>Bought (u)</th><th>Buy Cost</th>
+          <th>Sold (u)</th><th>Sell Revenue</th><th>Margin</th>
+          <th>Sell-Through</th><th>Ending On Hand</th>
+        </tr></thead>
+        <tbody>
+          {months.map(m=>{
+            const isOpen = !!open[m.key];
+            const partial = m.openOnhand==null;
+            const cats = Object.entries(m.cats).filter(([,v])=>v.inU>0||v.outU>0)
+              .sort((a,b)=>b[1].soldRev-a[1].soldRev);
+            return (
+              <React.Fragment key={m.key}>
+                <tr onClick={()=>setOpen(o=>({...o,[m.key]:!o[m.key]}))} style={{cursor:'pointer'}}>
+                  <td className="l">{monthName(m.key)} <span className="cat-sub">{isOpen?'▾':'▸'} {m.days}d</span></td>
+                  <td>{fmt(m.inU)}</td>
+                  <td>{usd(m.inCost)}</td>
+                  <td>{fmt(m.outU)}</td>
+                  <td>{usd(m.soldRev)}</td>
+                  <td className="sold-m">{usd(m.soldRev-m.soldCost)} <span className="cat-sub">{marginPct(m.soldRev,m.soldCost)}%</span></td>
+                  <td>{sellThrough(m)}%{partial && <span className="cat-sub" title="No prior-day position in history, so sell-through uses bought only"> *</span>}</td>
+                  <td>{m.endOnhand==null?'—':fmt(m.endOnhand)}</td>
+                </tr>
+                {isOpen && cats.map(([c,v])=>(
+                  <tr key={m.key+c} className="sub-row">
+                    <td className="l" style={{paddingLeft:'26px'}}>{c}</td>
+                    <td>{fmt(v.inU)}</td><td>{usd(v.inCost)}</td>
+                    <td>{fmt(v.outU)}</td><td>{usd(v.soldRev)}</td>
+                    <td className="sold-m">{usd(v.soldRev-v.soldCost)} <span className="cat-sub">{marginPct(v.soldRev,v.soldCost)}%</span></td>
+                    <td className="cat-sub">—</td>
+                    <td>{v.endOnhand==null?'—':fmt(v.endOnhand)}</td>
+                  </tr>
+                ))}
+              </React.Fragment>
+            );
+          })}
+          <tr className="sold-total">
+            <td className="l">Total</td>
+            <td>{fmt(grand.inU)}</td><td>{usd(grand.inCost)}</td>
+            <td>{fmt(grand.outU)}</td><td>{usd(grand.soldRev)}</td>
+            <td>{usd(grand.soldRev-grand.soldCost)} <span className="cat-sub">{marginPct(grand.soldRev,grand.soldCost)}%</span></td>
+            <td className="cat-sub">—</td>
+            <td>{last.endOnhand==null?'—':fmt(last.endOnhand)}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div className="footnote" style={{padding:'8px 2px 0'}}>
+        Sell-through = units sold ÷ (opening on hand + units bought). Buy cost is the cost basis of singles received that month. Click a month for the category split.
+      </div>
+    </div>
+  );
+}
+
 function DerivedAsOf({ entry }){
   const rows=Object.entries(entry.byCategory).map(([category,v])=>({category,v}))
     .filter(r=>r.v.cost!=null && (r.v.onhand>0||r.v.cost>0))
@@ -1386,16 +1515,35 @@ function App(){
   // ---- As-of resolver: custom range's end date rewinds the whole dashboard ----
   const customActive = !!(histCustom.from || histCustom.to);
   const latestDate = data ? data.date : '';
-  const asOf = customActive ? (histCustom.to || latestDate) : latestDate;
   // Effective range: presets are shorthand for a window ending at the latest date,
-  // so 7D/14D/30D/All drive the sold side exactly like a custom range does.
+  // so 7D/30D/All drive the sold side exactly like a custom range does.
   const histMinD = data && data.history && data.history.length ? data.history[0].date : '';
   const histMaxD = data && data.history && data.history.length ? data.history[data.history.length-1].date : '';
   const addDays = (d,n)=>{ const x=new Date(d+'T12:00:00'); x.setDate(x.getDate()+n); return x.toISOString().slice(0,10); };
-  const presetFrom = histRange ? (histMaxD ? addDays(histMaxD, -(histRange-1)) : '') : histMinD;
-  const effFrom = customActive ? (histCustom.from || histMinD) : presetFrom;
-  const effTo = customActive ? (histCustom.to || histMaxD) : histMaxD;
+  // Calendar-month presets resolve against the latest data date, then clamp to
+  // available history so a partial first month never reads as a full one.
+  const monthBounds = (endDate, back)=>{
+    if(!endDate) return ['',''];
+    const d = new Date(endDate+'T12:00:00');
+    const first = new Date(d.getFullYear(), d.getMonth()-back, 1);
+    const last  = new Date(d.getFullYear(), d.getMonth()-back+1, 0);
+    const iso = (x)=>`${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,'0')}-${String(x.getDate()).padStart(2,'0')}`;
+    return [iso(first), back===0 ? endDate : iso(last)];
+  };
+  let presetFrom, presetTo = histMaxD;
+  if(histRange==='mtd')        [presetFrom, presetTo] = monthBounds(histMaxD, 0);
+  else if(histRange==='lastmo')[presetFrom, presetTo] = monthBounds(histMaxD, 1);
+  else if(histRange)            presetFrom = histMaxD ? addDays(histMaxD, -(histRange-1)) : '';
+  else                          presetFrom = histMinD;
+  const clampLo = (d)=> (histMinD && d && d < histMinD) ? histMinD : d;
+  const effFrom = customActive ? (histCustom.from || histMinD) : clampLo(presetFrom);
+  const effTo = customActive ? (histCustom.to || histMaxD) : presetTo;
   const rangeActive = customActive || histRange !== 1;
+  // Monthly buy/sell table shows whenever a month preset or a multi-month span is picked.
+  const monthlyView = histRange==='mtd' || histRange==='lastmo' || histRange===null || customActive;
+  // On-hand is a point-in-time measure, so it always reads as of the range's end date.
+  // "Last month" therefore rewinds the tiles to that month's close; MTD stays live.
+  const asOf = effTo || latestDate;
   const [snap, setSnap] = useState(null); // {mode:'snapshot'|'derived'|'missing', date, records?, entry?}
   React.useEffect(()=>{
     if(!data || !asOf || asOf===latestDate){ setSnap(null); return; }
@@ -1439,6 +1587,7 @@ function App(){
       {rangeActive
         ? <RangeSold history={data.history} from={effFrom} to={effTo}/>
         : <SoldSide records={filtered}/>}
+      {monthlyView && <MonthlyBuySell history={data.history} from={effFrom} to={effTo}/>}
       {derivedReady
         ? <DerivedAsOf entry={snap.entry}/>
         : <React.Fragment>
