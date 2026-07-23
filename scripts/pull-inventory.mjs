@@ -268,8 +268,11 @@ async function pullSold(win) {
 }
 
 /* ---------- 3) History: daily rollups + June sold-side backfill ---------- */
-const HISTORY_BACKFILL_START = "2026-06-01"; // sold-side history begins here
-const BACKFILL_MAX_PER_RUN = 40;             // bound runtime on first run
+// Sold/buy history reaches back to Jan 1 2026, matching the retroactive date used
+// for loyalty. Orders and product createdAt are permanent in Shopify, so both
+// sides reconstruct cleanly. On-hand for these days remains a derived walk-back.
+const HISTORY_BACKFILL_START = "2026-01-01";
+const BACKFILL_MAX_PER_RUN = 220;            // one catch-up run covers Jan 1 -> today; gql() backs off on throttle
 
 // Rollup a records array into totals + per-category summaries.
 function rollupRecords(records) {
@@ -456,6 +459,28 @@ async function deriveOnhandHistory(history) {
   const first = history[0];
   if (first.totals.cost < 0 || first.totals.onhand < 0) {
     console.error(`WARNING: derived history went negative at ${first.date} (onhand ${first.totals.onhand}, cost ${first.totals.cost}). Raw-intake approximation likely off - flag for review.`);
+  }
+
+  // ---- Reliability guard on the walk-back ----
+  // The further back we infer on-hand, the more unrecorded adjustments accumulate.
+  // A negative position is proof the chain broke, so blank on-hand for that day and
+  // everything before it. Sold and buy figures are untouched - those come straight
+  // from orders and product creation, and stay trustworthy for the full span.
+  {
+    let lastBad = -1;
+    for (let i = 0; i < history.length; i++) {
+      const t = history[i].totals;
+      if (!history[i].onhandKnown && ((t.onhand != null && t.onhand < 0) || (t.cost != null && t.cost < 0))) lastBad = i;
+    }
+    if (lastBad >= 0) {
+      for (let i = 0; i <= lastBad; i++) {
+        const h = history[i];
+        h.totals.onhand = null; h.totals.cost = null; h.totals.retail = null;
+        for (const c of Object.values(h.byCategory)) { c.onhand = null; c.cost = null; c.retail = null; }
+        h.onhandUnreliable = true;
+      }
+      console.error(`Walk-back unreliable through ${history[lastBad].date} - on-hand blanked for ${lastBad + 1} day(s); sold/buy retained.`);
+    }
   }
   return pending.length;
 }
