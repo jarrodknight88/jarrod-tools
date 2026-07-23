@@ -1,0 +1,49 @@
+name: Price dashboard pull
+
+# Runs 4x daily so overnight and midday reprices land on the board within
+# ~6 hours. Cron is UTC (no daylight-saving adjustment):
+#   05:00 UTC = 1:00 AM EDT   (catches overnight repricing)
+#   11:00 UTC = 7:00 AM EDT   (fresh before breakers start)
+#   17:00 UTC = 1:00 PM EDT
+#   23:00 UTC = 7:00 PM EDT
+
+on:
+  schedule:
+    - cron: '0 5,11,17,23 * * *'
+  workflow_dispatch: {}        # manual "Run workflow" button for the first run / on-demand
+
+permissions:
+  contents: write              # lets the job commit data files back to the repo
+
+concurrency:
+  group: prices-pull
+  cancel-in-progress: false
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run price pull
+        env:
+          SHOPIFY_STORE: ${{ secrets.SHOPIFY_STORE }}
+          SHOPIFY_ADMIN_TOKEN: ${{ secrets.SHOPIFY_ADMIN_TOKEN }}
+        run: node scripts/pull-prices.mjs
+
+      - name: Commit data if changed
+        run: |
+          git config user.name "cardshq-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add cardshq/price-dashboard/data
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Price snapshot $(date -u +'%Y-%m-%d %H:%M') UTC"
+            git pull --rebase origin main
+            git push
+          fi

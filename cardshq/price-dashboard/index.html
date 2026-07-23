@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CardsHQ - TCG Price Changes</title>
+<style>
+  :root{
+    --black:#111111; --blue:#3B82F6; --teal:#10B981; --red:#EF4444;
+    --gray-bg:#F9FAFB; --gray-border:#D1D5DB; --gray-text:#6B7280;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:Calibri, Arial, sans-serif; background:#fff; color:var(--black); font-size:15px;}
+  .banner{background:var(--black); color:#fff; padding:18px 24px;}
+  .banner h1{font-size:20px; font-weight:700; letter-spacing:.2px;}
+  .banner .sub{font-size:13px; color:#D1D5DB; margin-top:4px;}
+  .wrap{max-width:1200px; margin:0 auto; padding:20px 24px 60px;}
+  .cards{display:flex; gap:14px; flex-wrap:wrap; margin-bottom:18px;}
+  .card{background:var(--gray-bg); border:1px solid var(--gray-border); border-radius:8px; padding:12px 18px; min-width:150px;}
+  .card .num{font-size:22px; font-weight:700;}
+  .card .lbl{font-size:12px; color:var(--gray-text); margin-top:2px;}
+  .card .num.up{color:var(--teal);} .card .num.down{color:var(--red);}
+  .tabs{display:flex; gap:8px; margin-bottom:14px;}
+  .tab{padding:8px 16px; border:1px solid var(--gray-border); border-radius:6px; background:#fff; cursor:pointer; font-size:14px; font-weight:600;}
+  .tab.active{background:var(--black); color:#fff; border-color:var(--black);}
+  .controls{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:14px;}
+  .controls input[type=text]{padding:8px 12px; border:1px solid var(--gray-border); border-radius:6px; font-size:14px; width:280px;}
+  .preset{padding:7px 12px; border:1px solid var(--gray-border); border-radius:6px; background:#fff; cursor:pointer; font-size:13px;}
+  .preset.active{background:var(--blue); color:#fff; border-color:var(--blue);}
+  .chk{font-size:13px; display:flex; align-items:center; gap:6px; cursor:pointer; user-select:none;}
+  table{width:100%; border-collapse:collapse; font-size:14px;}
+  th{background:var(--gray-bg); text-align:left; padding:9px 10px; border-bottom:2px solid var(--gray-border); font-size:12px; text-transform:uppercase; letter-spacing:.4px; color:var(--gray-text); cursor:pointer; white-space:nowrap;}
+  td{padding:9px 10px; border-bottom:1px solid #EDEFF2; vertical-align:top;}
+  tr:hover td{background:#F5F8FF;}
+  .num-cell{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap;}
+  .delta-up{color:var(--teal); font-weight:700;}
+  .delta-down{color:var(--red); font-weight:700;}
+  .variant{color:var(--gray-text); font-size:13px;}
+  .badge{display:inline-block; font-size:10px; font-weight:700; padding:1px 6px; border-radius:4px; margin-left:6px; vertical-align:1px;}
+  .badge.jp{background:#FEE2E2; color:#B91C1C;}
+  .empty{background:var(--gray-bg); border:1px solid var(--gray-border); border-radius:8px; padding:28px; text-align:center; color:var(--gray-text); font-size:14px;}
+  .footnote{margin-top:26px; font-size:12px; color:var(--gray-text);}
+  .count-note{font-size:13px; color:var(--gray-text); margin-bottom:8px;}
+</style>
+</head>
+<body>
+<div class="banner">
+  <h1>TCG Price Changes - Pokemon Sealed</h1>
+  <div class="sub" id="bannerSub">Loading&hellip;</div>
+</div>
+<div class="wrap">
+  <div class="cards" id="cards"></div>
+  <div class="tabs">
+    <div class="tab active" data-tab="changes">Price Changes</div>
+    <div class="tab" data-tab="current">Current Prices</div>
+  </div>
+  <div class="controls" id="controlsChanges">
+    <input type="text" id="searchChanges" placeholder="Search product, variant, SKU&hellip;">
+    <button class="preset" data-days="1">Last 24H</button>
+    <button class="preset active" data-days="7">7D</button>
+    <button class="preset" data-days="30">30D</button>
+    <button class="preset" data-days="0">All</button>
+  </div>
+  <div class="controls" id="controlsCurrent" style="display:none;">
+    <input type="text" id="searchCurrent" placeholder="Search product, variant, SKU&hellip;">
+    <label class="chk"><input type="checkbox" id="instockOnly" checked> In stock only</label>
+  </div>
+  <div class="count-note" id="countNote"></div>
+  <div id="content"></div>
+  <div class="footnote">
+    CardsHQ &middot; TCG Price Changes &middot; Scope: active products tagged Pokemon Boxes &middot;
+    Prices checked 4x daily (1 AM / 7 AM / 1 PM / 7 PM ET) - change times reflect when the check detected the change &middot;
+    Inventory shown is Shopify-tracked stock (CHQ Poke location pending) &middot; For: Professor Mike
+  </div>
+</div>
+<script>
+(function(){
+  var state = { tab:'changes', days:7, qChanges:'', qCurrent:'', instock:true,
+                changes:[], latest:null, sortKey:'at', sortDir:-1 };
+
+  function fmtMoney(n){ return '$' + Number(n).toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:2}); }
+  function fmtDelta(n){
+    var s = fmtMoney(Math.abs(n));
+    return n >= 0 ? '+' + s : '-' + s;
+  }
+  function fmtDate(iso){
+    var d = new Date(iso);
+    return d.toLocaleString('en-US',{month:'short', day:'numeric', hour:'numeric', minute:'2-digit', timeZone:'America/New_York'}) + ' ET';
+  }
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+  function render(){
+    document.querySelectorAll('.tab').forEach(function(t){ t.classList.toggle('active', t.dataset.tab === state.tab); });
+    document.getElementById('controlsChanges').style.display = state.tab === 'changes' ? 'flex' : 'none';
+    document.getElementById('controlsCurrent').style.display = state.tab === 'current' ? 'flex' : 'none';
+    if (state.tab === 'changes') renderChanges(); else renderCurrent();
+  }
+
+  function filteredChanges(){
+    var cutoff = state.days > 0 ? Date.now() - state.days * 86400000 : 0;
+    var q = state.qChanges.toLowerCase();
+    return state.changes.filter(function(c){
+      if (cutoff && new Date(c.at).getTime() < cutoff) return false;
+      if (q && (c.product + ' ' + c.variant + ' ' + c.sku).toLowerCase().indexOf(q) === -1) return false;
+      return true;
+    });
+  }
+
+  function renderCards(){
+    var el = document.getElementById('cards');
+    var last7 = state.changes.filter(function(c){ return new Date(c.at).getTime() > Date.now() - 7 * 86400000; });
+    var ups = last7.filter(function(c){ return c.delta > 0; }).length;
+    var downs = last7.filter(function(c){ return c.delta < 0; }).length;
+    var tracked = 0, instock = 0;
+    if (state.latest) state.latest.products.forEach(function(p){ p.variants.forEach(function(v){ tracked++; if (v.inv > 0) instock++; }); });
+    el.innerHTML =
+      '<div class="card"><div class="num">' + last7.length + '</div><div class="lbl">Changes - last 7 days</div></div>' +
+      '<div class="card"><div class="num up">' + ups + '</div><div class="lbl">Increases (7D)</div></div>' +
+      '<div class="card"><div class="num down">' + downs + '</div><div class="lbl">Decreases (7D)</div></div>' +
+      '<div class="card"><div class="num">' + tracked.toLocaleString() + '</div><div class="lbl">Variants tracked</div></div>' +
+      '<div class="card"><div class="num">' + instock.toLocaleString() + '</div><div class="lbl">In stock now</div></div>';
+  }
+
+  function renderChanges(){
+    var rows = filteredChanges();
+    document.getElementById('countNote').textContent = rows.length.toLocaleString() + ' price change' + (rows.length === 1 ? '' : 's');
+    if (!rows.length){
+      document.getElementById('content').innerHTML =
+        '<div class="empty">No price changes in this window yet. The tracker checks 4x daily - changes appear here as soon as a reprice is detected.</div>';
+      return;
+    }
+    var html = '<table><thead><tr>' +
+      '<th>Product</th><th class="num-cell">Current Price</th><th class="num-cell">Old Price</th>' +
+      '<th class="num-cell">+/-</th><th>Date Changed</th><th class="num-cell">Stock</th>' +
+      '</tr></thead><tbody>';
+    rows.forEach(function(c){
+      var cls = c.delta >= 0 ? 'delta-up' : 'delta-down';
+      html += '<tr><td>' + esc(c.product) + (c.jp ? '<span class="badge jp">JP</span>' : '') +
+        (c.variant ? '<div class="variant">' + esc(c.variant) + (c.sku ? ' &middot; ' + esc(c.sku) : '') + '</div>' : (c.sku ? '<div class="variant">' + esc(c.sku) + '</div>' : '')) +
+        '</td>' +
+        '<td class="num-cell"><strong>' + fmtMoney(c.new) + '</strong></td>' +
+        '<td class="num-cell">' + fmtMoney(c.old) + '</td>' +
+        '<td class="num-cell ' + cls + '">' + fmtDelta(c.delta) + '</td>' +
+        '<td>' + fmtDate(c.at) + '</td>' +
+        '<td class="num-cell">' + c.inv + '</td></tr>';
+    });
+    document.getElementById('content').innerHTML = html + '</tbody></table>';
+  }
+
+  function renderCurrent(){
+    if (!state.latest){ document.getElementById('content').innerHTML = '<div class="empty">No snapshot yet.</div>'; return; }
+    var q = state.qCurrent.toLowerCase();
+    var rows = [];
+    state.latest.products.forEach(function(p){
+      p.variants.forEach(function(v){
+        if (state.instock && v.inv <= 0) return;
+        if (q && (p.title + ' ' + v.title + ' ' + v.sku).toLowerCase().indexOf(q) === -1) return;
+        rows.push({ product:p.title, jp:p.jp, variant:v.title, sku:v.sku, price:Number(v.price), inv:v.inv });
+      });
+    });
+    rows.sort(function(a,b){ return a.product < b.product ? -1 : a.product > b.product ? 1 : 0; });
+    document.getElementById('countNote').textContent = rows.length.toLocaleString() + ' variant' + (rows.length === 1 ? '' : 's');
+    if (!rows.length){ document.getElementById('content').innerHTML = '<div class="empty">Nothing matches.</div>'; return; }
+    var html = '<table><thead><tr><th>Product</th><th class="num-cell">Current Price</th><th class="num-cell">Stock</th></tr></thead><tbody>';
+    rows.forEach(function(r){
+      html += '<tr><td>' + esc(r.product) + (r.jp ? '<span class="badge jp">JP</span>' : '') +
+        (r.variant ? '<div class="variant">' + esc(r.variant) + (r.sku ? ' &middot; ' + esc(r.sku) : '') + '</div>' : (r.sku ? '<div class="variant">' + esc(r.sku) + '</div>' : '')) +
+        '</td><td class="num-cell"><strong>' + fmtMoney(r.price) + '</strong></td>' +
+        '<td class="num-cell">' + r.inv + '</td></tr>';
+    });
+    document.getElementById('content').innerHTML = html + '</tbody></table>';
+  }
+
+  document.querySelectorAll('.tab').forEach(function(t){
+    t.addEventListener('click', function(){ state.tab = t.dataset.tab; render(); });
+  });
+  document.querySelectorAll('.preset').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('.preset').forEach(function(x){ x.classList.remove('active'); });
+      b.classList.add('active');
+      state.days = Number(b.dataset.days);
+      render();
+    });
+  });
+  document.getElementById('searchChanges').addEventListener('input', function(e){ state.qChanges = e.target.value; render(); });
+  document.getElementById('searchCurrent').addEventListener('input', function(e){ state.qCurrent = e.target.value; render(); });
+  document.getElementById('instockOnly').addEventListener('change', function(e){ state.instock = e.target.checked; render(); });
+
+  Promise.all([
+    fetch('data/latest.json').then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; }),
+    fetch('data/changes.json').then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; })
+  ]).then(function(res){
+    state.latest = res[0];
+    state.changes = (res[1] && res[1].changes) || [];
+    var sub = state.latest
+      ? 'Snapshot: ' + fmtDate(state.latest.generatedAt) + ' \u00b7 Sealed Pokemon (tag: Pokemon Boxes) \u00b7 Updated 4x daily'
+      : 'Waiting for first price snapshot \u00b7 Sealed Pokemon (tag: Pokemon Boxes)';
+    document.getElementById('bannerSub').textContent = sub;
+    renderCards();
+    render();
+  });
+})();
+</script>
+</body>
+</html>
