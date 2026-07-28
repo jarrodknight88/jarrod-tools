@@ -176,6 +176,62 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 <script>
 var MEETINGS = {
+  "loyalty-build-sync-jul-27-2026": {
+    label: "Loyalty Build Sync (Nathaniel + Nick) - July 27, 2026",
+    sections: [
+      {g:"Build Sequence & Timeline",i:[
+        {id:"lbs-001",t:"Nathaniel: finish PDP work today, then produce the loyalty design doc",d:"Wed AM",c:"urgent"},
+        {id:"lbs-002",t:"Nathaniel: stand up all three components on staging for end-to-end testing, then run customization discovery and hand constraints to design",d:"Wed",c:"urgent"},
+        {id:"lbs-003",t:"Mikhail: finish Cookie Bot work in parallel with the loyalty build",d:"This week",c:"urgent"},
+        {id:"lbs-004",t:"Nick and Steven: deliver first design pass on the three staging components",d:"Thu EOD",c:"urgent"},
+        {id:"lbs-005",t:"Nathaniel and Mikhail: deliver first CSS/demo pass on the three components",d:"Mon Aug 3 EOD",c:"urgent"},
+        {id:"lbs-006",t:"Schedule the loyalty demo presentation for Aug 4-5; include marketing if the landing page is ready",d:"Next week",c:"soon"},
+      ]},
+      {g:"Staging Setup & Vendor Questions",i:[
+        {id:"lbs-007",t:"Grant Nathaniel LoyaltyLion admin access and create/share the API key - he is in the dashboard but has no API access",d:"Today",c:"urgent",linkedTo:["llt-002"]},
+        {id:"lbs-008",t:"Set up dummy products, tiers, and point redemption in LoyaltyLion staging using Project Elevate products as placeholders",d:"Tomorrow",c:"urgent"},
+        {id:"lbs-009",t:"Confirm with LoyaltyLion whether the onboarding wizard supports two storefronts and whether staging config carries over to production or must be rebuilt",d:"Tomorrow AM call",c:"urgent"},
+        {id:"lbs-010",t:"Confirm whether LoyaltyLion rewards can pull from a Shopify collection or must be set item-by-item in the LoyaltyLion back end",d:"Tomorrow AM call",c:"urgent"},
+        {id:"lbs-011",t:"Load LoyaltyLion onto the CardsHQ production storefront - staging first, production next week with LoyaltyLion's help",d:"Next week",c:"soon"},
+      ]},
+      {g:"Design Handoff",i:[
+        {id:"lbs-012",t:"Deliver bolded page-hierarchy inventory for the account dashboard and the landing page - tiers explanation, point redemption, remaining sections; enough for design to wireframe from",d:"Tomorrow AM",c:"urgent"},
+        {id:"lbs-013",t:"Create the Monday.com request for the design team with sub-items for the loyalty page work",d:"Tomorrow",c:"urgent"},
+        {id:"lbs-014",t:"Add Nick and Steven to the Wednesday 10:30 AM standup for formal handoff once staging components are live",d:"Tomorrow",c:"urgent"},
+        {id:"lbs-015",t:"Nick and Steven: build the loyalty landing page design off Sammy's example pages and the page inventory - lower priority than the three components, marketing copy still needed",d:"Next week",c:"soon"},
+      ]},
+      {g:"Scope & Tickets",i:[
+        {id:"lbs-016",t:"Create a new loyalty epic in Jira - clean start, not linked to prior loyalty work; design doc story with two tasks: create design doc and engineering feasibility discovery",d:"Today",c:"urgent"},
+        {id:"lbs-017",t:"Finalize the loyalty tiers and entitlements doc covering all tiers, offerings, and Market Movers access, then get on a call with Brad and Nathaniel to identify gaps and confirm what is buildable vs deferred to 2027",d:"This week",c:"urgent",linkedTo:["lr28-011"]},
+        {id:"lbs-018",t:"Nathaniel: confirm whether Market Movers can query LoyaltyLion for point balance and gate access, document the approach, and hand it to the Market Movers team to accept and build",d:"This week",c:"soon"},
+        {id:"lbs-019",t:"Confirm with Kelly whether the monthly redemption drop releases on the 1st of the month or the first Friday",d:"This week",c:"soon"},
+      ]},
+    ]
+  },
+  "loyaltylion-onboarding-jul-27-2026": {
+    label: "LoyaltyLion Technical Onboarding (Sammy) - July 27, 2026",
+    sections: [
+      {g:"Integration Path",i:[
+        {id:"llt-001",t:"Nathaniel: test whether LoyaltyLion SDK components render under CardsHQ server-side rendering - client-side injection is the primary risk; fallback is raw headless API with a thinner feature set",d:"Today",c:"urgent"},
+        {id:"llt-002",t:"Nathaniel: generate LoyaltyLion API key from dashboard Settings > API keys to pull session, customer, and points data - blocked until admin access is granted",d:"Today",c:"urgent",linkedTo:["lbs-007"]},
+      ]},
+      {g:"Program Configuration",i:[
+        {id:"llt-003",t:"Set points approval/pending period to 30 days to match the return policy",d:"Before launch",c:"soon"},
+        {id:"llt-004",t:"Set loyalty redemption products to 'unlisted' status in Shopify so they are invisible on the site and redeemable only through the loyalty page",d:"Before demo",c:"soon"},
+        {id:"llt-005",t:"Remove the default paid-item requirement on free product rewards so points alone can redeem",d:"Before demo",c:"soon"},
+        {id:"llt-006",t:"Configure in-cart rewards so redeemable products pull directly into the cart - Sammy sending the implementation guide",d:"Before demo",c:"soon"},
+      ]},
+      {g:"Launch Prep",i:[
+        {id:"llt-007",t:"Prepare retroactive points CSV - customer emails and point values for the last ~6 months; Sammy needs it 24 hours before launch",d:"Before Sept 1",c:"soon"},
+        {id:"llt-008",t:"Book follow-up call with Sammy - multiplier setup, loyalty digital card design questions, and future-proofing as CardsHQ integrates sister company systems",d:"This week",c:"soon"},
+      ]},
+      {g:"LoyaltyLion Follow-Ups",i:[
+        {id:"llt-009",t:"Sammy: send follow-up email with documentation - integrated page div, standalone SDK components, headless API, example pages at varying customization levels, and Calendly link",d:"This week",c:"urgent"},
+        {id:"llt-010",t:"Sammy: share example pages with Nick and Steven spanning out-of-box CSS-styled through fully custom SDK builds",d:"This week",c:"urgent"},
+        {id:"llt-011",t:"Sammy: pass headless API feature-gap feedback to the LoyaltyLion product team",d:"Ongoing",c:"ongoing"},
+      ]},
+    ]
+  },
   "kelly-touchbase-jul-21-2026": {
     label: "Jarrod + Kelly - July 21, 2026",
     sections: [
@@ -865,7 +921,7 @@ var MEETINGS = {
         {id:"lr28-008",t:"Stress-test Member Marketplace inventory model: required SKU depth at 50% churn across Base/Rare/Holo tiers, 5/5/5 SKU split as proposed",d:"Before godfather meeting",c:"urgent"},
         {id:"lr28-009",t:"Confirm with Nathaniel: Member Marketplace online-only redemption, store pickup allowed, multi-location inventory implications",d:"Soon",c:"soon"},
         {id:"lr28-010",t:"Phase planning: Phase 1 launch foundation (Base/Rare/Holo/Grail); Phase 3 invite-only Grail concierge + Owners Club activation",d:"Working session next week",c:"soon"},
-        {id:"lr28-011",t:"Clarify Market Movers Premium scope for loyalty: subscription cost absorbed by CardsHQ or pass-through, eligibility duration tied to tier maintenance",d:"Soon",c:"soon"},
+        {id:"lr28-011",t:"Clarify Market Movers Premium scope for loyalty: subscription cost absorbed by CardsHQ or pass-through, eligibility duration tied to tier maintenance",d:"Soon",c:"soon",linkedTo:["lbs-017"]},
         {id:"lr28-012",t:"Clarify whiteboard $30K+ marker inside Grail tier - confirm intent (upper-Grail signaling, Owners Club path, or Phase 3 invite criteria)",d:"Before godfather meeting",c:"soon"},
       ]},
       {g:"Godfather Sign-Off",i:[
