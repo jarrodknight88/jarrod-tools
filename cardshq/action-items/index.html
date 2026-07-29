@@ -176,6 +176,70 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 <script>
 var MEETINGS = {
+  "nathaniel-brad-sync-jul-29-2026": {
+    label: "Nathaniel + Brad Sync - July 29, 2026",
+    sections: [
+      {g:"PRD & Stakeholder Alignment",i:[
+        {id:"nbs-001",t:"Add a phased rollout section to the PRD covering day 1, day 30, day 90, and day 180 - Sept 1 is MVP, benefits land in waves",d:"Before stakeholder mtg",c:"urgent"},
+        {id:"nbs-002",t:"Mark every tier mechanic in the PRD as LoyaltyLion-native or custom build so nobody assumes a behavior that still has to be built",d:"Before stakeholder mtg",c:"urgent"},
+        {id:"nbs-003",t:"Link the PRD out to LoyaltyLion configuration detail rather than restating it",d:"Before stakeholder mtg",c:"soon"},
+        {id:"nbs-004",t:"Resend the loyalty page hierarchy document to Brad",d:"Today",c:"urgent"},
+        {id:"nbs-005",t:"Schedule the internal stakeholder meeting for mid next week after the National - marketing, engineering, Brad, and cross-company SCI stakeholders; send Brad an optional invite",d:"This week",c:"urgent"},
+      ]},
+      {g:"Cross-Company Risks",i:[
+        {id:"nbs-006",t:"Resolve the cancellation path for existing iOS subscribers on recurring plans before loyalty tiers go live",d:"Before Sep 1",c:"urgent"},
+        {id:"nbs-007",t:"Brief Dan's team on the Market Movers revenue dip created by granting free access through loyalty tiers",d:"Before Sep 1",c:"urgent"},
+        {id:"nbs-008",t:"Document gaming mitigations: point accrual on returned items and rapid tier jumping",d:"Before stakeholder mtg",c:"soon"},
+        {id:"nbs-009",t:"Nathaniel: share the SDK findings write-up covering the free product add-to-cart limitation versus the headless approach",d:"This week",c:"urgent"},
+      ]},
+    ]
+  },
+  "project-elevate-standup-jul-29-2026": {
+    label: "Project Elevate Standup - July 29, 2026",
+    sections: [
+      {g:"Loyalty",i:[
+        {id:"pes-001",t:"Send Jared the loyalty designs with context on the SDK versus custom API route - he reviews on return from the National",d:"Thu EOD",c:"urgent"},
+        {id:"pes-002",t:"Nathaniel: share LoyaltyLion API and SDK documentation findings from the deep dive",d:"This week",c:"urgent"},
+      ]},
+      {g:"GDPR & Cross-Domain Attribution",i:[
+        {id:"pes-003",t:"Mikhail: implement Stape as the short-term fix so John has attribution numbers through the National - legal unavailable until mid next week",d:"This week",c:"urgent"},
+        {id:"pes-004",t:"Mikhail: share GDPR compliance documentation with John and verify no identifiable data bleeds to the front end",d:"This week",c:"urgent"},
+        {id:"pes-005",t:"Confirm Cookie Bot is the gatekeeper - nothing loads without consent and GTM must not side-load past it",d:"This week",c:"soon"},
+        {id:"pes-006",t:"Longer term: scope a server-side session ID passed in headers or redirects as the only clean cross-domain attribution solution",d:"Post-National",c:"soon"},
+        {id:"pes-007",t:"RevenueCat on mobile is losing attribution when a Facebook ad opens the app - scope with the mobile team",d:"Post-National",c:"soon"},
+      ]},
+      {g:"Publishing Flow",i:[
+        {id:"pes-008",t:"Set up Zach to review the publishing flow when he is back from the National - Rich wants feedback from someone who knows sports",d:"Next week",c:"soon"},
+        {id:"pes-009",t:"Rich: Slabber UI changes - lightweight rich text editor, enrichment and publishing queue tabs with queued/active/successful/failed, merge the failed views into their parent queues, delete the old progress view",d:"In progress",c:"ongoing"},
+      ]},
+    ]
+  },
+  "nathaniel-jarrod-sync-jul-29-2026": {
+    label: "Nathaniel + Jarrod Weekly Sync - July 29, 2026",
+    sections: [
+      {g:"Blocking Vendor Questions",i:[
+        {id:"njs-001",t:"Get SDK API keys from Sammy - not creatable in the admin, blocks all SDK testing. Blocker email sent Jul 29.",d:"Sent, chasing",c:"urgent"},
+        {id:"njs-002",t:"Confirm with Sammy whether a global one-redemption-per-member-per-month cap is configurable - only per-reward limits found",d:"In blocker email",c:"urgent"},
+        {id:"njs-003",t:"Confirm with Sammy that invitation-only tier assignment is supported for Grail - Nathaniel could not find it in the code",d:"In blocker email",c:"urgent"},
+      ]},
+      {g:"SDK vs Headless",i:[
+        {id:"njs-004",t:"Nathaniel: test SDK components once keys arrive and make the SDK versus headless call - headless already fully vetted and confirmed capable of everything needed",d:"Thu",c:"urgent"},
+        {id:"njs-005",t:"Nathaniel: continue the build with headless as the working fallback - SDK injects JavaScript into server-side rendered pages and is likely to render poorly on Fragment",d:"Started today",c:"urgent"},
+      ]},
+      {g:"Design & Wallet Card",i:[
+        {id:"njs-006",t:"Share the LoyaltyLion admin login with Nick and Steven so they can read wallet card image dimension requirements directly",d:"Today",c:"urgent"},
+        {id:"njs-007",t:"Nick: deliver account page wireframes - loose first, designed for SDK drop-in with the custom path as fallback. Account page only, not the landing page.",d:"Thu afternoon",c:"urgent"},
+        {id:"njs-008",t:"Nick: switch designs from points-based to dollar-based display",d:"Thu",c:"urgent"},
+        {id:"njs-009",t:"Nick and Steven: work the existing tier badges into the wallet card banner artwork - one banner file per tier, banner image only, no other customization",d:"Next week",c:"soon"},
+        {id:"njs-010",t:"Reconcile wallet card cost before it reaches Matthew - $200/mo standalone today versus the pitch figure of $1,808/mo with wallet included. PassKit at ~$10K/yr is out.",d:"This week",c:"urgent"},
+      ]},
+      {g:"Program Corrections",i:[
+        {id:"njs-011",t:"Update the program announcement to MVP framing - Grail is teased at launch and stood up later, not live Sept 1, and Market Movers still has open integration questions",d:"Before stakeholder mtg",c:"urgent"},
+        {id:"njs-012",t:"Tiers stay spend-based, not point-based - Nathaniel tested point-based in staging and every tier reset when points were redeemed",d:"Confirmed",c:"ongoing"},
+        {id:"njs-013",t:"If LoyaltyLion cannot enforce a global monthly redemption cap, build the enforcement ourselves",d:"Pending Sammy",c:"soon"},
+      ]},
+    ]
+  },
   "loyalty-build-sync-jul-27-2026": {
     label: "Loyalty Build Sync (Nathaniel + Nick) - July 27, 2026",
     sections: [
