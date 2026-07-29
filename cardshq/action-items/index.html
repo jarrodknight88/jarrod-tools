@@ -187,6 +187,12 @@ var MEETINGS = {
         {id:"nbs-005",t:"Schedule the internal stakeholder meeting for mid next week after the National - marketing, engineering, Brad, and cross-company SCI stakeholders; send Brad an optional invite",d:"This week",c:"urgent"},
       ]},
       {g:"Cross-Company Risks",i:[
+        {id:"nbs-010",t:"DECISION NEEDED: Brad suggested holding Market Movers as coming soon at launch rather than day one, because existing iOS subscribers have no cancellation path. Conflicts with the announcement doc, which currently says day one.",d:"Before stakeholder mtg",c:"urgent"},
+        {id:"nbs-011",t:"Scope the Market Movers pricing problem: existing Premium holder who reaches Rare, discounted tiers for existing subscribers, annual versus monthly prorating",d:"Before Sep 1",c:"urgent"},
+        {id:"nbs-012",t:"Decide whether a Market Movers subscription counts toward loyalty spend thresholds - answered as it depends, so currently undecided",d:"Before stakeholder mtg",c:"urgent"},
+        {id:"nbs-013",t:"Avoid coupling the loyalty build to MemberPress - Brad wants off MemberPress and WordPress and flagged that loyalty tied into it makes that migration much harder",d:"Before build commits",c:"urgent"},
+        {id:"nbs-014",t:"Loop Tyler in - Brad asked directly whether he had been involved and the answer was no",d:"This week",c:"soon"},
+        {id:"nbs-015",t:"Work with James on milestone planning so each phase of the rollout has scoped work behind it",d:"Before stakeholder mtg",c:"soon"},
         {id:"nbs-006",t:"Resolve the cancellation path for existing iOS subscribers on recurring plans before loyalty tiers go live",d:"Before Sep 1",c:"urgent"},
         {id:"nbs-007",t:"Brief Dan's team on the Market Movers revenue dip created by granting free access through loyalty tiers",d:"Before Sep 1",c:"urgent"},
         {id:"nbs-008",t:"Document gaming mitigations: point accrual on returned items and rapid tier jumping",d:"Before stakeholder mtg",c:"soon"},
@@ -206,7 +212,7 @@ var MEETINGS = {
         {id:"pes-004",t:"Mikhail: share GDPR compliance documentation with John and verify no identifiable data bleeds to the front end",d:"This week",c:"urgent"},
         {id:"pes-005",t:"Confirm Cookie Bot is the gatekeeper - nothing loads without consent and GTM must not side-load past it",d:"This week",c:"soon"},
         {id:"pes-006",t:"Longer term: scope a server-side session ID passed in headers or redirects as the only clean cross-domain attribution solution",d:"Post-National",c:"soon"},
-        {id:"pes-007",t:"RevenueCat on mobile is losing attribution when a Facebook ad opens the app - scope with the mobile team",d:"Post-National",c:"soon"},
+        {id:"pes-007",t:"RevenueCat on mobile is losing attribution when a Facebook ad opens the app. Brad's structural fix: move the RevenueCat checkout into marketmoversapp.com so conversions stop crossing a domain - would solve most of the attribution problem on its own.",d:"Post-National",c:"soon"},
       ]},
       {g:"Publishing Flow",i:[
         {id:"pes-008",t:"Set up Zach to review the publishing flow when he is back from the National - Rich wants feedback from someone who knows sports",d:"Next week",c:"soon"},
