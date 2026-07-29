@@ -176,6 +176,41 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 <script>
 var MEETINGS = {
+  "loyalty-priority-sequencing-jul-29-2026": {
+    label: "Loyalty Priority Sequencing (Nathaniel) - July 29, 2026",
+    sections: [
+      {g:"Immediate Commitments",i:[
+        {id:"lps-001",t:"Deliver the stripped phased PRD by 4 PM - Phase 1 is the three components with a Sept 1 date, Phases 2 and 3 listed with no dates. Blocks Nathaniel's design doc.",d:"4 PM today",c:"urgent"},
+        {id:"lps-002",t:"Build the Jira epic timeline for CardsHQ - Gantt view of every epic with dates and progress so displacement is visible when a new priority is inserted. Shareable directly with Kelly.",d:"Today",c:"urgent"},
+        {id:"lps-003",t:"Send Kelly a priority recap before tomorrow's meeting: SDK plug-and-play not feasible, Cookiebot is 1A and loyalty 1B, named projects being stalled, Project Elevate unknowns",d:"Before tomorrow",c:"urgent"},
+        {id:"lps-004",t:"Tell Nick and Steven to stop designing for SDK drop-in - the route is fully custom, design what we want",d:"Today",c:"urgent"},
+      ]},
+      {g:"V1 Scope & Build Route",i:[
+        {id:"lps-005",t:"V1 is three components only: earn points, redeem points, view status and tier. Landing page excluded from API work and stays a static page.",d:"Locked",c:"ongoing"},
+        {id:"lps-006",t:"Build route decided: fully custom against the headless API. SDK deprioritized - Nathaniel is 97% confident custom does everything, and designing around SDK constraints compromises the product.",d:"Decided",c:"ongoing"},
+        {id:"lps-007",t:"Nathaniel: write the developer-facing design doc - blocked on the phased PRD",d:"On PRD delivery",c:"urgent"},
+        {id:"lps-008",t:"Demo of the three components targeted for Tuesday or Wednesday next week",d:"Aug 4-5",c:"urgent"},
+      ]},
+      {g:"Demo Blockers on Staging",i:[
+        {id:"lps-009",t:"Tear down the staging tiers and rebuild them spend-based - they were built point-based and are wrong. Tier basis locks once set and cannot be changed.",d:"Before demo",c:"urgent"},
+        {id:"lps-010",t:"Find a way to simulate purchases on staging so users can be moved through tiers - Nathaniel flagged this as a possible blocker since you cannot buy on staging",d:"Before demo",c:"urgent"},
+        {id:"lps-011",t:"Set correct point values on the staging redemption rules - as configured, completing everything pays out roughly $650 of value",d:"Before demo",c:"urgent"},
+        {id:"lps-012",t:"Add real demo products for redemption on staging rather than placeholders",d:"Before demo",c:"urgent"},
+        {id:"lps-013",t:"Set up the cart redemption widget and the digital card on staging",d:"Before demo",c:"urgent"},
+      ]},
+      {g:"Resourcing & Displacement",i:[
+        {id:"lps-014",t:"Raise Mikhail going full time with Kelly - capped at 20 hrs/week, already turning work away, and Project Elevate work may land on top",d:"This week",c:"urgent"},
+        {id:"lps-015",t:"Document what loyalty is displacing: Collector Center, PDP V2 redesign, CMS project, and Project Elevate deliverables pending tomorrow. Cookiebot is 1A with about two weeks left on Mikhail.",d:"For Kelly recap",c:"urgent"},
+        {id:"lps-016",t:"Add unstarted Q4 work to the timeline as epics with loose estimates: new store opening, Black Friday, Cyber Monday, winter virtual. None currently counted as engineering load.",d:"This week",c:"soon"},
+      ]},
+      {g:"Process & Cadence",i:[
+        {id:"lps-017",t:"Create the new CardsHQ standup: Rich, Mikhail, designers on the work, and Nathaniel. 15 min standup plus 45 min optional parking lot, Tuesdays and Thursdays. Today was the last Project Elevate standup.",d:"This week",c:"urgent"},
+        {id:"lps-018",t:"Take Brad off the product standup - he brings engineering questions into product discussion. Nathaniel briefs him directly as the bridge between the companies.",d:"This week",c:"soon"},
+        {id:"lps-019",t:"Consolidate marketing board tickets into the product and engineering board and take ownership of board maintenance",d:"This week",c:"soon"},
+        {id:"lps-020",t:"Make the PRD the source of truth rather than updating the circulated overview doc, and pull people into a meeting to sign off rather than relying on async comments",d:"Ongoing",c:"ongoing"},
+      ]},
+    ]
+  },
   "nathaniel-brad-sync-jul-29-2026": {
     label: "Nathaniel + Brad Sync - July 29, 2026",
     sections: [
