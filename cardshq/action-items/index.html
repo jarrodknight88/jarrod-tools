@@ -176,6 +176,31 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 <script>
 var MEETINGS = {
+  "loyalty-stakeholder-demo-aug-06-2026": {
+    label: "Loyalty Stakeholder Demo - August 6, 2026",
+    sections: [
+      {g:"Program Decisions Needed",i:[
+        {id:"lsd-001",t:"Confirm Grail store credit rate (1% vs 2%) and whether credit applies retroactively to 2026 spend - determines day-one experience for the 50 Grail members",d:"This week",c:"urgent"},
+        {id:"lsd-002",t:"Finalize employee account eligibility and fraud/misuse guidelines (staff working trade nights with customer accounts - raised by Lei) before testing opens",d:"Before Aug 12",c:"urgent"},
+      ]},
+      {g:"Build & Testing",i:[
+        {id:"lsd-003",t:"Send staging access to all internal staff for stress testing starting Aug 12 - test orders with no real payment info",d:"Before Aug 12",c:"urgent"},
+        {id:"lsd-004",t:"Coordinate with Nathaniel and LoyaltyLion on account merging and point consolidation - manual point add works today, confirm whether Shop Pay supports any automation",d:"Before launch",c:"soon"},
+        {id:"lsd-005",t:"Define the account claim workflow including the profile quiz (self-segmentation: TCG vs sports, product interests)",d:"Before Aug 12",c:"urgent"},
+      ]},
+      {g:"Department Rollout",i:[
+        {id:"lsd-006",t:"Send slide deck and program recap to all attendees",d:"Today",c:"urgent"},
+        {id:"lsd-007",t:"Schedule department one-off meetings: inventory, marketing, retail, finance, engineering - every team ready by last week of August",d:"This week",c:"urgent"},
+        {id:"lsd-008",t:"Marketplace procurement and segmentation with inventory, including where reward inventory physically lives - deep enough stock that the Sep 4 drop does not sell out day one without over-pulling sellable inventory",d:"Start now",c:"urgent",linkedTo:["njs-019"]},
+        {id:"lsd-009",t:"Work through free shipping logistics with Collin - thresholds and operational handling before launch",d:"Before launch",c:"soon"},
+        {id:"lsd-010",t:"Marketing with Nick: landing page copy, launch comms, retroactive balance messaging",d:"Aug 24-28",c:"soon"},
+      ]},
+      {g:"Ideas Parked",i:[
+        {id:"lsd-011",t:"Explore grading submissions as a Grail-exclusive perk - manageable at 50 members, revisit after launch",d:"Later wave",c:"ongoing"},
+        {id:"lsd-012",t:"Points-for-giveaways tied to streams and content - align with production promo push (Kelly driving video promotion)",d:"Later wave",c:"ongoing"},
+      ]},
+    ]
+  },
   "loyalty-review-jul-31-2026": {
     label: "Loyalty Wireframe Review (Nick + Steven) - July 31, 2026",
     sections: [
@@ -318,7 +343,7 @@ var MEETINGS = {
         {id:"njs-016",t:"Nathaniel: dig out the second SDK blocker he found but could not recall in the meeting",d:"This week",c:"urgent"},
         {id:"njs-017",t:"Confirm the PreProduct early-access mechanism: LoyaltyLion tags the customer in Shopify, PreProduct assigns pre-order access to the segment carrying that tag, differentiated by access versus reservation. Described as loosely confirmed.",d:"Today",c:"urgent"},
         {id:"njs-018",t:"Walk Nathaniel to where Num Nums sit in the LoyaltyLion admin - he could not find them in two different places",d:"Today",c:"soon"},
-        {id:"njs-019",t:"Get the Member Marketplace product list from inventory - point pricing depends on the catalog and earn values depend on point pricing, so account creation and newsletter values stay placeholders until then",d:"When Kelly is back",c:"urgent"},
+        {id:"njs-019",t:"Get the Member Marketplace product list from inventory - point pricing depends on the catalog and earn values depend on point pricing, so account creation and newsletter values stay placeholders until then",d:"When Kelly is back",c:"urgent",linkedTo:["lsd-008"]},
         {id:"njs-020",t:"Pull the Grail seed list of roughly 100 customers from marketing for manual tier assignment",d:"Post-launch",c:"soon"},
         {id:"njs-021",t:"Document when points post and how they claw back on a return - Brad's example is buy a Mickey Mantle rookie, jump a tier, then return it",d:"Before stakeholder mtg",c:"urgent"},
         {id:"njs-004",t:"Nathaniel: test SDK components once keys arrive and make the SDK versus headless call - headless already fully vetted and confirmed capable of everything needed",d:"Thu",c:"urgent"},
