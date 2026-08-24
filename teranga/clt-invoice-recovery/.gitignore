@@ -1,0 +1,14 @@
+# Secrets — never commit
+credentials.json
+token_clt.json
+token*.json
+.env
+
+# Local working data
+clt_invoices/
+*.csv
+!*_example.csv
+ocr_cache/
+
+# Python bytecode
+__pycache__/
