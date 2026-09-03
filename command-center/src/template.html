@@ -1,0 +1,587 @@
+
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;padding:0;background:#F6F7F9;color:#111111;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;font-feature-settings:"cv11","ss01"}
+button,a,input{transition:border-color 120ms ease,background-color 120ms ease,color 120ms ease,box-shadow 120ms ease}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid #3B82F6;outline-offset:1px}
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:#D1D5DB;border:3px solid #fff;border-radius:6px}
+*{box-sizing:border-box}
+a{color:#3B82F6;text-decoration:none}a:hover{text-decoration:underline}
+button{font-family:inherit;color:inherit}
+input::placeholder{color:#9CA3AF}
+@keyframes hqBurst{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(0.2);opacity:0}}
+@keyframes hqRing{0%{transform:scale(0.3);opacity:0.9}100%{transform:scale(2.4);opacity:0}}
+</style>
+</helmet>
+<div style="min-height:100vh;display:flex;flex-direction:column;font-size:13px;line-height:1.45">
+  <header style="display:flex;align-items:center;gap:20px;padding:0 24px;height:56px;border-bottom:1px solid #E5E7EB;position:sticky;top:0;background:rgba(255,255,255,0.92);backdrop-filter:blur(8px);z-index:5">
+    <div style="display:flex;align-items:center;gap:10px;flex:none">
+      <div style="width:26px;height:26px;border-radius:7px;background:#111111;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;letter-spacing:-0.02em">HQ</div>
+      <div style="display:flex;flex-direction:column;line-height:1.2">
+        <span style="font-size:13px;font-weight:600;letter-spacing:-0.01em;white-space:nowrap">Command Center</span>
+        <span style="font-size:11px;color:#6B7280;white-space:nowrap">{{ dateLabel }}</span>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;flex:none">
+      <sc-for list="{{ stats }}" as="s" hint-placeholder-count="3">
+        <span style="display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border:1px solid #E5E7EB;border-radius:999px;background:#fff;font-size:12px;color:#374151;white-space:nowrap"><span style="font-weight:600;color:#111111;font-variant-numeric:tabular-nums">{{ s.n }}</span>{{ s.label }}</span>
+      </sc-for>
+    </div>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:8px;min-width:0;flex:1 1 220px;max-width:420px">
+      <div style="position:relative;width:100%;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;gap:8px;height:34px;padding:0 8px 0 12px;border:1px solid #E5E7EB;border-radius:6px;background:#FAFAFA" style-focus="border-color:#3B82F6;background:#fff">
+          <span style="color:#9CA3AF;font-size:13px;flex:none">⌕</span>
+          <input value="{{ query }}" onChange="{{ onQuery }}" onKeyDown="{{ onQuickKey }}" placeholder="Search, or type a task and press ↵ to add" style="flex:1;min-width:0;border:0;outline:none;font:inherit;font-size:13px;color:#111111;background:transparent"/>
+          <sc-if value="{{ noQuery }}" hint-placeholder-val="{{ true }}">
+            <kbd style="font-family:inherit;font-size:10px;color:#9CA3AF;border:1px solid #E5E7EB;border-radius:4px;padding:1px 5px;background:#fff">⌘K</kbd>
+          </sc-if>
+          <sc-if value="{{ quickPreview }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ addFromQuery }}" style="display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 8px;border:0;border-radius:4px;background:#3B82F6;color:#fff;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap" style-hover="background:#2563EB">+ Add task <kbd style="font-family:inherit;font-size:10px;opacity:0.8">↵</kbd></button>
+          </sc-if>
+        </div>
+        <sc-if value="{{ quickPreview }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;top:100%;left:0;right:0;margin-top:4px;padding:8px 12px;border:1px solid #E5E7EB;border-radius:6px;background:#fff;font-size:11px;color:#6B7280;box-shadow:0 4px 12px rgba(17,17,17,0.06);display:flex;flex-direction:column;gap:8px;z-index:6">
+            <div>{{ quickPreview }}</div>
+            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:4px"><span style="width:52px;color:#9CA3AF">Meeting</span>
+              <sc-for list="{{ linkMeetings }}" as="c" hint-placeholder-count="4">
+                <button onClick="{{ c.pick }}" style="display:inline-flex;align-items:center;gap:5px;padding:2px 7px;border:1px solid {{ c.border }};border-radius:4px;background:{{ c.bg }};color:{{ c.fg }};font-size:11px;cursor:pointer" style-hover="border-color:#3B82F6"><span style="width:5px;height:5px;border-radius:50%;background:{{ c.dot }}"></span>{{ c.label }}</button>
+              </sc-for>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:4px"><span style="width:52px;color:#9CA3AF">Project</span>
+              <sc-for list="{{ linkProjects }}" as="c" hint-placeholder-count="4">
+                <button onClick="{{ c.pick }}" style="display:inline-flex;align-items:center;gap:5px;padding:2px 7px;border:1px solid {{ c.border }};border-radius:4px;background:{{ c.bg }};color:{{ c.fg }};font-size:11px;cursor:pointer" style-hover="border-color:#3B82F6">▣ {{ c.label }}</button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+    <span style="font-size:11px;color:{{ saveColor }};white-space:nowrap;flex:none">{{ saveLabel }}</span>
+    <button onClick="{{ signOut }}" title="Sign out" style="height:30px;padding:0 10px;border:1px solid #E5E7EB;border-radius:6px;background:#fff;color:#6B7280;cursor:pointer;font-size:12px;flex:none" style-hover="background:#F3F4F6;color:#111111">Sign out</button>
+    <button onClick="{{ openSettings }}" title="Settings" aria-label="Settings" style="width:30px;height:30px;border:1px solid #E5E7EB;border-radius:6px;background:#fff;color:#6B7280;cursor:pointer;font-size:15px;line-height:1;display:flex;align-items:center;justify-content:center;flex:none;position:relative" style-hover="background:#F3F4F6;color:#111111">⚙<sc-if value="{{ hasUnmapped }}" hint-placeholder-val="{{ false }}"><span title="Some meetings have no recap folder" style="position:absolute;top:-3px;right:-3px;width:8px;height:8px;border-radius:50%;background:#F59E0B;border:2px solid #fff"></span></sc-if></button>
+    <div title="Jarrod" style="width:28px;height:28px;border-radius:50%;background:#F3F4F6;color:#374151;border:1px solid #E5E7EB;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex:none">JA</div>
+  </header>
+  <sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:48px 24px;text-align:center;color:#6B7280;font-size:13px">Loading your day…</div>
+  </sc-if>
+  <sc-if value="{{ loadError }}" hint-placeholder-val="{{ false }}">
+    <div style="margin:12px 24px 0;padding:10px 14px;border:1px solid #FECACA;border-radius:8px;background:#FEF2F2;color:#B91C1C;font-size:12px">{{ loadError }}</div>
+  </sc-if>
+
+  <main style="display:grid;grid-template-columns:{{ gridCols }};gap:16px;padding:16px 24px 32px;align-items:start;max-width:1600px;width:100%;margin:0 auto">
+    <section data-screen-label="Meetings / Calendar" style="display:flex;flex-direction:column;gap:12px;min-width:0;background:#fff;border:1px solid #E5E7EB;border-radius:10px;padding:14px 16px 16px;box-shadow:0 1px 2px rgba(17,17,17,0.03)">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+        <h2 style="margin:0;font-size:13px;font-weight:600;letter-spacing:-0.01em">Today</h2>
+        <div style="display:inline-flex;border:1px solid #E5E7EB;border-radius:6px;padding:2px;gap:2px;background:#F3F4F6;margin-left:auto">
+          <button onClick="{{ viewMeetings }}" style="padding:4px 10px;border:0;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer;background:{{ meetingsBtnBg }};color:{{ meetingsBtnFg }};box-shadow:{{ meetingsBtnShadow }}">Meetings</button>
+          <button onClick="{{ viewCalendar }}" style="padding:4px 10px;border:0;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer;background:{{ calendarBtnBg }};color:{{ calendarBtnFg }};box-shadow:{{ calendarBtnShadow }}">Calendar</button>
+        </div>
+      </div>
+
+      <sc-if value="{{ showMeetingsView }}" hint-placeholder-val="{{ true }}">
+        <sc-if value="{{ noMeetings }}" hint-placeholder-val="{{ false }}">
+          <div style="border:1px dashed #D1D5DB;border-radius:8px;padding:40px 24px;text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center">
+            <div style="width:36px;height:36px;border-radius:50%;background:#ECFDF5;color:#10B981;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600">✓</div>
+            <div style="font-size:15px;font-weight:600">Clear calendar</div>
+            <div style="color:#6B7280">Good day for deep work</div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ hasMeetings }}" hint-placeholder-val="{{ true }}">
+          <ol style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column">
+            <sc-for list="{{ meetings }}" as="m" hint-placeholder-count="4">
+              <li style="display:grid;grid-template-columns:64px 20px 1fr;gap:0 8px">
+                <div style="padding-top:12px;text-align:right;font-variant-numeric:tabular-nums;color:#374151;font-weight:500;font-size:12px">{{ m.time }}</div>
+                <div style="display:flex;flex-direction:column;align-items:center">
+                  <div style="width:1px;flex:0 0 14px;background:#E5E7EB"></div>
+                  <div title="{{ m.type }}" style="width:10px;height:10px;border-radius:50%;background:{{ m.color }};box-shadow:0 0 0 2px #fff"></div>
+                  <div style="width:1px;flex:1;background:#E5E7EB"></div>
+                </div>
+                <button onClick="{{ m.open }}" style="text-align:left;width:100%;margin:4px 0;padding:10px 12px;border:1px solid {{ m.border }};background:{{ m.bg }};border-radius:8px;cursor:pointer;display:flex;flex-direction:column;gap:8px;opacity:{{ m.opacity }}" style-hover="border-color:#3B82F6;box-shadow:0 1px 3px rgba(17,17,17,0.06)">
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+                    <span style="font-weight:600;font-size:13px;display:inline-flex;align-items:center;gap:8px">{{ m.title }}<sc-if value="{{ m.upNext }}" hint-placeholder-val="{{ false }}"><span style="padding:1px 6px;border-radius:4px;background:#DBEAFE;color:#1D4ED8;font-size:10px;font-weight:600;letter-spacing:0.03em">UP NEXT</span></sc-if></span>
+                    <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:#6B7280;white-space:nowrap"><span style="width:6px;height:6px;border-radius:50%;background:{{ m.color }}"></span>{{ m.type }}</span>
+                  </div>
+                  <sc-if value="{{ m.oneOff }}" hint-placeholder-val="{{ false }}">
+                    <span style="align-self:flex-start;padding:1px 6px;border:1px solid #E5E7EB;border-radius:4px;font-size:10px;font-weight:600;color:#6B7280;text-transform:uppercase;letter-spacing:0.05em">One-off</span>
+                  </sc-if>
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+                    <div style="display:flex">
+                      <sc-for list="{{ m.avatars }}" as="a" hint-placeholder-count="2">
+                        <span title="{{ a.name }}" style="width:22px;height:22px;border-radius:50%;background:{{ a.bg }};color:{{ a.fg }};font-size:10px;font-weight:600;display:flex;align-items:center;justify-content:center;border:2px solid #fff;margin-left:-6px">{{ a.initials }}</span>
+                      </sc-for>
+                    </div>
+                    <span style="font-size:11px;color:#6B7280">{{ m.openLabel }}</span>
+                  </div>
+                </button>
+              </li>
+            </sc-for>
+          </ol>
+        </sc-if>
+      </sc-if>
+
+      <sc-if value="{{ showCalendarView }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="border:1px solid #E5E7EB;border-radius:8px;overflow:hidden;background:#fff">
+            <div style="position:relative;height:680px;padding-top:8px">
+              <sc-for list="{{ slots }}" as="s" hint-placeholder-count="24">
+                <div style="height:28px;display:flex;border-top:1px solid {{ s.border }}">
+                  <div style="width:56px;flex:none;font-size:10px;color:#9CA3AF;padding:2px 6px 0 0;text-align:right;font-variant-numeric:tabular-nums;transform:translateY(-8px);background:#fff">{{ s.label }}</div>
+                </div>
+              </sc-for>
+              <sc-if value="{{ nowVisible }}" hint-placeholder-val="{{ false }}">
+                <div style="position:absolute;left:50px;right:0;top:{{ nowTop }};height:0;border-top:2px solid #DC2626;z-index:2;pointer-events:none"><span style="position:absolute;left:-4px;top:-4px;width:6px;height:6px;border-radius:50%;background:#DC2626"></span></div>
+              </sc-if>
+              <div onDragOver="{{ gridDragOver }}" onDrop="{{ gridDrop }}" style="position:absolute;top:8px;bottom:0;left:56px;right:6px">
+                <sc-for list="{{ meetingBlocks }}" as="b" hint-placeholder-count="4">
+                  <button onClick="{{ b.open }}" style="position:absolute;left:0;right:0;top:{{ b.top }};height:{{ b.height }};text-align:left;padding:{{ b.pad }};border:0;border-left:3px solid {{ b.color }};border-radius:4px;background:{{ b.bg }};cursor:pointer;overflow:hidden;display:flex;flex-direction:column;justify-content:center;gap:1px;font-size:11px;line-height:1.3" style-hover="filter:brightness(0.97)">
+                    <span style="font-weight:600;color:#111111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:none;max-width:100%"><sc-if value="{{ b.compact }}" hint-placeholder-val="{{ false }}"><span style="font-weight:500;color:#6B7280;margin-right:6px">{{ b.start }}</span></sc-if>{{ b.title }}</span>
+                    <sc-if value="{{ b.showMeta }}" hint-placeholder-val="{{ true }}"><span style="color:#6B7280;flex:none">{{ b.range }} · {{ b.type }}</span></sc-if>
+                  </button>
+                </sc-for>
+                <sc-for list="{{ taskBlocks }}" as="b" hint-placeholder-count="2">
+                  <div draggable="true" onDragStart="{{ b.dragStart }}" title="Drag to move · drag bottom edge to resize" style="position:absolute;left:4px;right:0;top:{{ b.top }};height:{{ b.height }};padding:{{ b.pad }};border:1px dashed {{ b.border }};border-radius:4px;background:{{ b.bg }};cursor:grab;overflow:hidden;display:flex;flex-direction:column;justify-content:center;gap:1px;font-size:11px;line-height:1.3;color:{{ b.fg }}">
+                    <div style="display:flex;align-items:center;gap:6px;flex:none">
+                      <span style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0;text-decoration:{{ b.deco }}">{{ b.title }}</span>
+                      <button onClick="{{ b.unschedule }}" aria-label="Unschedule" title="Remove block (task stays in list)" style="width:16px;height:16px;border:0;border-radius:3px;background:transparent;color:#6B7280;cursor:pointer;font-size:11px;line-height:1;padding:0;flex:none" style-hover="background:#DBEAFE;color:#111111">✕</button>
+                    </div>
+                    <sc-if value="{{ b.showMeta }}" hint-placeholder-val="{{ true }}"><span style="opacity:0.8;flex:none">◷ {{ b.range }} · {{ b.status }}</span></sc-if>
+                    <div onMouseDown="{{ b.resizeStart }}" style="position:absolute;left:0;right:0;bottom:0;height:7px;cursor:ns-resize;display:flex;justify-content:center;align-items:flex-end;padding-bottom:2px"><span style="width:20px;height:2px;border-radius:1px;background:{{ b.border }};opacity:0.6"></span></div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+          <div style="border:1px solid #E5E7EB;border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:8px;background:#FAFAFA">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <span style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#6B7280">Unscheduled</span>
+              <span style="font-size:11px;color:#9CA3AF;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0">Drag onto the grid to block time</span>
+            </div>
+            <sc-if value="{{ noUnscheduled }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:12px;color:#9CA3AF">Everything open is on the calendar.</div>
+            </sc-if>
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
+              <sc-for list="{{ unscheduled }}" as="t" hint-placeholder-count="4">
+                <div draggable="true" onDragStart="{{ t.dragStart }}" style="display:inline-flex;align-items:center;gap:6px;padding:4px 8px 4px 6px;border:1px solid #E5E7EB;border-radius:6px;background:#fff;font-size:12px;cursor:grab;max-width:100%" style-hover="border-color:#3B82F6">
+                  <span style="color:#D1D5DB;font-size:10px;letter-spacing:-1px">⋮⋮</span>
+                  <span style="width:6px;height:6px;border-radius:50%;background:{{ t.dot }};flex:none"></span>
+                  <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.title }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+    </section>
+
+    <section data-screen-label="Tasks" style="display:flex;flex-direction:column;gap:12px;min-width:0;background:#fff;border:1px solid #E5E7EB;border-radius:10px;padding:14px 16px 16px;box-shadow:0 1px 2px rgba(17,17,17,0.03)">
+      <div style="display:flex;align-items:center;justify-content:space-between;height:26px">
+        <h2 style="margin:0;font-size:13px;font-weight:600;letter-spacing:-0.01em">Daily Tasks</h2>
+        <span style="font-size:12px;color:#6B7280;font-variant-numeric:tabular-nums;white-space:nowrap;flex:none">{{ openTaskLabel }}</span>
+      </div>
+      <sc-for list="{{ taskGroups }}" as="g" hint-placeholder-count="3">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;background:{{ g.bg }};color:{{ g.fg }}"><span style="width:6px;height:6px;border-radius:50%;background:{{ g.dot }}"></span>{{ g.label }}</span>
+            <span style="font-size:11px;color:#9CA3AF;white-space:nowrap">{{ g.count }}</span>
+          </div>
+          <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;border:1px solid #E5E7EB;border-radius:8px;overflow:hidden">
+            <sc-for list="{{ g.tasks }}" as="t" hint-placeholder-count="2">
+              <li draggable="true" onDragStart="{{ t.dragStart }}" style="display:flex;align-items:flex-start;gap:8px;padding:10px 12px 10px 8px;border-top:1px solid #F3F4F6;background:#fff;cursor:grab" style-hover="background:#FAFAFA">
+                <span style="color:#D1D5DB;font-size:10px;letter-spacing:-1px;padding-top:4px;flex:none" title="Drag to calendar">⋮⋮</span>
+                <input type="checkbox" checked="{{ t.done }}" onChange="{{ t.toggle }}" style="margin:3px 0 0;width:15px;height:15px;accent-color:#3B82F6;cursor:pointer;flex:none"/>
+                <div style="display:flex;flex-direction:column;gap:4px;min-width:0;flex:1">
+                  <span style="text-decoration:{{ t.deco }};color:{{ t.textColor }}">{{ t.title }}</span>
+                  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px">
+                    <sc-for list="{{ t.meetingTags }}" as="g" hint-placeholder-count="1">
+                      <span style="display:inline-flex;align-items:stretch;border:1px solid #E5E7EB;border-radius:4px;background:#F9FAFB;font-size:11px;color:#4B5563;max-width:100%;overflow:hidden" style-hover="border-color:#3B82F6">
+                        <button onClick="{{ g.open }}" title="Open meeting" style="display:inline-flex;align-items:center;gap:5px;padding:1px 4px 1px 7px;border:0;background:transparent;font-size:11px;color:inherit;cursor:pointer;min-width:0" style-hover="color:#3B82F6"><span style="width:5px;height:5px;border-radius:50%;background:{{ g.color }};flex:none"></span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ g.title }}</span></button>
+                        <button onClick="{{ g.remove }}" aria-label="Remove meeting tag" title="Remove tag" style="border:0;border-left:1px solid #E5E7EB;background:transparent;padding:0 5px;font-size:10px;color:#9CA3AF;cursor:pointer;line-height:1" style-hover="color:#B91C1C;background:#FEF2F2">✕</button>
+                      </span>
+                    </sc-for>
+                    <sc-for list="{{ t.projectTags }}" as="g" hint-placeholder-count="0">
+                      <span style="display:inline-flex;align-items:stretch;border:1px solid #E5E7EB;border-radius:4px;background:#F9FAFB;font-size:11px;color:#4B5563;max-width:100%;overflow:hidden">
+                        <span style="display:inline-flex;align-items:center;gap:4px;padding:1px 4px 1px 7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">▣ {{ g.title }}</span>
+                        <button onClick="{{ g.remove }}" aria-label="Remove project tag" title="Remove tag" style="border:0;border-left:1px solid #E5E7EB;background:transparent;padding:0 5px;font-size:10px;color:#9CA3AF;cursor:pointer;line-height:1" style-hover="color:#B91C1C;background:#FEF2F2">✕</button>
+                      </span>
+                    </sc-for>
+                    <sc-if value="{{ t.dueLabel }}" hint-placeholder-val="{{ false }}">
+                      <span style="font-size:11px;color:#6B7280;display:inline-flex;align-items:center;gap:4px;white-space:nowrap">▤ {{ t.dueLabel }}</span>
+                    </sc-if>
+                    <sc-if value="{{ t.scheduled }}" hint-placeholder-val="{{ false }}">
+                      <span title="Time blocked on calendar" style="font-size:11px;color:#3B82F6;font-weight:500;display:inline-flex;align-items:center;gap:4px;white-space:nowrap">◷ {{ t.scheduled }}</span>
+                    </sc-if>
+                    <sc-if value="{{ t.canTag }}" hint-placeholder-val="{{ false }}">
+                      <button onClick="{{ t.openTagger }}" title="Link to a meeting or project" style="display:inline-flex;align-items:center;gap:3px;padding:1px 7px;border:1px dashed #D1D5DB;border-radius:4px;background:transparent;font-size:11px;color:#9CA3AF;cursor:pointer;white-space:nowrap" style-hover="border-color:#3B82F6;color:#3B82F6">+ {{ t.tagLabel }}</button>
+                    </sc-if>
+                  </div>
+                  <sc-if value="{{ t.tagging }}" hint-placeholder-val="{{ false }}">
+                    <div style="margin-top:4px;padding:8px 10px;border:1px solid #E5E7EB;border-radius:6px;background:#fff;box-shadow:0 4px 12px rgba(17,17,17,0.06);display:flex;flex-direction:column;gap:6px;font-size:11px;color:#6B7280">
+                      <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-weight:600;color:#111111;white-space:nowrap">Link task</span><button onClick="{{ t.closeTagger }}" aria-label="Close" style="border:0;background:transparent;color:#9CA3AF;cursor:pointer;font-size:11px;padding:0">✕</button></div>
+                      <sc-if value="{{ t.needsMeeting }}" hint-placeholder-val="{{ true }}">
+                        <div style="display:flex;flex-direction:column;gap:4px"><span style="color:#9CA3AF;text-transform:uppercase;letter-spacing:0.05em;font-size:10px">Meeting</span>
+                          <sc-for list="{{ t.tagMeetings }}" as="c" hint-placeholder-count="4">
+                            <button onClick="{{ c.pick }}" style="display:flex;align-items:center;gap:6px;width:100%;text-align:left;padding:4px 7px;border:1px solid #E5E7EB;border-radius:4px;background:#fff;color:#4B5563;font-size:11px;cursor:pointer;white-space:nowrap;overflow:hidden" style-hover="border-color:#3B82F6;color:#3B82F6"><span style="width:5px;height:5px;border-radius:50%;background:{{ c.dot }};flex:none"></span><span style="overflow:hidden;text-overflow:ellipsis">{{ c.label }}</span></button>
+                          </sc-for>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{ t.needsProject }}" hint-placeholder-val="{{ true }}">
+                        <div style="display:flex;flex-direction:column;gap:4px"><span style="color:#9CA3AF;text-transform:uppercase;letter-spacing:0.05em;font-size:10px">Project</span>
+                          <sc-for list="{{ t.tagProjects }}" as="c" hint-placeholder-count="4">
+                            <button onClick="{{ c.pick }}" style="display:flex;align-items:center;gap:6px;width:100%;text-align:left;padding:4px 7px;border:1px solid #E5E7EB;border-radius:4px;background:#fff;color:#4B5563;font-size:11px;cursor:pointer;white-space:nowrap;overflow:hidden" style-hover="border-color:#3B82F6;color:#3B82F6"><span style="flex:none">▣</span><span style="overflow:hidden;text-overflow:ellipsis">{{ c.label }}</span></button>
+                          </sc-for>
+                        </div>
+                      </sc-if>
+                    </div>
+                  </sc-if>
+                </div>
+              </li>
+            </sc-for>
+          </ul>
+        </div>
+      </sc-for>
+    </section>
+
+    <section data-screen-label="Projects and Jira" style="display:flex;flex-direction:column;gap:16px;min-width:0">
+      <div style="border:1px solid #E5E7EB;border-radius:10px;display:flex;flex-direction:column;background:#fff;box-shadow:0 1px 2px rgba(17,17,17,0.03);overflow:hidden">
+        <h2 style="margin:0;padding:12px 16px;font-size:13px;font-weight:600;letter-spacing:-0.01em;border-bottom:1px solid #E5E7EB;display:flex;align-items:center;justify-content:space-between;gap:8px"><span style="white-space:nowrap">Project Status</span><span style="display:inline-flex;align-items:center;gap:10px;flex:none;min-width:0"><span title="{{ projectSummary }}" style="font-size:12px;font-weight:400;color:#6B7280;white-space:nowrap;display:{{ projectSummaryDisplay }}">{{ projectSummary }}</span><button onClick="{{ newProject }}" title="New project" style="height:24px;padding:0 8px;border:1px solid #E5E7EB;border-radius:5px;background:#fff;font-size:11px;font-weight:600;color:#374151;cursor:pointer;white-space:nowrap" style-hover="border-color:#3B82F6;color:#3B82F6">+ New</button></span></h2>
+        <sc-if value="{{ noProjects }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:20px 16px;border-top:1px solid #F3F4F6;color:#6B7280;font-size:12px">No projects yet. Add one to start tracking health, milestones, and linked tasks.</div>
+        </sc-if>
+        <sc-for list="{{ projects }}" as="p" hint-placeholder-count="4">
+          <div style="border-top:1px solid #F3F4F6">
+            <button onClick="{{ p.toggle }}" style="width:100%;text-align:left;padding:12px 16px;border:0;background:{{ p.bg }};cursor:pointer;display:flex;flex-direction:column;gap:8px" style-hover="background:#FAFAFA">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+                <span style="font-weight:600">{{ p.name }}</span>
+                <span style="display:inline-flex;align-items:center;gap:5px;padding:1px 7px;border-radius:999px;font-size:11px;font-weight:600;background:{{ p.pillBg }};color:{{ p.pillFg }};white-space:nowrap"><span style="width:6px;height:6px;border-radius:50%;background:{{ p.pillDot }}"></span>{{ p.healthLabel }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <div style="flex:1;height:4px;border-radius:2px;background:#F3F4F6;overflow:hidden"><div style="height:100%;width:{{ p.pctW }};background:{{ p.pillDot }};transition:width 400ms cubic-bezier(.2,.8,.2,1)"></div></div>
+                <span title="{{ p.pctTitle }}" style="font-size:11px;color:#6B7280;font-variant-numeric:tabular-nums;width:30px;text-align:right">{{ p.pctLabel }}</span>
+              </div>
+              <div style="font-size:12px;color:#374151"><span style="color:#9CA3AF">Next:</span> {{ p.milestone }} <span style="color:#6B7280">· {{ p.milestoneDate }}</span></div>
+              <div style="font-size:12px;color:#6B7280;font-style:italic">“{{ p.update }}”</div>
+            </button>
+            <sc-if value="{{ p.expanded }}" hint-placeholder-val="{{ false }}">
+              <ul style="list-style:none;margin:0;padding:4px 16px 12px 16px;display:flex;flex-direction:column;gap:6px;background:#F9FAFB;border-top:1px solid #F3F4F6">
+                <li style="display:flex;align-items:center;justify-content:space-between;padding-top:6px"><span style="font-size:11px;font-weight:600;color:#6B7280;text-transform:uppercase;letter-spacing:0.05em">Open tasks</span><button onClick="{{ p.edit }}" style="height:22px;padding:0 8px;border:1px solid #E5E7EB;border-radius:4px;background:#fff;font-size:11px;font-weight:600;color:#374151;cursor:pointer" style-hover="border-color:#3B82F6;color:#3B82F6">Edit project</button></li>
+                <sc-for list="{{ p.tasks }}" as="t" hint-placeholder-count="2">
+                  <li style="display:flex;gap:8px;font-size:12px;color:#374151"><span style="color:#9CA3AF">○</span><span>{{ t }}</span></li>
+                </sc-for>
+                <li style="display:flex;align-items:center;gap:8px;font-size:12px;padding-top:4px"><span style="color:#3B82F6;font-weight:600">+</span><input value="{{ p.newText }}" onChange="{{ p.onNew }}" onKeyDown="{{ p.onNewKey }}" placeholder="Add task to this project…" style="flex:1;min-width:0;border:0;border-bottom:1px solid #E5E7EB;background:transparent;padding:3px 0;font:inherit;font-size:12px;color:#111111;outline:none" style-focus="border-color:#3B82F6"/></li>
+              </ul>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="border:1px solid #E5E7EB;border-radius:10px;display:flex;flex-direction:column;overflow:hidden;background:#fff;box-shadow:0 1px 2px rgba(17,17,17,0.03)">
+        <h2 style="margin:0;padding:12px 16px;font-size:13px;font-weight:600;letter-spacing:-0.01em;border-bottom:1px solid #E5E7EB;display:flex;align-items:center;justify-content:space-between">My Jira Tickets<a href="https://cardshq.atlassian.net/issues/?jql=assignee%3DcurrentUser()" target="_blank" style="font-size:12px;font-weight:400;white-space:nowrap;flex:none">Open Jira ↗</a></h2>
+        <sc-if value="{{ noTickets }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:20px 16px;border-top:1px solid #F3F4F6;color:#6B7280;font-size:12px">Jira connects in Phase 3. Your assigned HQ tickets will appear here, sorted by due date.</div>
+        </sc-if>
+        <sc-for list="{{ tickets }}" as="k" hint-placeholder-count="4">
+          <div style="display:flex;flex-direction:column;gap:6px;padding:10px 16px 10px 13px;border-top:1px solid #F3F4F6;border-left:3px solid {{ k.borderLeft }}" style-hover="background:#FAFAFA">
+            <div style="display:flex;align-items:center;gap:8px">
+              <a href="{{ k.url }}" target="_blank" style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;font-weight:600;white-space:nowrap;flex:none">{{ k.key }}</a>
+              <span style="display:inline-flex;align-items:center;gap:4px;padding:1px 7px;border-radius:999px;font-size:11px;font-weight:500;background:{{ k.statusBg }};color:{{ k.statusFg }};margin-left:auto;white-space:nowrap">{{ k.status }}</span>
+            </div>
+            <div style="font-size:13px;color:#111111">{{ k.title }}</div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:11px;color:#6B7280">
+              <span title="Priority" style="display:inline-flex;align-items:center;gap:3px;color:{{ k.prioColor }};font-weight:600;white-space:nowrap">{{ k.prioIcon }} {{ k.priority }}</span>
+              <span style="color:{{ k.dueColor }};font-weight:{{ k.dueWeight }};white-space:nowrap">{{ k.dueLabel }}</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+  </main>
+
+  <sc-if value="{{ settingsOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeSettings }}" style="position:fixed;inset:0;background:rgba(17,17,17,0.32);z-index:50"></div>
+    <div data-screen-label="Settings" role="dialog" style="position:fixed;top:{{ modalTop }};bottom:{{ modalBottom }};left:50%;transform:translateX(-50%);width:{{ modalWidth }};max-width:100vw;max-height:{{ modalMaxH }};background:#fff;border-radius:{{ modalRadius }};box-shadow:0 24px 64px rgba(17,17,17,0.18);z-index:51;display:flex;flex-direction:column;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid #E5E7EB;border-radius:{{ modalRadius }} {{ modalRadius }} 0 0">
+        <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+          <h3 style="margin:0;font-size:15px;font-weight:600;letter-spacing:-0.01em">Settings</h3>
+          <span style="font-size:12px;color:#6B7280">Recap Sources · where each meeting's recap docs live in Google Drive</span>
+        </div>
+        <button onClick="{{ closeSettings }}" aria-label="Close" style="margin-left:auto;width:30px;height:30px;border:1px solid #E5E7EB;border-radius:6px;background:#fff;cursor:pointer;font-size:14px;line-height:1;flex:none" style-hover="background:#F3F4F6">✕</button>
+      </div>
+      <div style="flex:1;min-height:0;overflow:auto;padding:16px 20px 20px;display:flex;flex-direction:column;gap:16px">
+        <sc-if value="{{ pickerView }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <button onClick="{{ cancelPick }}" style="height:28px;padding:0 10px;border:1px solid #E5E7EB;border-radius:6px;background:#fff;font-size:12px;cursor:pointer;white-space:nowrap" style-hover="background:#F3F4F6">‹ Back</button>
+              <div style="display:flex;flex-direction:column;min-width:0"><span style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Choose a Google Drive folder</span><span style="font-size:11px;color:#6B7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">for {{ pickerForLabel }}</span></div>
+            </div>
+            <div style="border:1px solid #E5E7EB;border-radius:8px;overflow:hidden;display:flex;flex-direction:column">
+              <div style="padding:10px 12px;border-bottom:1px solid #E5E7EB;display:flex;flex-direction:column;gap:8px;background:#FAFBFC">
+                <input value="{{ pickerQuery }}" onChange="{{ onPickerQuery }}" placeholder="Search folders" style="height:32px;padding:0 10px;border:1px solid #E5E7EB;border-radius:6px;font:inherit;font-size:12px;outline:none;background:#fff" style-focus="border-color:#3B82F6"/>
+                <div style="display:flex;align-items:center;gap:4px;font-size:11px;color:#6B7280;flex-wrap:wrap;min-height:16px">
+                  <sc-for list="{{ pickerCrumbs }}" as="c" hint-placeholder-count="2">
+                    <button onClick="{{ c.go }}" style="border:0;background:transparent;padding:0;font-size:11px;color:{{ c.color }};font-weight:{{ c.weight }};cursor:pointer;white-space:nowrap" style-hover="color:#3B82F6">{{ c.name }}</button><span style="color:#D1D5DB">{{ c.sep }}</span>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="height:300px;overflow:auto;padding:6px">
+                <sc-for list="{{ pickerNodes }}" as="n" hint-placeholder-count="6">
+                  <div onClick="{{ n.select }}" style="display:flex;align-items:center;gap:4px;height:32px;padding:0 8px 0 {{ n.pad }};border-radius:5px;background:{{ n.bg }};color:{{ n.fg }};font-size:12px;cursor:pointer;white-space:nowrap;overflow:hidden" style-hover="background:#F3F4F6">
+                    <button onClick="{{ n.toggle }}" aria-label="Expand" style="width:18px;height:18px;border:0;background:transparent;color:#9CA3AF;cursor:pointer;font-size:10px;padding:0;visibility:{{ n.chevVis }};transform:{{ n.chevRot }};flex:none">▸</button>
+                    <span style="color:#F59E0B;flex:none">▰</span>
+                    <span style="overflow:hidden;text-overflow:ellipsis">{{ n.name }}</span>
+                    <span style="margin-left:auto;font-size:11px;color:#9CA3AF;overflow:hidden;text-overflow:ellipsis">{{ n.hint }}</span>
+                  </div>
+                </sc-for>
+                <sc-if value="{{ pickerEmpty }}" hint-placeholder-val="{{ false }}">
+                  <div style="padding:16px;text-align:center;font-size:12px;color:#9CA3AF">No folders match “{{ pickerQuery }}”</div>
+                </sc-if>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-top:1px solid #E5E7EB;background:#FAFBFC">
+                <span style="font-size:11px;color:#6B7280;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1">{{ pickerSelLabel }}</span>
+                <button onClick="{{ cancelPick }}" style="height:28px;padding:0 10px;border:1px solid #E5E7EB;border-radius:6px;background:#fff;font-size:12px;cursor:pointer" style-hover="background:#F3F4F6">Cancel</button>
+                <button onClick="{{ confirmPick }}" style="height:28px;padding:0 12px;border:0;border-radius:6px;background:#3B82F6;color:#fff;font-size:12px;font-weight:600;cursor:pointer;opacity:{{ confirmOpacity }};white-space:nowrap" style-hover="background:#2563EB">Select folder</button>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ tableView }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;align-items:center;gap:16px;padding:12px 14px;border:1px solid #E5E7EB;border-radius:8px;background:#FAFBFC;flex-wrap:wrap">
+          <div style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1 1 240px">
+            <span style="font-weight:600">Default folder</span>
+            <span style="font-size:12px;color:#6B7280">Used for any meeting without an explicit mapping below.</span>
+          </div>
+          <div style="position:relative">
+            <button onClick="{{ defaultRow.openPicker }}" style="display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border:1px solid {{ defaultRow.chipBorder }};border-radius:6px;background:{{ defaultRow.chipBg }};color:{{ defaultRow.chipFg }};font-size:12px;cursor:pointer;max-width:320px;white-space:nowrap" style-hover="border-color:#3B82F6"><span style="color:{{ defaultRow.iconColor }}">{{ defaultRow.icon }}</span><span style="overflow:hidden;text-overflow:ellipsis">{{ defaultRow.folderPath }}</span><span style="color:#9CA3AF;font-size:10px">▾</span></button>
+            
+          </div>
+        </div>
+
+        <div style="border:1px solid #E5E7EB;border-radius:8px;overflow:hidden">
+          <div style="display:grid;grid-template-columns:{{ settingsCols }};gap:12px;padding:8px 14px;border-bottom:1px solid #E5E7EB;background:#FAFBFC;font-size:11px;font-weight:600;color:#6B7280;text-transform:uppercase;letter-spacing:0.05em">
+            <span style="white-space:nowrap">Meeting</span><sc-if value="{{ settingsWide }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap">Cadence</span><span style="white-space:nowrap">Next</span></sc-if><span style="white-space:nowrap">Recap folder</span><span style="white-space:nowrap">Shown as</span>
+          </div>
+          <sc-for list="{{ settingsRows }}" as="r" hint-placeholder-count="4">
+            <div style="display:grid;grid-template-columns:{{ settingsCols }};gap:12px;align-items:center;padding:10px 14px;border-top:1px solid #F3F4F6;background:{{ r.rowBg }};font-size:12px">
+              <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+                <sc-if value="{{ r.isPattern }}" hint-placeholder-val="{{ false }}">
+                  <input value="{{ r.pattern }}" onChange="{{ r.onPattern }}" placeholder="Title pattern, e.g. Vendor call*" style="height:28px;padding:0 8px;border:1px solid #E5E7EB;border-radius:5px;font:inherit;font-size:12px;font-weight:600;color:#111111;outline:none;min-width:0;width:100%" style-focus="border-color:#3B82F6"/>
+                  <span style="font-size:11px;color:#9CA3AF">Title pattern · <button onClick="{{ r.remove }}" style="border:0;background:transparent;padding:0;font-size:11px;color:#9CA3AF;cursor:pointer" style-hover="color:#B91C1C">remove</button></span>
+                </sc-if>
+                <sc-if value="{{ r.isMeeting }}" hint-placeholder-val="{{ true }}">
+                  <span style="font-weight:600;display:inline-flex;align-items:center;gap:6px;min-width:0"><span style="width:6px;height:6px;border-radius:50%;background:{{ r.color }};flex:none"></span><span style="min-width:0">{{ r.title }}</span></span>
+                  <span style="display:inline-flex;gap:8px;align-items:center;font-size:11px"><button onClick="{{ r.edit }}" style="border:0;background:transparent;padding:0;font-size:11px;color:#3B82F6;cursor:pointer">Edit</button><sc-if value="{{ r.excluded }}" hint-placeholder-val="{{ false }}"><span style="color:#B45309">Excluded from recaps</span></sc-if></span>
+                  <sc-if value="{{ settingsNarrow }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;color:#6B7280">{{ r.cadence }} · {{ r.next }}</span></sc-if>
+                </sc-if>
+              </div>
+              <sc-if value="{{ settingsWide }}" hint-placeholder-val="{{ true }}">
+                <span style="color:#374151">{{ r.cadence }}</span>
+                <span style="color:#374151;white-space:nowrap;font-variant-numeric:tabular-nums">{{ r.next }}</span>
+              </sc-if>
+              <div style="position:relative;min-width:0">
+                <button onClick="{{ r.openPicker }}" style="display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border:1px solid {{ r.chipBorder }};border-radius:6px;background:{{ r.chipBg }};color:{{ r.chipFg }};font-size:12px;cursor:pointer;max-width:100%;white-space:nowrap" style-hover="border-color:#3B82F6"><span style="color:{{ r.iconColor }};flex:none">{{ r.icon }}</span><span style="overflow:hidden;text-overflow:ellipsis">{{ r.folderPath }}</span><span style="color:#9CA3AF;font-size:10px;flex:none">▾</span></button>
+                
+              </div>
+              <div style="display:inline-flex;border:1px solid #E5E7EB;border-radius:6px;padding:2px;gap:2px;background:#F3F4F6;align-self:center;justify-self:start">
+                <button onClick="{{ r.modeTitle }}" title="Only files whose name contains the meeting title" style="height:22px;padding:0 8px;border:0;border-radius:4px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;background:{{ r.titleBg }};color:{{ r.titleFg }};box-shadow:{{ r.titleShadow }}">Match title</button>
+                <button onClick="{{ r.modeAll }}" title="Every file in the folder" style="height:22px;padding:0 8px;border:0;border-radius:4px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;background:{{ r.allBg }};color:{{ r.allFg }};box-shadow:{{ r.allShadow }}">All files</button>
+              </div>
+            </div>
+          </sc-for>
+          <div style="padding:10px 14px;border-top:1px solid #F3F4F6;display:flex;align-items:center;gap:12px">
+            <button onClick="{{ addPattern }}" style="display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border:1px dashed #D1D5DB;border-radius:6px;background:#fff;font-size:12px;font-weight:600;color:#374151;cursor:pointer" style-hover="border-color:#3B82F6;color:#3B82F6">+ Add mapping</button>
+            <span style="font-size:11px;color:#9CA3AF">For one-off meetings: match by title pattern, e.g. “Vendor call*”.</span>
+          </div>
+        </div>
+        </sc-if>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:12px 20px;border-top:1px solid #E5E7EB;background:#FAFBFC;border-radius:0 0 {{ modalRadius }} {{ modalRadius }}">
+        <button onClick="{{ newMeeting }}" style="height:28px;padding:0 10px;border:1px solid #E5E7EB;border-radius:6px;background:#fff;font-size:12px;font-weight:600;color:#374151;cursor:pointer;white-space:nowrap" style-hover="border-color:#3B82F6;color:#3B82F6">+ Add meeting</button>
+        <span style="font-size:12px;color:#6B7280">{{ meetingCountLabel }} · {{ settingsStatus }}</span>
+        <button onClick="{{ closeSettings }}" style="margin-left:auto;height:32px;padding:0 14px;border:0;border-radius:6px;background:#111111;color:#fff;font-size:13px;font-weight:600;cursor:pointer" style-hover="background:#000">Done</button>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ projEditOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ cancelProject }}" style="position:fixed;inset:0;background:rgba(17,17,17,0.32);z-index:50"></div>
+    <div data-screen-label="Project editor" role="dialog" style="position:fixed;top:{{ modalTop }};bottom:{{ modalBottom }};left:50%;transform:translateX(-50%);width:{{ projModalWidth }};max-width:100vw;max-height:{{ modalMaxH }};background:#fff;border-radius:{{ modalRadius }};box-shadow:0 24px 64px rgba(17,17,17,0.18);z-index:51;display:flex;flex-direction:column;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid #E5E7EB">
+        <h3 style="margin:0;font-size:15px;font-weight:600;letter-spacing:-0.01em">{{ projEditTitle }}</h3>
+        <button onClick="{{ cancelProject }}" aria-label="Close" style="margin-left:auto;width:30px;height:30px;border:1px solid #E5E7EB;border-radius:6px;background:#fff;cursor:pointer;font-size:14px;line-height:1;flex:none" style-hover="background:#F3F4F6">✕</button>
+      </div>
+      <div style="flex:1;min-height:0;overflow:auto;padding:16px 20px;display:flex;flex-direction:column;gap:14px;font-size:12px">
+        <label style="display:flex;flex-direction:column;gap:4px"><span style="font-weight:600;color:#374151">Project name</span><input value="{{ pe.name }}" onChange="{{ pe.setName }}" placeholder="e.g. Marketplace Shipping Rules" style="height:32px;padding:0 10px;border:1px solid #E5E7EB;border-radius:6px;font:inherit;font-size:13px;color:#111111;outline:none" style-focus="border-color:#3B82F6"/></label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div style="display:flex;flex-direction:column;gap:4px"><span style="font-weight:600;color:#374151">Health</span>
+            <div style="display:inline-flex;border:1px solid #E5E7EB;border-radius:6px;padding:2px;gap:2px;background:#F3F4F6">
+              <sc-for list="{{ pe.healthOptions }}" as="o" hint-placeholder-count="3">
+                <button onClick="{{ o.pick }}" style="flex:1;height:26px;padding:0 8px;border:0;border-radius:4px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;background:{{ o.bg }};color:{{ o.fg }};box-shadow:{{ o.shadow }};display:inline-flex;align-items:center;justify-content:center;gap:5px"><span style="width:6px;height:6px;border-radius:50%;background:{{ o.dot }}"></span>{{ o.label }}</button>
+              </sc-for>
+            </div>
+          </div>
+          <label style="display:flex;flex-direction:column;gap:4px"><span style="font-weight:600;color:#374151;display:flex;justify-content:space-between">Percent complete<span style="color:#6B7280;font-weight:500;font-variant-numeric:tabular-nums">{{ pe.pctLabel }}</span></span><input type="range" min="0" max="100" step="5" value="{{ pe.pct }}" onChange="{{ pe.setPct }}" style="width:100%;accent-color:#3B82F6;margin-top:8px"/></label>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 120px;gap:14px">
+          <label style="display:flex;flex-direction:column;gap:4px"><span style="font-weight:600;color:#374151">Next milestone</span><input value="{{ pe.milestone }}" onChange="{{ pe.setMilestone }}" placeholder="What ships next" style="height:32px;padding:0 10px;border:1px solid #E5E7EB;border-radius:6px;font:inherit;font-size:13px;color:#111111;outline:none" style-focus="border-color:#3B82F6"/></label>
+          <label style="display:flex;flex-direction:column;gap:4px"><span style="font-weight:600;color:#374151">Date</span><input value="{{ pe.date }}" onChange="{{ pe.setDate }}" placeholder="Sep 30" style="height:32px;padding:0 10px;border:1px solid #E5E7EB;border-radius:6px;font:inherit;font-size:13px;color:#111111;outline:none" style-focus="border-color:#3B82F6"/></label>
+        </div>
+        <label style="display:flex;flex-direction:column;gap:4px"><span style="font-weight:600;color:#374151">Latest update</span><textarea value="{{ pe.update }}" onChange="{{ pe.setUpdate }}" rows="2" placeholder="One line on where things stand" style="padding:8px 10px;border:1px solid #E5E7EB;border-radius:6px;font:inherit;font-size:13px;color:#111111;outline:none;resize:vertical;line-height:1.45" style-focus="border-color:#3B82F6"></textarea></label>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:12px 20px;border-top:1px solid #E5E7EB;background:#FAFBFC">
+        <sc-if value="{{ pe.canDelete }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ deleteProject }}" style="height:32px;padding:0 12px;border:1px solid #E5E7EB;border-radius:6px;background:#fff;font-size:12px;font-weight:600;color:#B91C1C;cursor:pointer;white-space:nowrap" style-hover="background:#FEF2F2;border-color:#FECACA">Delete project</button>
+        </sc-if>
+        <button onClick="{{ cancelProject }}" style="margin-left:auto;height:32px;padding:0 12px;border:1px solid #E5E7EB;border-radius:6px;background:#fff;font-size:13px;cursor:pointer;white-space:nowrap" style-hover="background:#F3F4F6">Cancel</button>
+        <button onClick="{{ saveProject }}" style="height:32px;padding:0 14px;border:0;border-radius:6px;background:#111111;color:#fff;font-size:13px;font-weight:600;cursor:pointer;opacity:{{ pe.saveOpacity }};white-space:nowrap" style-hover="background:#000">{{ pe.saveLabel }}</button>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ meetEditOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ cancelMeeting }}" style="position:fixed;inset:0;background:rgba(17,17,17,0.32);z-index:60"></div>
+    <div data-screen-label="Meeting editor" role="dialog" style="position:fixed;top:{{ modalTop }};bottom:{{ modalBottom }};left:50%;transform:translateX(-50%);width:{{ projModalWidth }};max-width:100vw;max-height:{{ modalMaxH }};background:#fff;border:1px solid #E5E7EB;border-radius:{{ modalRadius }};box-shadow:0 20px 60px rgba(17,17,17,0.18);z-index:61;display:flex;flex-direction:column;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid #E5E7EB">
+        <h3 style="margin:0;font-size:15px;font-weight:600;letter-spacing:-0.01em">{{ meetEditTitle }}</h3>
+        <button onClick="{{ cancelMeeting }}" aria-label="Close" style="margin-left:auto;width:30px;height:30px;border:1px solid #E5E7EB;border-radius:6px;background:#fff;cursor:pointer;font-size:14px;line-height:1;flex:none" style-hover="background:#F3F4F6">✕</button>
+      </div>
+      <div style="flex:1;min-height:0;overflow:auto;padding:16px 20px;display:flex;flex-direction:column;gap:14px;font-size:12px">
+        <label style="display:flex;flex-direction:column;gap:4px"><span style="font-weight:600;color:#374151">Meeting title</span><input value="{{ me.title }}" onChange="{{ me.setTitle }}" placeholder="e.g. Kelly Weekly Touchbase" style="height:32px;padding:0 10px;border:1px solid #E5E7EB;border-radius:6px;font:inherit;font-size:13px;outline:none;width:100%"/></label>
+        <div style="display:flex;flex-direction:column;gap:4px"><span style="font-weight:600;color:#374151">Type</span>
+          <div style="display:inline-flex;border:1px solid #E5E7EB;border-radius:6px;padding:2px;gap:2px;background:#F3F4F6;flex-wrap:wrap">
+            <sc-for list="{{ me.typeOptions }}" as="o" hint-placeholder-count="6">
+              <button onClick="{{ o.pick }}" style="height:26px;padding:0 10px;border:0;border-radius:4px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;background:{{ o.bg }};color:{{ o.fg }};box-shadow:{{ o.shadow }};display:inline-flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:50%;background:{{ o.dot }}"></span>{{ o.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <label style="display:flex;flex-direction:column;gap:4px"><span style="font-weight:600;color:#374151">Start time</span><input type="time" value="{{ me.time24 }}" onChange="{{ me.setTime }}" style="height:32px;padding:0 10px;border:1px solid #E5E7EB;border-radius:6px;font:inherit;font-size:13px;outline:none;width:100%"/></label>
+          <label style="display:flex;flex-direction:column;gap:4px"><span style="font-weight:600;color:#374151">Duration (minutes)</span><input type="number" min="5" step="5" value="{{ me.dur }}" onChange="{{ me.setDur }}" style="height:32px;padding:0 10px;border:1px solid #E5E7EB;border-radius:6px;font:inherit;font-size:13px;outline:none;width:100%"/></label>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px"><span style="font-weight:600;color:#374151">Repeats on</span>
+          <div style="display:flex;gap:6px">
+            <sc-for list="{{ me.dayOptions }}" as="d" hint-placeholder-count="7">
+              <button onClick="{{ d.pick }}" style="width:32px;height:30px;border:1px solid {{ d.border }};border-radius:6px;background:{{ d.bg }};color:{{ d.fg }};font-size:12px;font-weight:600;cursor:pointer">{{ d.label }}</button>
+            </sc-for>
+            <button onClick="{{ me.toggleOneOff }}" style="margin-left:auto;height:30px;padding:0 10px;border:1px solid #E5E7EB;border-radius:6px;background:{{ me.oneOffBg }};color:{{ me.oneOffFg }};font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap">One-off</button>
+          </div>
+          <sc-if value="{{ me.oneOff }}" hint-placeholder-val="{{ false }}">
+            <label style="display:flex;flex-direction:column;gap:4px"><span style="font-weight:600;color:#374151">Date</span><input type="date" value="{{ me.oneOffDate }}" onChange="{{ me.setOneOffDate }}" style="height:32px;padding:0 10px;border:1px solid #E5E7EB;border-radius:6px;font:inherit;font-size:13px;outline:none;width:100%"/></label>
+          </sc-if>
+        </div>
+        <label style="display:flex;flex-direction:column;gap:4px"><span style="font-weight:600;color:#374151">Cadence label</span><input value="{{ me.cadence }}" onChange="{{ me.setCadence }}" placeholder="e.g. Weekly, Wednesdays" style="height:32px;padding:0 10px;border:1px solid #E5E7EB;border-radius:6px;font:inherit;font-size:13px;outline:none;width:100%"/></label>
+        <label style="display:flex;flex-direction:column;gap:4px"><span style="font-weight:600;color:#374151">Attendees</span><input value="{{ me.attendeesText }}" onChange="{{ me.setAttendees }}" placeholder="Comma-separated, e.g. Kelly, Matthew" style="height:32px;padding:0 10px;border:1px solid #E5E7EB;border-radius:6px;font:inherit;font-size:13px;outline:none;width:100%"/></label>
+        <label style="display:flex;flex-direction:column;gap:4px"><span style="font-weight:600;color:#374151">Calendar title pattern <span style="font-weight:400;color:#6B7280">(used in Phase 2 to match Google Calendar events)</span></span><input value="{{ me.matchPattern }}" onChange="{{ me.setPattern }}" placeholder="e.g. Kelly*Touchbase*" style="height:32px;padding:0 10px;border:1px solid #E5E7EB;border-radius:6px;font:inherit;font-size:13px;outline:none;width:100%"/></label>
+        <button onClick="{{ me.toggleExclude }}" style="align-self:flex-start;height:30px;padding:0 12px;border:1px solid #E5E7EB;border-radius:6px;background:{{ me.excludeBg }};color:{{ me.excludeFg }};font-size:12px;font-weight:600;cursor:pointer">Exclude from automatic recaps</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:12px 20px;border-top:1px solid #E5E7EB;background:#FAFBFC">
+        <sc-if value="{{ me.canDelete }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ deleteMeeting }}" style="height:32px;padding:0 12px;border:1px solid #E5E7EB;border-radius:6px;background:#fff;font-size:12px;font-weight:600;color:#B91C1C;cursor:pointer">Remove meeting</button>
+        </sc-if>
+        <button onClick="{{ cancelMeeting }}" style="margin-left:auto;height:32px;padding:0 12px;border:1px solid #E5E7EB;border-radius:6px;background:#fff;font-size:13px;cursor:pointer;white-space:nowrap">Cancel</button>
+        <button onClick="{{ saveMeeting }}" style="height:32px;padding:0 14px;border:0;border-radius:6px;background:#111111;color:#fff;font-size:13px;font-weight:600;cursor:pointer;opacity:{{ me.saveOpacity }}">{{ me.saveLabel }}</button>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:8px;background:#111111;color:#fff;font-size:13px;box-shadow:0 8px 24px rgba(17,17,17,0.2);z-index:70;white-space:nowrap"><span style="color:#10B981;font-weight:700">✓</span>{{ toast }}</div>
+  </sc-if>
+  {{ celebrations }}
+  <sc-if value="{{ panelOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closePanel }}" style="position:fixed;inset:0;background:rgba(17,17,17,0.18);z-index:20"></div>
+  </sc-if>
+  <aside data-screen-label="Meeting panel" style="position:fixed;top:0;right:0;bottom:0;width:{{ panelWidth }};max-width:100vw;background:#fff;border-left:1px solid #E5E7EB;box-shadow:-12px 0 32px rgba(17,17,17,0.08);z-index:30;transform:{{ panelTransform }};transition:transform 240ms cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;overflow:hidden">
+    <div style="padding:18px 20px 0;display:flex;flex-direction:column;gap:12px;border-bottom:1px solid #E5E7EB;background:#FAFBFC">
+      <div style="display:flex;align-items:flex-start;gap:12px">
+        <div style="display:flex;flex-direction:column;gap:4px;min-width:0;flex:1">
+          <div style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:{{ panel.color }}"></span><span style="font-size:11px;color:#6B7280">{{ panel.type }}</span></div>
+          <h3 style="margin:0;font-size:17px;font-weight:600;letter-spacing:-0.01em">{{ panel.title }}</h3>
+          <div style="color:#6B7280;font-size:12px">{{ panel.cadence }} · <span style="color:#111111;font-weight:500">{{ panel.openCountLabel }}</span></div>
+        </div>
+        <button onClick="{{ closePanel }}" aria-label="Close" style="width:30px;height:30px;border:1px solid #E5E7EB;border-radius:6px;background:#fff;cursor:pointer;font-size:14px;line-height:1;flex:none" style-hover="background:#F3F4F6">✕</button>
+      </div>
+      <div style="display:flex;gap:18px">
+        <button onClick="{{ tabRecaps }}" style="padding:8px 0 10px;border:0;border-bottom:2px solid {{ recapsTabBorder }};background:transparent;font-size:13px;font-weight:600;color:{{ recapsTabColor }};cursor:pointer">Past Recaps</button>
+        <button onClick="{{ tabActions }}" style="padding:8px 0 10px;border:0;border-bottom:2px solid {{ actionsTabBorder }};background:transparent;font-size:13px;font-weight:600;color:{{ actionsTabColor }};cursor:pointer">Action Items <span style="font-weight:500;color:#9CA3AF">{{ panel.openCount }}</span></button>
+      </div>
+    </div>
+    <div style="flex:1;overflow:auto;padding:16px 20px 24px">
+      <sc-if value="{{ showRecaps }}" hint-placeholder-val="{{ true }}">
+        <sc-if value="{{ panel.oneOff }}" hint-placeholder-val="{{ false }}">
+          <div style="border:1px dashed #D1D5DB;border-radius:8px;padding:28px 20px;text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center">
+            <div style="font-weight:600">No past recaps</div>
+            <div style="color:#6B7280;max-width:300px">This is a one-off meeting, so there's no recurring history. Action items still track here, and the recap you write afterward will be filed under it.</div>
+            <a href="https://docs.google.com/document/create" target="_blank" style="font-size:12px;margin-top:4px">Create recap doc in Google Drive ↗</a>
+          </div>
+        </sc-if>
+        <sc-if value="{{ panel.unmapped }}" hint-placeholder-val="{{ false }}">
+          <div style="border:1px dashed #D1D5DB;border-radius:8px;padding:28px 20px;text-align:center;display:flex;flex-direction:column;gap:8px;align-items:center">
+            <div style="width:32px;height:32px;border-radius:8px;background:#FEF3C7;color:#B45309;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700">!</div>
+            <div style="font-weight:600">No recap folder mapped</div>
+            <div style="color:#6B7280;max-width:300px">Point this meeting at a Google Drive folder and past recaps will show up here.</div>
+            <button onClick="{{ panel.mapFolder }}" style="margin-top:4px;height:30px;padding:0 12px;border:0;border-radius:6px;background:#3B82F6;color:#fff;font-size:12px;font-weight:600;cursor:pointer" style-hover="background:#2563EB">Map a folder</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ panel.mapped }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:11px;color:#6B7280;min-width:0">
+            <span style="display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border:1px solid #E5E7EB;border-radius:4px;background:#F9FAFB;color:#374151;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0"><span style="color:#F59E0B">▰</span>{{ panel.folderPath }}</span>
+            <span style="white-space:nowrap">{{ panel.modeLabel }}</span>
+            <button onClick="{{ panel.mapFolder }}" style="margin-left:auto;border:0;background:transparent;color:#3B82F6;font-size:11px;cursor:pointer;padding:0;white-space:nowrap" style-hover="text-decoration:underline">Change</button>
+          </div>
+        </sc-if>
+        <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px">
+          <sc-for list="{{ panel.recaps }}" as="r" hint-placeholder-count="4">
+            <li style="border:1px solid #E5E7EB;border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+                <span style="font-weight:600;font-size:13px;display:inline-flex;align-items:center;gap:6px">{{ r.dateLabel }}<sc-if value="{{ r.kind }}" hint-placeholder-val="{{ false }}"><span style="padding:0 5px;border-radius:3px;background:#F3F4F6;color:#6B7280;font-size:10px;font-weight:500">{{ r.kind }}</span></sc-if></span>
+                <a href="{{ r.url }}" target="_blank" style="font-size:12px;display:inline-flex;align-items:center;gap:4px;white-space:nowrap">Open in Google Drive <span aria-hidden="true">↗</span></a>
+              </div>
+              <p style="margin:0;color:#4B5563;font-size:12.5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ r.summary }}</p>
+            </li>
+          </sc-for>
+        </ul>
+      </sc-if>
+      <sc-if value="{{ showActions }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;border:1px solid #E5E7EB;border-radius:8px;overflow:hidden">
+            <sc-for list="{{ panel.openItems }}" as="t" hint-placeholder-count="3">
+              <li style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-top:1px solid #F3F4F6">
+                <input type="checkbox" checked="{{ t.done }}" onChange="{{ t.toggle }}" style="margin:3px 0 0;width:15px;height:15px;accent-color:#3B82F6;cursor:pointer;flex:none"/>
+                <div style="display:flex;flex-direction:column;gap:5px;flex:1;min-width:0">
+                  <span>{{ t.title }}</span>
+                  <div style="display:flex;align-items:center;gap:8px;font-size:11px">
+                    <span style="display:inline-flex;align-items:center;gap:5px;color:#4B5563"><span style="width:16px;height:16px;border-radius:50%;background:{{ t.ownerBg }};color:{{ t.ownerFg }};font-size:8px;font-weight:600;display:inline-flex;align-items:center;justify-content:center">{{ t.ownerInitials }}</span>{{ t.owner }}</span>
+                    <span style="display:inline-flex;align-items:center;gap:4px;padding:1px 7px;border-radius:999px;font-weight:600;background:{{ t.bg }};color:{{ t.fg }}"><span style="width:5px;height:5px;border-radius:50%;background:{{ t.dot }}"></span>{{ t.urgencyLabel }}</span>
+                  </div>
+                </div>
+              </li>
+            </sc-for>
+          </ul>
+          <sc-if value="{{ panel.noOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="color:#6B7280;text-align:center;padding:8px">All action items are done.</div>
+          </sc-if>
+          <div style="display:flex;align-items:center;gap:8px;height:36px;padding:0 12px;border:1px dashed #D1D5DB;border-radius:8px" style-focus="border-color:#3B82F6">
+            <span style="color:#3B82F6;font-size:16px;line-height:1;font-weight:500">+</span>
+            <input value="{{ panelNew }}" onChange="{{ onPanelNew }}" onKeyDown="{{ onPanelNewKey }}" placeholder="Add action item for this meeting… ↵" style="flex:1;min-width:0;border:0;outline:none;font:inherit;font-size:13px;color:#111111;background:transparent"/>
+          </div>
+          <sc-if value="{{ panel.hasDone }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <button onClick="{{ toggleDone }}" style="align-self:flex-start;display:inline-flex;align-items:center;gap:6px;border:0;background:transparent;padding:0;font-size:12px;font-weight:600;color:#6B7280;cursor:pointer" style-hover="color:#111111"><span style="display:inline-block;transform:{{ doneChevron }};transition:transform 150ms">▸</span>Done {{ panel.doneCount }}</button>
+              <sc-if value="{{ showDone }}" hint-placeholder-val="{{ false }}">
+                <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;border:1px solid #E5E7EB;border-radius:8px;overflow:hidden;background:#F9FAFB">
+                  <sc-for list="{{ panel.doneItems }}" as="t" hint-placeholder-count="1">
+                    <li style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-top:1px solid #F3F4F6">
+                      <input type="checkbox" checked="{{ t.done }}" onChange="{{ t.toggle }}" style="margin:3px 0 0;width:15px;height:15px;accent-color:#3B82F6;cursor:pointer;flex:none"/>
+                      <div style="display:flex;flex-direction:column;gap:5px;flex:1;min-width:0">
+                        <span style="text-decoration:line-through;color:#9CA3AF">{{ t.title }}</span>
+                        <span style="font-size:11px;color:#9CA3AF">{{ t.owner }}</span>
+                      </div>
+                    </li>
+                  </sc-for>
+                </ul>
+              </sc-if>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+    </div>
+  </aside>
+</div>
