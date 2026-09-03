@@ -22,7 +22,10 @@ export function clearCookie() {
   return sessionCookie('', 0);
 }
 
+export function authDisabled() { return (Netlify.env.get('AUTH_DISABLED') || '').toLowerCase() === 'true'; }
+
 export function isAuthed(req) {
+  if (authDisabled()) return true;
   const raw = req.headers.get('cookie') || '';
   const m = raw.match(new RegExp('(?:^|;\\s*)' + COOKIE + '=([^;]+)'));
   if (!m) return false;

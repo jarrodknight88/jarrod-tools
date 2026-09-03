@@ -17,6 +17,7 @@ Personal daily dashboard for Jarrod: today's meetings, tasks with Akiflow-style 
 | `SUPABASE_SERVICE_ROLE_KEY` | Service role key from Supabase, Settings > API (never the anon key) |
 | `APP_PASSWORD` | The password for the login page |
 | `SESSION_SECRET` | Any long random string; signs the session cookie |
+| `AUTH_DISABLED` | Set to `true` to turn the login off entirely (site becomes open to anyone with the URL) |
 
 ## Phases
 
