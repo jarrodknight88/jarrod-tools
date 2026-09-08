@@ -72,7 +72,11 @@ export async function loadState() {
   const meetingsOut = meetings.data.map(m => {
     const ev = token ? events.find(e => !claimed.has(e.eventId) && matchesMeeting(m, e.title)) : null;
     if (ev) claimed.add(ev.eventId);
-    const fromDrive = (filesByMeeting[m.id] || []).filter(f => m.recap_mode === 'all' || globMatch('*' + m.title + '*', f.name) || (m.key && globMatch('*' + m.key + '*', f.name)))
+    // 'title' mode: a file belongs to this meeting if its name contains the meeting title, the key, or any distinctive word from the title.
+    const STOP = new Set(['weekly', 'daily', 'monthly', 'meeting', 'sync', 'call', 'session', 'with', 'and', 'the', 'team', 'check', 'standup', 'review']);
+    const words = (m.title || '').toLowerCase().split(/[^a-z0-9]+/).filter(w => w.length >= 4 && !STOP.has(w));
+    const nameMatches = f => { const n = f.name.toLowerCase(); return n.includes((m.title || '').toLowerCase()) || (m.key && n.includes(m.key.toLowerCase())) || words.some(w => n.includes(w)); };
+    const fromDrive = (filesByMeeting[m.id] || []).filter(f => m.recap_mode === 'all' || nameMatches(f))
       .map(f => ({ id: 'drive:' + f.id, fileId: f.id, date: f.date, summary: f.isDoc ? '' : 'File in recap folder', url: f.url, title: f.name }));
     const stored = recapsByMeeting[m.id] || [];
     const seen = new Set(stored.map(r => r.fileId));
