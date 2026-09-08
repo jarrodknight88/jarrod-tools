@@ -129,10 +129,15 @@ export async function saveState(doc) {
     const rows = doc.meetings.map((m, i) => ({ id: m.id, key: m.key || m.id.slice(0, 8), title: m.title, type: m.type || 'General', cadence: m.cadence || null, default_time: to24(m.time), default_dur_min: m.dur || 30,
       days: m.days || [], one_off: !!m.oneOff, one_off_date: m.oneOff ? (m.oneOffDate || null) : null, attendees: m.attendees || [], match_pattern: m.matchPattern || null, exclude_from_recaps: !!m.exclude, active: true, sort_order: i,
       recap_folder_id: ((doc.settings || {}).mappings || {})[m.id]?.folder || null, recap_mode: ((doc.settings || {}).mappings || {})[m.id]?.mode || 'title' }));
+    // Folder mapping is only written when the client actually has an entry for the meeting, so a page that
+    // loaded before a mapping was made cannot wipe it.
+    const mappings = (doc.settings || {}).mappings || {};
+    for (const r of rows) if (!(r.id in mappings)) { delete r.recap_folder_id; delete r.recap_mode; }
     if (rows.length) fail(await s.from('meetings').upsert(rows, { onConflict: 'id' }));
-    const keep = rows.map(r => r.id);
-    const q = s.from('meetings').update({ active: false }).eq('active', true);
-    fail(await (keep.length ? q.not('id', 'in', `(${keep.join(',')})`) : q));
+    // Deletions are explicit. A meeting missing from a client's list is never treated as deleted,
+    // because another tab or a server-side insert may know about meetings this page never loaded.
+    const gone = (doc.deletedMeetings || []).filter(Boolean);
+    if (gone.length) fail(await s.from('meetings').update({ active: false }).in('id', gone));
   }
 
   // Projects
@@ -140,9 +145,8 @@ export async function saveState(doc) {
     const rows = doc.projects.map((p, i) => ({ id: p.id, name: p.name, health: p.health || 'Green', pct_baseline: Math.max(0, Math.min(100, Math.round(p.pct || 0))), baseline_open_count: p.baselineOpen || 0,
       milestone: p.milestone || null, milestone_date: p.date || null, latest_update: p.update || null, active: true, sort_order: i }));
     if (rows.length) fail(await s.from('projects').upsert(rows, { onConflict: 'id' }));
-    const keep = rows.map(r => r.id);
-    const q = s.from('projects').update({ active: false }).eq('active', true);
-    fail(await (keep.length ? q.not('id', 'in', `(${keep.join(',')})`) : q));
+    const gone = (doc.deletedProjects || []).filter(Boolean);
+    if (gone.length) fail(await s.from('projects').update({ active: false }).in('id', gone));
   }
 
   // Tasks + links

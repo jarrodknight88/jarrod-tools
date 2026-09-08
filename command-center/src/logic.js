@@ -31,7 +31,7 @@ setFolderTree(DRIVE);
 const folderPath = id => id && FOLDER_INDEX[id] ? FOLDER_INDEX[id].path.join(' / ') : '';
 const FOLDER_FILES = {};
 const uuid = () => (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16); });
-const PERSIST_KEYS = ['custom', 'done', 'links', 'blocks', 'projectsState', 'settings', 'meetingsState'];
+const PERSIST_KEYS = ['custom', 'done', 'links', 'blocks', 'projectsState', 'settings', 'meetingsState', 'deletedMeetings', 'deletedProjects'];
 const globMatch = (pattern, title) => { const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); return new RegExp('^' + pattern.trim().split('*').map(esc).join('.*') + '$', 'i').test(title); };
 const DEFAULT_SETTINGS = { defaultFolder: null, mappings: {}, patterns: [] };
 function parseQuick(text, now) {
@@ -60,7 +60,7 @@ function dueLabel(due, now) {
 class Component extends DCLogic {
   state = { selected: null, tab: 'recaps', showDone: false, expanded: null, query: '', isMobile: false, view: 'meetings', newTask: '', custom: [], panelNew: '', projNew: '', links: {}, tagging: null,
     projectsState: PROJECTS, projEdit: null, settings: DEFAULT_SETTINGS, draft: null, settingsOpen: false, pickerFor: null, pickerSel: null, pickerQuery: '', pickerExpanded: { root: true, recaps: true }, highlightRow: null, toast: '', linkMeeting: undefined, linkProject: undefined,
-    blocks: {}, done: {}, loaded: false, loadError: '', saving: false, meetingsState: [], meetEdit: null, today: null, calendarConnected: false, googleConfigured: false, warnings: [] };
+    blocks: {}, done: {}, loaded: false, loadError: '', saving: false, meetingsState: [], meetEdit: null, today: null, deletedMeetings: [], deletedProjects: [], calendarConnected: false, googleConfigured: false, warnings: [] };
   componentDidMount() {
     this._onResize = () => { const w = document.documentElement.clientWidth || window.innerWidth; const isMobile = w < 760; if (isMobile !== this.state.isMobile) this.setState({ isMobile }); };
     this._onResize(); requestAnimationFrame(this._onResize); setTimeout(this._onResize, 300);
@@ -98,12 +98,12 @@ class Component extends DCLogic {
   }
   schedulePersist() { clearTimeout(this._persistT); this._persistT = setTimeout(() => this.persist(), 500); }
   buildDoc() {
-    const { custom, done, links, blocks, projectsState, settings, meetingsState } = this.state;
+    const { custom, done, links, blocks, projectsState, settings, meetingsState, deletedMeetings, deletedProjects } = this.state;
     const pad = n => String(n).padStart(2, '0');
     const tasks = custom.map(t => { const l = links[t.id] || {}; return { id: t.id, title: t.title, owner: t.owner, urgency: t.urgency, scope: !!t.scope, source: t.source || 'manual', done: !!done[t.id],
       dueDate: t.due ? t.due.date.getFullYear() + '-' + pad(t.due.date.getMonth() + 1) + '-' + pad(t.due.date.getDate()) : null, dueTime: t.due && t.due.hasTime ? pad(t.due.date.getHours()) + ':' + pad(t.due.date.getMinutes()) : null,
       meetings: l.meetings || t.meetings || [], projects: l.projects || t.projects || [], block: blocks[t.id] || null }; });
-    return { tasks, projects: projectsState, settings, meetings: meetingsState.filter(m => !m.ephemeral).map(m => { const { recaps, ...rest } = m; return rest; }) };
+    return { tasks, projects: projectsState, settings, deletedMeetings, deletedProjects, meetings: meetingsState.filter(m => !m.ephemeral).map(m => { const { recaps, ...rest } = m; return rest; }) };
   }
   async persist() {
     if (this._persisting) { this._persistAgain = true; return; }
@@ -215,7 +215,7 @@ class Component extends DCLogic {
       if (isNew || p.pct !== pctOrig) p.baselineOpen = isNew ? 0 : (openNow || 0);
       this.setState(s => ({ projectsState: isNew ? [...s.projectsState, p] : s.projectsState.map(x => x.id === p.id ? { ...x, ...p } : x), projEdit: null, expanded: p.id, toast: isNew ? 'Project created' : 'Project updated' }));
       clearTimeout(this._toast); this._toast = setTimeout(() => this.setState({ toast: '' }), 2600); };
-    const deleteProject = () => { if (!projEdit) return; const id = projEdit.id; this.setState(s => ({ projectsState: s.projectsState.filter(x => x.id !== id), projEdit: null, expanded: null, toast: 'Project deleted' })); clearTimeout(this._toast); this._toast = setTimeout(() => this.setState({ toast: '' }), 2600); };
+    const deleteProject = () => { if (!projEdit) return; const id = projEdit.id; this.setState(s => ({ projectsState: s.projectsState.filter(x => x.id !== id), deletedProjects: [...s.deletedProjects, id], projEdit: null, expanded: null, toast: 'Project deleted' })); clearTimeout(this._toast); this._toast = setTimeout(() => this.setState({ toast: '' }), 2600); };
     // Calendar
     const slots = []; for (let m = DAY_START; m < DAY_END; m += 30) slots.push({ label: m % 60 === 0 ? hourLabel(m) : '', border: m % 60 === 0 ? '#E5E7EB' : '#F3F4F6' });
     const meetingBlocks = (empty ? [] : TODAY).map(m => { const s = toMin(m.time); return { title: m.title, type: m.type, color: TYPES[m.type], bg: TYPES[m.type] + '1F', open: openM(m.id), compact: m.dur <= 30, showMeta: m.dur > 30, pad: m.dur <= 30 ? '0 8px' : '4px 8px', start: fromMin(s).replace(/ [AP]M/, ''), top: (s - DAY_START) * PX_PER_MIN + 1 + 'px', height: m.dur * PX_PER_MIN - 3 + 'px', range: fromMin(s) + '–' + fromMin(s + m.dur) }; });
@@ -312,7 +312,7 @@ class Component extends DCLogic {
       const rec = { ...m, title: m.title.trim(), time, attendees: (attendeesText || '').split(',').map(x => x.trim()).filter(Boolean), days: m.oneOff ? [] : (m.days || []), recaps: m.recaps || [] };
       this.setState(s => ({ meetingsState: isNew ? [...s.meetingsState, rec] : s.meetingsState.map(x => x.id === rec.id ? { ...x, ...rec } : x), meetEdit: null, toast: isNew ? 'Meeting added' : 'Meeting updated' }));
       clearTimeout(this._toast); this._toast = setTimeout(() => this.setState({ toast: '' }), 2600); };
-    const deleteMeeting = () => { if (!meetEdit) return; const id = meetEdit.id; this.setState(s => ({ meetingsState: s.meetingsState.filter(x => x.id !== id), meetEdit: null, selected: s.selected === id ? null : s.selected, toast: 'Meeting removed' })); clearTimeout(this._toast); this._toast = setTimeout(() => this.setState({ toast: '' }), 2600); };
+    const deleteMeeting = () => { if (!meetEdit) return; const id = meetEdit.id; this.setState(s => ({ meetingsState: s.meetingsState.filter(x => x.id !== id), deletedMeetings: [...s.deletedMeetings, id], meetEdit: null, selected: s.selected === id ? null : s.selected, toast: 'Meeting removed' })); clearTimeout(this._toast); this._toast = setTimeout(() => this.setState({ toast: '' }), 2600); };
     const meetingCountLabel = MEETINGS.length + ' meeting' + (MEETINGS.length === 1 ? '' : 's') + ' configured';
     return {
       loaded: this.state.loaded, loading: !this.state.loaded && !this.state.loadError, loadError: this.state.loadError, saveLabel: this.state.saving ? 'Saving…' : (this.state.loadError ? '' : 'Saved'), saveColor: this.state.loadError ? '#B91C1C' : '#9CA3AF',
