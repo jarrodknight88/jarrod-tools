@@ -1,6 +1,7 @@
 // Translation layer between the dashboard's client state and the Supabase tables.
 // Reads assemble one document the UI renders from; writes reconcile that document back into rows.
 import { createClient } from '@supabase/supabase-js';
+import { accessToken, todayEvents, folderTree, folderFiles, upsertBlockEvent, deleteBlockEvent, globMatch } from './google.mjs';
 
 export function db() {
   return createClient(Netlify.env.get('SUPABASE_URL'), Netlify.env.get('SUPABASE_SERVICE_ROLE_KEY'), { auth: { persistSession: false } });
@@ -24,6 +25,7 @@ function zonedToIso(dateStr, minutes, tz) {
   return new Date(guess - (localMs - guess)).toISOString();
 }
 
+const fromMin = mm => { const h = Math.floor(mm / 60), m = mm % 60; return (((h + 11) % 12) + 1) + ':' + String(m).padStart(2, '0') + ' ' + (h >= 12 ? 'PM' : 'AM'); };
 const to12 = t => { if (!t) return ''; const [h, m] = t.split(':').map(Number); return (((h + 11) % 12) + 1) + ':' + String(m).padStart(2, '0') + ' ' + (h >= 12 ? 'PM' : 'AM'); };
 const to24 = t => { if (!t) return null; const m = t.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i); if (!m) return t.length === 5 ? t : null; let h = +m[1]; if (/pm/i.test(m[3]) && h !== 12) h += 12; if (/am/i.test(m[3]) && h === 12) h = 0; return String(h).padStart(2, '0') + ':' + m[2]; };
 
@@ -48,13 +50,41 @@ export async function loadState() {
   const today = todayIn(tz);
 
   const recapsByMeeting = {};
-  for (const r of recaps.data) (recapsByMeeting[r.meeting_id] ||= []).push({ id: r.id, date: r.meeting_date, summary: r.summary || '', url: r.drive_url, title: r.title });
+  for (const r of recaps.data) (recapsByMeeting[r.meeting_id] ||= []).push({ id: r.id, fileId: r.drive_file_id, date: r.meeting_date, summary: r.summary || '', url: r.drive_url, title: r.title });
 
-  const meetingsOut = meetings.data.map(m => ({
-    id: m.id, key: m.key, title: m.title, type: m.type, cadence: m.cadence || '', time: to12(m.default_time && m.default_time.slice(0, 5)), dur: m.default_dur_min,
-    days: m.days || [], oneOff: m.one_off, oneOffDate: m.one_off_date, attendees: m.attendees || [], matchPattern: m.match_pattern || '', exclude: m.exclude_from_recaps,
-    recaps: recapsByMeeting[m.id] || []
-  }));
+  // ---- Google layer (Calendar events for today, Drive folders and recap files) ----
+  const googleConfigured = !!Netlify.env.get('GOOGLE_CLIENT_ID');
+  const token = googleConfigured ? await accessToken().catch(() => null) : null;
+  let events = [], tree = null, warnings = [];
+  const filesByMeeting = {};
+  if (token) {
+    const mapped = meetings.data.filter(m => m.recap_folder_id && !m.recap_folder_id.startsWith('ph:'));
+    const [ev, tr, ...ff] = await Promise.all([
+      todayEvents(token, tz).catch(e => { warnings.push('Calendar: ' + e.message); return []; }),
+      folderTree(token).catch(e => { warnings.push('Drive: ' + e.message); return null; }),
+      ...mapped.map(m => folderFiles(token, m.recap_folder_id).catch(() => []))
+    ]);
+    events = ev; tree = tr; mapped.forEach((m, i) => { filesByMeeting[m.id] = ff[i]; });
+  }
+
+  const matchesMeeting = (m, title) => (m.match_pattern && globMatch(m.match_pattern, title)) || (m.title || '').trim().toLowerCase() === (title || '').trim().toLowerCase();
+  const claimed = new Set();
+  const meetingsOut = meetings.data.map(m => {
+    const ev = token ? events.find(e => !claimed.has(e.eventId) && matchesMeeting(m, e.title)) : null;
+    if (ev) claimed.add(ev.eventId);
+    const fromDrive = (filesByMeeting[m.id] || []).filter(f => m.recap_mode === 'all' || globMatch('*' + m.title + '*', f.name) || (m.key && globMatch('*' + m.key + '*', f.name)))
+      .map(f => ({ id: 'drive:' + f.id, fileId: f.id, date: f.date, summary: f.isDoc ? '' : 'File in recap folder', url: f.url, title: f.name }));
+    const stored = recapsByMeeting[m.id] || [];
+    const seen = new Set(stored.map(r => r.fileId));
+    const allRecaps = [...stored, ...fromDrive.filter(r => !seen.has(r.fileId))].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    return {
+      id: m.id, key: m.key, title: m.title, type: m.type, cadence: m.cadence || '', time: ev ? fromMin(ev.startMin) : to12(m.default_time && m.default_time.slice(0, 5)), dur: ev ? ev.dur : m.default_dur_min,
+      days: m.days || [], oneOff: m.one_off, oneOffDate: m.one_off_date, attendees: ev && ev.attendees.length ? ev.attendees : (m.attendees || []), matchPattern: m.match_pattern || '', exclude: m.exclude_from_recaps,
+      onCalendarToday: !!ev, eventLink: ev ? ev.link : null, recaps: allRecaps
+    };
+  });
+  // Calendar events that aren't tracked meetings still show on today's timeline (read-only, not persisted).
+  for (const e of events) if (!claimed.has(e.eventId)) meetingsOut.push({ id: 'gcal:' + e.eventId, key: '', title: e.title, type: 'General', cadence: '', time: fromMin(e.startMin), dur: e.dur, days: [], oneOff: true, oneOffDate: today, attendees: e.attendees, matchPattern: '', exclude: false, onCalendarToday: true, ephemeral: true, eventLink: e.link, recaps: [] });
 
   const mappings = {};
   for (const m of meetings.data) if (m.recap_folder_id) mappings[m.id] = { folder: m.recap_folder_id, mode: m.recap_mode };
@@ -72,9 +102,9 @@ export async function loadState() {
   const projectsOut = projects.data.map(p => ({ id: p.id, name: p.name, health: p.health, pct: p.pct_baseline, baselineOpen: p.baseline_open_count, milestone: p.milestone || '', date: p.milestone_date || '', update: p.latest_update || '' }));
 
   return {
-    today, tz,
+    today, tz, googleConfigured, calendarConnected: !!token, warnings,
     meetings: meetingsOut, tasks: tasksOut, projects: projectsOut, tickets: [],
-    folderTree: cfg.folder_tree || { id: 'root', name: 'My Drive', children: [] },
+    folderTree: tree || cfg.folder_tree || { id: 'root', name: 'My Drive', children: [] },
     settings: { defaultFolder: (cfg.default_recap_folder || {}).id || null, mappings, patterns: patterns.data.map(p => ({ id: 'p:' + p.id, pattern: p.pattern, folder: p.folder_id, mode: p.mode })) }
   };
 }
@@ -91,6 +121,7 @@ export async function saveState(doc) {
 
   // Meetings: upsert incoming; anything missing is deactivated (soft delete).
   if (Array.isArray(doc.meetings)) {
+    doc.meetings = doc.meetings.filter(m => !m.ephemeral && !String(m.id).startsWith('gcal:'));
     const rows = doc.meetings.map((m, i) => ({ id: m.id, key: m.key || m.id.slice(0, 8), title: m.title, type: m.type || 'General', cadence: m.cadence || null, default_time: to24(m.time), default_dur_min: m.dur || 30,
       days: m.days || [], one_off: !!m.oneOff, one_off_date: m.oneOff ? (m.oneOffDate || null) : null, attendees: m.attendees || [], match_pattern: m.matchPattern || null, exclude_from_recaps: !!m.exclude, active: true, sort_order: i,
       recap_folder_id: ((doc.settings || {}).mappings || {})[m.id]?.folder || null, recap_mode: ((doc.settings || {}).mappings || {})[m.id]?.mode || 'title' }));
@@ -112,20 +143,22 @@ export async function saveState(doc) {
 
   // Tasks + links
   if (Array.isArray(doc.tasks)) {
-    const existing = fail(await s.from('tasks').select('id,done,done_at')).data;
+    const existing = fail(await s.from('tasks').select('id,done,done_at,block_start,block_dur_min,calendar_event_id,title')).data;
     const prev = Object.fromEntries(existing.map(t => [t.id, t]));
+    const knownMeetings = new Set(fail(await s.from('meetings').select('id')).data.map(m => m.id));
     const rows = doc.tasks.map(t => {
       const was = prev[t.id];
       return { id: t.id, title: t.title, owner: t.owner || 'Jarrod', urgency: t.urgency || 'soon', done: !!t.done, done_at: t.done ? ((was && was.done_at) || now) : null,
         due_date: t.dueDate || null, due_time: t.dueTime || null, scope: !!t.scope, source: t.source || 'manual', notes: t.notes || null,
-        block_start: t.block ? zonedToIso(today, t.block.start, tz) : null, block_dur_min: t.block ? t.block.dur : null };
+        block_start: t.block ? zonedToIso(today, t.block.start, tz) : null, block_dur_min: t.block ? t.block.dur : null, calendar_event_id: was ? was.calendar_event_id : null };
     });
+    await syncBlocks(rows, prev);
     if (rows.length) {
       fail(await s.from('tasks').upsert(rows, { onConflict: 'id' }));
       const ids = rows.map(r => r.id);
       fail(await s.from('task_meetings').delete().in('task_id', ids));
       fail(await s.from('task_projects').delete().in('task_id', ids));
-      const tm = doc.tasks.flatMap(t => (t.meetings || []).map(meeting_id => ({ task_id: t.id, meeting_id })));
+      const tm = doc.tasks.flatMap(t => (t.meetings || []).filter(id => knownMeetings.has(id)).map(meeting_id => ({ task_id: t.id, meeting_id })));
       const tp = doc.tasks.flatMap(t => (t.projects || []).map(project_id => ({ task_id: t.id, project_id })));
       if (tm.length) fail(await s.from('task_meetings').insert(tm));
       if (tp.length) fail(await s.from('task_projects').insert(tp));
@@ -140,4 +173,22 @@ export async function saveState(doc) {
     if (pats.length) fail(await s.from('recap_patterns').insert(pats));
   }
   return { ok: true, savedAt: now };
+}
+
+// Mirror task time blocks to Google Calendar as tagged events. Runs only when Google is connected; failures never block a save.
+async function syncBlocks(rows, prev) {
+  let token = null;
+  try { token = Netlify.env.get('GOOGLE_CLIENT_ID') ? await accessToken() : null; } catch { token = null; }
+  if (!token) return;
+  for (const r of rows) {
+    const was = prev[r.id] || {};
+    try {
+      if (r.block_start) {
+        const changed = !was.calendar_event_id || was.block_start !== r.block_start || (was.block_dur_min || 0) !== r.block_dur_min || was.title !== r.title || !!was.done !== r.done;
+        if (changed) r.calendar_event_id = await upsertBlockEvent(token, { eventId: was.calendar_event_id, title: r.title, startIso: r.block_start, durMin: r.block_dur_min, taskId: r.id, done: r.done });
+      } else if (was.calendar_event_id) {
+        await deleteBlockEvent(token, was.calendar_event_id); r.calendar_event_id = null;
+      }
+    } catch (e) { console.error('block sync', r.id, e.message); }
+  }
 }

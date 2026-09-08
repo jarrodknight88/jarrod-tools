@@ -58,6 +58,9 @@ input::placeholder{color:#9CA3AF}
         </sc-if>
       </div>
     </div>
+    <sc-if value="{{ showConnectGoogle }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ connectGoogle }}" style="height:30px;padding:0 12px;border:1px solid #3B82F6;border-radius:6px;background:#EFF6FF;color:#1D4ED8;cursor:pointer;font-size:12px;font-weight:600;flex:none;white-space:nowrap" style-hover="background:#DBEAFE">{{ connectGoogleLabel }}</button>
+    </sc-if>
     <span style="font-size:11px;color:{{ saveColor }};white-space:nowrap;flex:none">{{ saveLabel }}</span>
     <button onClick="{{ signOut }}" title="Sign out" style="height:30px;padding:0 10px;border:1px solid #E5E7EB;border-radius:6px;background:#fff;color:#6B7280;cursor:pointer;font-size:12px;flex:none" style-hover="background:#F3F4F6;color:#111111">Sign out</button>
     <button onClick="{{ openSettings }}" title="Settings" aria-label="Settings" style="width:30px;height:30px;border:1px solid #E5E7EB;border-radius:6px;background:#fff;color:#6B7280;cursor:pointer;font-size:15px;line-height:1;display:flex;align-items:center;justify-content:center;flex:none;position:relative" style-hover="background:#F3F4F6;color:#111111">⚙<sc-if value="{{ hasUnmapped }}" hint-placeholder-val="{{ false }}"><span title="Some meetings have no recap folder" style="position:absolute;top:-3px;right:-3px;width:8px;height:8px;border-radius:50%;background:#F59E0B;border:2px solid #fff"></span></sc-if></button>
@@ -65,6 +68,9 @@ input::placeholder{color:#9CA3AF}
   </header>
   <sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}">
     <div style="padding:48px 24px;text-align:center;color:#6B7280;font-size:13px">Loading your day…</div>
+  </sc-if>
+  <sc-if value="{{ warningText }}" hint-placeholder-val="{{ false }}">
+    <div style="margin:12px 24px 0;padding:10px 14px;border:1px solid #FDE68A;border-radius:8px;background:#FFFBEB;color:#92400E;font-size:12px">{{ warningText }}</div>
   </sc-if>
   <sc-if value="{{ loadError }}" hint-placeholder-val="{{ false }}">
     <div style="margin:12px 24px 0;padding:10px 14px;border:1px solid #FECACA;border-radius:8px;background:#FEF2F2;color:#B91C1C;font-size:12px">{{ loadError }}</div>
@@ -396,6 +402,9 @@ input::placeholder{color:#9CA3AF}
         </sc-if>
       </div>
       <div style="display:flex;align-items:center;gap:10px;padding:12px 20px;border-top:1px solid #E5E7EB;background:#FAFBFC;border-radius:0 0 {{ modalRadius }} {{ modalRadius }}">
+        <sc-if value="{{ googleConnected }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ disconnectGoogle }}" style="height:28px;padding:0 10px;border:1px solid #E5E7EB;border-radius:6px;background:#fff;font-size:12px;color:#6B7280;cursor:pointer;white-space:nowrap" style-hover="color:#B91C1C;border-color:#FECACA">Google connected · Disconnect</button>
+        </sc-if>
         <button onClick="{{ newMeeting }}" style="height:28px;padding:0 10px;border:1px solid #E5E7EB;border-radius:6px;background:#fff;font-size:12px;font-weight:600;color:#374151;cursor:pointer;white-space:nowrap" style-hover="border-color:#3B82F6;color:#3B82F6">+ Add meeting</button>
         <span style="font-size:12px;color:#6B7280">{{ meetingCountLabel }} · {{ settingsStatus }}</span>
         <button onClick="{{ closeSettings }}" style="margin-left:auto;height:32px;padding:0 14px;border:0;border-radius:6px;background:#111111;color:#fff;font-size:13px;font-weight:600;cursor:pointer" style-hover="background:#000">Done</button>

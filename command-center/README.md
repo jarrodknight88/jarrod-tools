@@ -17,11 +17,13 @@ Personal daily dashboard for Jarrod: today's meetings, tasks with Akiflow-style 
 | `SUPABASE_SERVICE_ROLE_KEY` | Service role key from Supabase, Settings > API (never the anon key) |
 | `APP_PASSWORD` | The password for the login page |
 | `SESSION_SECRET` | Any long random string; signs the session cookie |
+| `GOOGLE_CLIENT_ID` | OAuth client ID from Google Cloud (Web application type) |
+| `GOOGLE_CLIENT_SECRET` | OAuth client secret |
 | `AUTH_DISABLED` | Set to `true` to turn the login off entirely (site becomes open to anyone with the URL) |
 
 ## Phases
 
 1. Static shell on Supabase (this) - tasks, projects, meetings, settings, calendar blocks all persist.
-2. Google - Calendar read for today's meetings, Drive read for recaps, Calendar write for time blocks.
+2. Google (built) - visit `/api/google/connect` once to authorize. Today's meetings come from the primary calendar and match tracked meetings by title pattern; unmatched events show read-only. Recaps merge the `recaps` table with Docs in each meeting's mapped Drive folder. Time blocks become tagged Calendar events. Redirect URI: `https://<site>/api/google/callback`.
 3. Jira - assigned HQ tickets.
 4. Granola automation writes recaps and tasks into the same tables.

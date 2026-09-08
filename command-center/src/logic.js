@@ -60,7 +60,7 @@ function dueLabel(due, now) {
 class Component extends DCLogic {
   state = { selected: null, tab: 'recaps', showDone: false, expanded: null, query: '', isMobile: false, view: 'meetings', newTask: '', custom: [], panelNew: '', projNew: '', links: {}, tagging: null,
     projectsState: PROJECTS, projEdit: null, settings: DEFAULT_SETTINGS, draft: null, settingsOpen: false, pickerFor: null, pickerSel: null, pickerQuery: '', pickerExpanded: { root: true, recaps: true }, highlightRow: null, toast: '', linkMeeting: undefined, linkProject: undefined,
-    blocks: {}, done: {}, loaded: false, loadError: '', saving: false, meetingsState: [], meetEdit: null, today: null };
+    blocks: {}, done: {}, loaded: false, loadError: '', saving: false, meetingsState: [], meetEdit: null, today: null, calendarConnected: false, googleConfigured: false, warnings: [] };
   componentDidMount() {
     this._onResize = () => { const w = document.documentElement.clientWidth || window.innerWidth; const isMobile = w < 760; if (isMobile !== this.state.isMobile) this.setState({ isMobile }); };
     this._onResize(); requestAnimationFrame(this._onResize); setTimeout(this._onResize, 300);
@@ -84,7 +84,7 @@ class Component extends DCLogic {
       const blocks = Object.fromEntries(d.tasks.filter(t => t.block).map(t => [t.id, t.block]));
       const settings = { defaultFolder: d.settings.defaultFolder || null, mappings: d.settings.mappings || {}, patterns: d.settings.patterns || [] };
       this._snapshot = null;
-      this.setState({ custom, done, blocks, links: {}, projectsState: d.projects, settings, meetingsState: MEETINGS, loaded: true, loadError: '', today: d.today }, () => { this._snapshot = this.snapshot(); });
+      this.setState({ custom, done, blocks, links: {}, projectsState: d.projects, settings, meetingsState: MEETINGS, loaded: true, loadError: '', today: d.today, calendarConnected: !!d.calendarConnected, googleConfigured: !!d.googleConfigured, warnings: d.warnings || [] }, () => { this._snapshot = this.snapshot(); });
     } catch (e) { this.setState({ loadError: e.message || 'Could not load' }); }
   }
   snapshot() { const s = this.state; return PERSIST_KEYS.map(k => s[k]); }
@@ -103,7 +103,7 @@ class Component extends DCLogic {
     const tasks = custom.map(t => { const l = links[t.id] || {}; return { id: t.id, title: t.title, owner: t.owner, urgency: t.urgency, scope: !!t.scope, source: t.source || 'manual', done: !!done[t.id],
       dueDate: t.due ? t.due.date.getFullYear() + '-' + pad(t.due.date.getMonth() + 1) + '-' + pad(t.due.date.getDate()) : null, dueTime: t.due && t.due.hasTime ? pad(t.due.date.getHours()) + ':' + pad(t.due.date.getMinutes()) : null,
       meetings: l.meetings || t.meetings || [], projects: l.projects || t.projects || [], block: blocks[t.id] || null }; });
-    return { tasks, projects: projectsState, settings, meetings: meetingsState.map(m => { const { recaps, ...rest } = m; return rest; }) };
+    return { tasks, projects: projectsState, settings, meetings: meetingsState.filter(m => !m.ephemeral).map(m => { const { recaps, ...rest } = m; return rest; }) };
   }
   async persist() {
     if (this._persisting) { this._persistAgain = true; return; }
@@ -141,7 +141,7 @@ class Component extends DCLogic {
     MEETINGS = this.state.meetingsState;
     const MEET = showOneOff ? MEETINGS : MEETINGS.filter(m => !m.oneOff);
     const today0 = new Date(); const dow = today0.getDay(); const pad2 = n => String(n).padStart(2, '0'); const todayStr = today0.getFullYear() + '-' + pad2(today0.getMonth() + 1) + '-' + pad2(today0.getDate());
-    const TODAY = MEET.filter(m => m.time && (m.oneOff ? m.oneOffDate === todayStr : (m.days || []).includes(dow)));
+    const TODAY = this.state.calendarConnected ? MEET.filter(m => m.onCalendarToday) : MEET.filter(m => m.time && (m.oneOff ? m.oneOffDate === todayStr : (m.days || []).includes(dow)));
     const PROJ = this.state.projectsState;
     const byProject = Object.fromEntries(PROJ.map(p => [p.id, p]));
     const isMobile = this.props.forceMobile ? true : this.state.isMobile;
@@ -316,6 +316,10 @@ class Component extends DCLogic {
     const meetingCountLabel = MEETINGS.length + ' meeting' + (MEETINGS.length === 1 ? '' : 's') + ' configured';
     return {
       loaded: this.state.loaded, loading: !this.state.loaded && !this.state.loadError, loadError: this.state.loadError, saveLabel: this.state.saving ? 'Saving…' : (this.state.loadError ? '' : 'Saved'), saveColor: this.state.loadError ? '#B91C1C' : '#9CA3AF',
+      googleConnected: this.state.calendarConnected, showConnectGoogle: this.state.loaded && !this.state.calendarConnected, connectGoogleLabel: this.state.googleConfigured ? 'Connect Google' : 'Google not configured',
+      connectGoogle: () => { if (this.state.googleConfigured) location.href = '/api/google/connect'; else this.setState({ toast: 'Add GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET on Netlify first' }); },
+      disconnectGoogle: async () => { if (!confirm('Disconnect Google Calendar and Drive?')) return; await fetch('/api/google/disconnect', { method: 'POST', credentials: 'same-origin' }); this.load(); },
+      warningText: (this.state.warnings || []).join(' · '),
       signOut: async () => { await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' }); location.href = '/login.html'; },
       meetEditOpen: !!meetEdit, me, meetEditTitle: meetEdit && meetEdit.isNew ? 'New meeting' : 'Edit meeting', newMeeting: () => this.openMeetingEditor(null), cancelMeeting: () => this.setState({ meetEdit: null }), saveMeeting, deleteMeeting, meetingCountLabel,
       noTickets: !tickets.length, noProjects: !projects.length,
