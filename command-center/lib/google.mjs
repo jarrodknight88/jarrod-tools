@@ -107,7 +107,8 @@ export async function folderTree(token, force = false) {
     folders.push(...(j.files || [])); pageToken = j.nextPageToken || '';
   } while (pageToken);
   const nodes = Object.fromEntries(folders.map(f => [f.id, { id: f.id, name: f.name, children: [] }]));
-  const tree = { id: root.id, name: 'My Drive', children: [] };
+  // The UI treats 'root' as the tree root; keep Google's real root id alongside for reference.
+  const tree = { id: 'root', driveId: root.id, name: 'My Drive', children: [] };
   for (const f of folders) { const parent = (f.parents || [])[0]; const n = nodes[f.id]; if (parent === root.id) tree.children.push(n); else if (nodes[parent]) nodes[parent].children.push(n); }
   const sortRec = n => { n.children.sort((a, b) => a.name.localeCompare(b.name)); n.children.forEach(sortRec); }; sortRec(tree);
   await s.from('settings').upsert({ key: 'folder_tree_cache', value: { at: Date.now(), tree } }, { onConflict: 'key' });

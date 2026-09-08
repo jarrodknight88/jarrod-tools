@@ -26,7 +26,7 @@ const DAYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 let MEETINGS = [], ITEMS = [], PROJECTS = [], TICKETS = [];
 let DRIVE = { id: 'root', name: 'My Drive', children: [] };
 let FOLDER_INDEX = {};
-function setFolderTree(tree) { DRIVE = tree || { id: 'root', name: 'My Drive', children: [] }; FOLDER_INDEX = {}; (function walk(n, path, parent) { FOLDER_INDEX[n.id] = { node: n, path, parent }; (n.children || []).forEach(c => walk(c, [...path, c.name], n.id)); })(DRIVE, [], null); }
+function setFolderTree(tree) { DRIVE = tree || { id: 'root', name: 'My Drive', children: [] }; DRIVE.id = 'root'; FOLDER_INDEX = {}; (function walk(n, path, parent) { FOLDER_INDEX[n.id] = { node: n, path, parent }; (n.children || []).forEach(c => walk(c, [...path, c.name], n.id)); })(DRIVE, [], null); }
 setFolderTree(DRIVE);
 const folderPath = id => id && FOLDER_INDEX[id] ? FOLDER_INDEX[id].path.join(' / ') : '';
 const FOLDER_FILES = {};
@@ -292,7 +292,7 @@ class Component extends DCLogic {
       bg: pickerSel === node.id ? '#EFF6FF' : 'transparent', fg: pickerSel === node.id ? '#1D4ED8' : '#111111',
       select: () => this.setState({ pickerSel: node.id }), toggle: e => { e.stopPropagation(); this.setState(s => ({ pickerExpanded: { ...s.pickerExpanded, [node.id]: !s.pickerExpanded[node.id] } })); } }));
     const crumbPath = pickerSel && FOLDER_INDEX[pickerSel] ? ['root', ...(function chain(id) { const out = []; let c = id; while (c && c !== 'root') { out.unshift(c); c = FOLDER_INDEX[c].parent; } return out; })(pickerSel)] : ['root'];
-    const pickerCrumbs = crumbPath.map((id, i) => ({ name: FOLDER_INDEX[id].node.name, sep: i < crumbPath.length - 1 ? '›' : '', color: i === crumbPath.length - 1 ? '#111111' : '#6B7280', weight: i === crumbPath.length - 1 ? 600 : 400,
+    const pickerCrumbs = crumbPath.filter(id => FOLDER_INDEX[id]).map((id, i) => ({ name: FOLDER_INDEX[id].node.name, sep: i < crumbPath.length - 1 ? '›' : '', color: i === crumbPath.length - 1 ? '#111111' : '#6B7280', weight: i === crumbPath.length - 1 ? 600 : 400,
       go: () => this.setState(s => ({ pickerSel: id, pickerQuery: '', pickerExpanded: { ...s.pickerExpanded, [id]: true } })) }));
     const confirmPick = () => { if (!pickerSel || pickerSel === 'root') return; const id = pickerFor; this.setDraft(d => { if (id === 'default') d.defaultFolder = pickerSel; else if (id.startsWith('p:')) { const p = d.patterns.find(p => p.id === id); if (p) p.folder = pickerSel; } else d.mappings[id] = { ...(d.mappings[id] || { mode: 'title' }), folder: pickerSel }; }); this.setState({ pickerFor: null, highlightRow: null }); };
     const modalNarrow = isMobile;
