@@ -2,7 +2,7 @@
 // One-time OAuth stores a refresh token in the settings table; every request mints a short-lived access token from it.
 import { db } from './db.mjs';
 
-const SCOPES = ['https://www.googleapis.com/auth/calendar.events', 'https://www.googleapis.com/auth/drive.metadata.readonly'];
+const SCOPES = ['https://www.googleapis.com/auth/calendar.events', 'https://www.googleapis.com/auth/drive.metadata.readonly', 'https://www.googleapis.com/auth/drive.file'];
 const cfg = () => ({ id: Netlify.env.get('GOOGLE_CLIENT_ID'), secret: Netlify.env.get('GOOGLE_CLIENT_SECRET') });
 
 export function redirectUri(req) { const u = new URL(req.url); return `${u.protocol}//${u.host}/api/google/callback`; }
@@ -132,3 +132,32 @@ export function dateFromName(name) {
 
 // Simple glob: * matches anything, case-insensitive.
 export const globMatch = (pattern, text) => { if (!pattern) return false; const re = new RegExp('^' + pattern.split('*').map(x => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('.*') + '$', 'i'); return re.test(text || ''); };
+
+// ---- Drive writes (drive.file scope: only files this app creates) ----
+
+// Create a Google Doc from HTML by letting Drive convert the upload.
+export async function createDocFromHtml(token, { name, html, parentId }) {
+  const boundary = 'cc' + Date.now();
+  const meta = { name, mimeType: 'application/vnd.google-apps.document', parents: parentId ? [parentId] : undefined };
+  const body = `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(meta)}\r\n--${boundary}\r\nContent-Type: text/html; charset=UTF-8\r\n\r\n${html}\r\n--${boundary}--`;
+  const r = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink', { method: 'POST', headers: { authorization: 'Bearer ' + token, 'content-type': `multipart/related; boundary=${boundary}` }, body });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error((j.error && j.error.message) || ('Drive upload ' + r.status));
+  return j;
+}
+
+// Find-or-create a folder by name under a parent (root when parentId is null).
+export async function ensureFolder(token, name, parentId) {
+  const parentQ = parentId ? `'${parentId}' in parents` : "'root' in parents";
+  const q = `name = '${name.replace(/'/g, "\\'")}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false and ${parentQ}`;
+  const found = await g(token, 'https://www.googleapis.com/drive/v3/files?' + new URLSearchParams({ q, fields: 'files(id,name)', pageSize: '1' }));
+  if (found.files && found.files.length) return found.files[0];
+  return g(token, 'https://www.googleapis.com/drive/v3/files?fields=id,name', { method: 'POST', body: JSON.stringify({ name, mimeType: 'application/vnd.google-apps.folder', parents: parentId ? [parentId] : undefined }) });
+}
+
+// Does the stored token carry a scope? Used to tell the user to re-authorize after scopes grow.
+export async function tokenScopes(token) {
+  const r = await fetch('https://oauth2.googleapis.com/tokeninfo?access_token=' + encodeURIComponent(token));
+  const j = await r.json().catch(() => ({}));
+  return (j.scope || '').split(' ');
+}

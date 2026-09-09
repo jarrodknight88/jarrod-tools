@@ -120,10 +120,10 @@ class Component extends DCLogic {
   componentWillUnmount() { window.removeEventListener('resize', this._onResize); if (this._ro) this._ro.disconnect(); }
   addTask(text, extra) { const { title, due } = parseQuick(text, new Date()); if (!title) return false;
     this.setState(s => ({ custom: [...s.custom, { id: uuid(), title, due, urgency: 'soon', owner: 'Jarrod', source: 'quick_add', meetings: [], projects: [], ...extra }] })); return true; }
-  openMeetingEditor(m) {
+  openMeetingEditor(m, prefill) {
     const to24 = t => { if (!t) return ''; const mm = toMin(t); return String(Math.floor(mm / 60)).padStart(2, '0') + ':' + String(mm % 60).padStart(2, '0'); };
     this.setState({ meetEdit: m ? { ...m, time24: to24(m.time), attendeesText: (m.attendees || []).join(', '), isNew: false }
-      : { id: uuid(), key: '', title: '', type: 'General', cadence: '', time24: '', dur: 30, days: [], attendees: [], attendeesText: '', matchPattern: '', exclude: false, oneOff: false, oneOffDate: '', recaps: [], isNew: true } });
+      : { id: uuid(), key: '', title: '', type: 'General', cadence: '', time24: '', dur: 30, days: [], attendees: [], attendeesText: '', matchPattern: '', exclude: false, oneOff: false, oneOffDate: '', recaps: [], isNew: true, ...(prefill || {}) } });
   }
   openSettings(rowId, withPicker) { this.setState(s => ({ settingsOpen: true, draft: JSON.parse(JSON.stringify(s.settings)), highlightRow: rowId || null, pickerFor: withPicker ? rowId : null, pickerSel: null, pickerQuery: '' })); }
   closeSettings() { this.setState(s => ({ settings: s.draft || s.settings, draft: null, settingsOpen: false, pickerFor: null, highlightRow: null, toast: 'Recap sources updated' }));
@@ -251,7 +251,8 @@ class Component extends DCLogic {
     const openItems = items.filter(i => !i.done), doneItems = items.filter(i => i.done);
     const src = pm ? this.resolveSource(pm, settings) : null;
     const srcRecaps = pm && src ? [...pm.recaps.map(r => ({ ...r, kind: '' })), ...(src.mode === 'all' ? (FOLDER_FILES[src.folder] || []).map(f => ({ date: f, summary: 'Other file in this folder (not a recap).', kind: 'File' })) : [])] : [];
-    const panel = pm ? { title: pm.title, type: pm.type, oneOff: !!pm.oneOff, unmapped: !pm.oneOff && !src, mapped: !pm.oneOff && !!src,
+    const panel = pm ? { title: pm.title, type: pm.type, oneOff: !!pm.oneOff, unmapped: !pm.oneOff && !src, mapped: !pm.oneOff && !!src, ephemeral: !!pm.ephemeral,
+      track: () => { this.setState({ selected: null }); this.openMeetingEditor(null, { title: pm.title, matchPattern: pm.title, time24: pm.time ? (() => { const mm = toMin(pm.time); return String(Math.floor(mm / 60)).padStart(2, '0') + ':' + String(mm % 60).padStart(2, '0'); })() : '', dur: pm.dur || 30, days: [new Date().getDay()], attendees: pm.attendees || [], attendeesText: (pm.attendees || []).join(', ') }); },
       folderPath: src ? folderPath(src.folder) + (src.via === 'default' ? ' (default)' : src.via === 'pattern' ? ' (pattern)' : '') : '',
       modeLabel: src ? (src.mode === 'all' ? 'All files in folder' : 'Matching “' + pm.title + '”') : '', mapFolder: () => this.openSettings(pm.id, true), color: TYPES[pm.type], cadence: pm.cadence, openCount: openItems.length, openCountLabel: openItems.length + ' open item' + (openItems.length === 1 ? '' : 's'),
       recaps: (pm.oneOff || src ? srcRecaps : []).map(r => ({ ...r, dateLabel: r.kind ? r.date : fmtDate(r.date), url: r.url || ('https://drive.google.com/drive/search?q=' + encodeURIComponent(pm.title + ' ' + r.date)) })), openItems, doneItems, noOpen: !openItems.length, hasDone: doneItems.length > 0, doneCount: '(' + doneItems.length + ')' } : { recaps: [], openItems: [], doneItems: [], openCount: '' };
@@ -320,6 +321,9 @@ class Component extends DCLogic {
       connectGoogle: () => { if (this.state.googleConfigured) location.href = '/api/google/connect'; else this.setState({ toast: 'Add GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET on Netlify first' }); },
       disconnectGoogle: async () => { if (!confirm('Disconnect Google Calendar and Drive?')) return; await fetch('/api/google/disconnect', { method: 'POST', credentials: 'same-origin' }); this.load(); },
       warningText: (this.state.warnings || []).join(' · '),
+      syncGranola: async () => { this.setState({ toast: 'Checking Granola…' }); try { const r = await fetch('/api/granola/sync', { method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'application/json' }, body: '{}' }); const j = await r.json();
+        const msg = !r.ok ? ('Sync failed: ' + (j.error || r.status)) : !j.ran ? ('Sync not run: ' + j.reason) : ((j.results || []).filter(x => x.status === 'processed').length + ' recap(s) created, ' + (j.results || []).filter(x => x.status !== 'processed').length + ' skipped');
+        this.setState({ toast: msg }); clearTimeout(this._toast); this._toast = setTimeout(() => this.setState({ toast: '' }), 5000); if (r.ok && j.ran) this.load(); } catch (e) { this.setState({ toast: 'Sync failed: ' + e.message }); } },
       signOut: async () => { await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' }); location.href = '/login.html'; },
       meetEditOpen: !!meetEdit, me, meetEditTitle: meetEdit && meetEdit.isNew ? 'New meeting' : 'Edit meeting', newMeeting: () => this.openMeetingEditor(null), cancelMeeting: () => this.setState({ meetEdit: null }), saveMeeting, deleteMeeting, meetingCountLabel,
       noTickets: !tickets.length, noProjects: !projects.length,
