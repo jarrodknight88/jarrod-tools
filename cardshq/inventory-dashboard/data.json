@@ -1,6 +1,6 @@
 {
-  "date": "2026-09-19",
-  "generatedAt": "2026-09-20T15:24:21.093Z",
+  "date": "2026-09-20",
+  "generatedAt": "2026-09-21T17:49:14.875Z",
   "scope": "Cards only - all channels (online + POS)",
   "isSample": false,
   "records": [
@@ -9,19 +9,19 @@
       "subject": "Other",
       "tier": "<$25",
       "cond": "Graded",
-      "onhand": 1,
+      "onhand": 0,
       "val": {
-        "cost": 16,
-        "retail": 20
+        "cost": 0,
+        "retail": 0
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 0,
+          "out": 1,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
+          "soldCost": 16,
+          "soldRevenue": 20
         }
       }
     },
@@ -30,19 +30,19 @@
       "subject": "Other",
       "tier": "$150-250",
       "cond": "Graded",
-      "onhand": 5,
+      "onhand": 4,
       "val": {
-        "cost": 823,
-        "retail": 1025
+        "cost": 643,
+        "retail": 800
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 0,
+          "out": 1,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
+          "soldCost": 250,
+          "soldRevenue": 220
         }
       }
     },
@@ -72,19 +72,19 @@
       "subject": "Other",
       "tier": "$25-50",
       "cond": "Graded",
-      "onhand": 4,
+      "onhand": 3,
       "val": {
-        "cost": 113,
-        "retail": 150
+        "cost": 83,
+        "retail": 105
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 0,
+          "out": 1,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
+          "soldCost": 30,
+          "soldRevenue": 45
         }
       }
     },
@@ -93,19 +93,19 @@
       "subject": "Other",
       "tier": "$250-500",
       "cond": "Graded",
-      "onhand": 7,
+      "onhand": 4,
       "val": {
-        "cost": 1892,
-        "retail": 2340
+        "cost": 1091,
+        "retail": 1350
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 0,
+          "out": 2,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
+          "soldCost": 551,
+          "soldRevenue": 690
         }
       }
     },
@@ -114,19 +114,19 @@
       "subject": "Other",
       "tier": "$50-150",
       "cond": "Graded",
-      "onhand": 9,
+      "onhand": 7,
       "val": {
-        "cost": 671,
-        "retail": 835
+        "cost": 567,
+        "retail": 700
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 0,
+          "out": 1,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
+          "soldCost": 56,
+          "soldRevenue": 75
         }
       }
     },
@@ -135,19 +135,19 @@
       "subject": "Other",
       "tier": "$500-1K",
       "cond": "Graded",
-      "onhand": 1,
+      "onhand": 0,
       "val": {
-        "cost": 575,
-        "retail": 700
+        "cost": 0,
+        "retail": 0
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 0,
+          "out": 1,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
+          "soldCost": 575,
+          "soldRevenue": 700
         }
       }
     },
@@ -156,19 +156,19 @@
       "subject": "Baseball",
       "tier": "<$25",
       "cond": "Graded",
-      "onhand": 482,
+      "onhand": 481,
       "val": {
-        "cost": 4679.73,
-        "retail": 7525
+        "cost": 4666.14,
+        "retail": 7505
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 43,
+          "out": 3,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 432,
-          "soldRevenue": 765
+          "soldCost": 33.59,
+          "soldRevenue": 60
         }
       }
     },
@@ -177,19 +177,19 @@
       "subject": "Baseball",
       "tier": "$150-250",
       "cond": "Graded",
-      "onhand": 113,
+      "onhand": 112,
       "val": {
-        "cost": 17503.1,
-        "retail": 21340
+        "cost": 17418.1,
+        "retail": 21190
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 3,
+          "out": 1,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 390,
-          "soldRevenue": 525
+          "soldCost": 85,
+          "soldRevenue": 150
         }
       }
     },
@@ -198,10 +198,10 @@
       "subject": "Baseball",
       "tier": "$1K+",
       "cond": "Graded",
-      "onhand": 51,
+      "onhand": 48,
       "val": {
-        "cost": 192623.12,
-        "retail": 232155
+        "cost": 179988.12,
+        "retail": 218055
       },
       "p": {
         "daily": {
@@ -219,19 +219,19 @@
       "subject": "Baseball",
       "tier": "$25-50",
       "cond": "Graded",
-      "onhand": 266,
+      "onhand": 265,
       "val": {
-        "cost": 3426.98,
-        "retail": 7370
+        "cost": 3416.98,
+        "retail": 7345
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 36,
+          "out": 1,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 629,
-          "soldRevenue": 1085
+          "soldCost": 35,
+          "soldRevenue": 45
         }
       }
     },
@@ -240,19 +240,19 @@
       "subject": "Baseball",
       "tier": "$250-500",
       "cond": "Graded",
-      "onhand": 102,
+      "onhand": 99,
       "val": {
-        "cost": 27939.35,
-        "retail": 34375
+        "cost": 27179.35,
+        "retail": 33420
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 2,
+          "out": 4,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 500,
-          "soldRevenue": 640
+          "soldCost": 1130,
+          "soldRevenue": 1395
         }
       }
     },
@@ -261,19 +261,19 @@
       "subject": "Baseball",
       "tier": "$50-150",
       "cond": "Graded",
-      "onhand": 320,
+      "onhand": 319,
       "val": {
-        "cost": 14299.07,
-        "retail": 25860
+        "cost": 14317.07,
+        "retail": 25840
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 10,
+          "out": 2,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 435,
-          "soldRevenue": 670
+          "soldCost": 50,
+          "soldRevenue": 105
         }
       }
     },
@@ -282,19 +282,19 @@
       "subject": "Baseball",
       "tier": "$500-1K",
       "cond": "Graded",
-      "onhand": 70,
+      "onhand": 67,
       "val": {
-        "cost": 41082.14,
-        "retail": 48910
+        "cost": 38917.14,
+        "retail": 46410
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 0,
+          "out": 1,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
+          "soldCost": 775,
+          "soldRevenue": 875
         }
       }
     },
@@ -303,19 +303,19 @@
       "subject": "Baseball",
       "tier": "<$25",
       "cond": "Raw",
-      "onhand": 1366,
+      "onhand": 1364,
       "val": {
-        "cost": 14585.01,
-        "retail": 18816
+        "cost": 14570.01,
+        "retail": 18791
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 12,
+          "out": 2,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 149.92,
-          "soldRevenue": 200
+          "soldCost": 15,
+          "soldRevenue": 25
         }
       }
     },
@@ -345,10 +345,10 @@
       "subject": "Baseball",
       "tier": "$1K+",
       "cond": "Raw",
-      "onhand": 40,
+      "onhand": 39,
       "val": {
-        "cost": 81912,
-        "retail": 99970
+        "cost": 81022,
+        "retail": 98870
       },
       "p": {
         "daily": {
@@ -356,8 +356,8 @@
           "out": 1,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 800,
-          "soldRevenue": 1000
+          "soldCost": 890,
+          "soldRevenue": 1100
         }
       }
     },
@@ -366,19 +366,19 @@
       "subject": "Baseball",
       "tier": "$25-50",
       "cond": "Raw",
-      "onhand": 812,
+      "onhand": 807,
       "val": {
-        "cost": 19689.68,
-        "retail": 26225
+        "cost": 19574.68,
+        "retail": 26070
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 10,
+          "out": 4,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 253.85,
-          "soldRevenue": 305
+          "soldCost": 90,
+          "soldRevenue": 120
         }
       }
     },
@@ -387,19 +387,19 @@
       "subject": "Baseball",
       "tier": "$250-500",
       "cond": "Raw",
-      "onhand": 241,
+      "onhand": 238,
       "val": {
-        "cost": 64514.27,
-        "retail": 78795
+        "cost": 63610.27,
+        "retail": 77645
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 1,
+          "out": 3,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 341.13,
-          "soldRevenue": 425
+          "soldCost": 880,
+          "soldRevenue": 1085
         }
       }
     },
@@ -408,19 +408,19 @@
       "subject": "Baseball",
       "tier": "$50-150",
       "cond": "Raw",
-      "onhand": 828,
+      "onhand": 825,
       "val": {
-        "cost": 54444.9,
-        "retail": 70060
+        "cost": 54204.9,
+        "retail": 69755
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 14,
+          "out": 7,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 899.61,
-          "soldRevenue": 1220
+          "soldCost": 510,
+          "soldRevenue": 650
         }
       }
     },
@@ -429,19 +429,19 @@
       "subject": "Baseball",
       "tier": "$500-1K",
       "cond": "Raw",
-      "onhand": 84,
+      "onhand": 83,
       "val": {
-        "cost": 48755.47,
-        "retail": 55940
+        "cost": 48005.47,
+        "retail": 55090
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 0,
+          "out": 1,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
+          "soldCost": 750,
+          "soldRevenue": 850
         }
       }
     },
@@ -450,19 +450,19 @@
       "subject": "Basketball",
       "tier": "<$25",
       "cond": "Graded",
-      "onhand": 6,
+      "onhand": 3,
       "val": {
-        "cost": 68.59,
-        "retail": 100
+        "cost": 38.59,
+        "retail": 50
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 13,
+          "out": 3,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 125,
-          "soldRevenue": 230.86
+          "soldCost": 30,
+          "soldRevenue": 50
         }
       }
     },
@@ -479,11 +479,11 @@
       "p": {
         "daily": {
           "in": 0,
-          "out": 1,
+          "out": 0,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 125,
-          "soldRevenue": 203.1
+          "soldCost": 0,
+          "soldRevenue": 0
         }
       }
     },
@@ -492,19 +492,19 @@
       "subject": "Basketball",
       "tier": "$1K+",
       "cond": "Graded",
-      "onhand": 60,
+      "onhand": 50,
       "val": {
-        "cost": 179550.47,
-        "retail": 218625
+        "cost": 128520.47,
+        "retail": 156275
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 0,
+          "out": 2,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
+          "soldCost": 4700,
+          "soldRevenue": 5500
         }
       }
     },
@@ -513,73 +513,10 @@
       "subject": "Basketball",
       "tier": "$25-50",
       "cond": "Graded",
-      "onhand": 12,
+      "onhand": 13,
       "val": {
-        "cost": 267,
-        "retail": 415
-      },
-      "p": {
-        "daily": {
-          "in": 0,
-          "out": 19,
-          "inCost": 0,
-          "inRetail": 0,
-          "soldCost": 285,
-          "soldRevenue": 590
-        }
-      }
-    },
-    {
-      "category": "Sports",
-      "subject": "Basketball",
-      "tier": "$250-500",
-      "cond": "Graded",
-      "onhand": 38,
-      "val": {
-        "cost": 10689.48,
-        "retail": 13565
-      },
-      "p": {
-        "daily": {
-          "in": 0,
-          "out": 2,
-          "inCost": 0,
-          "inRetail": 0,
-          "soldCost": 365,
-          "soldRevenue": 510
-        }
-      }
-    },
-    {
-      "category": "Sports",
-      "subject": "Basketball",
-      "tier": "$50-150",
-      "cond": "Graded",
-      "onhand": 46,
-      "val": {
-        "cost": 3860.5,
-        "retail": 4835
-      },
-      "p": {
-        "daily": {
-          "in": 0,
-          "out": 7,
-          "inCost": 0,
-          "inRetail": 0,
-          "soldCost": 345,
-          "soldRevenue": 510
-        }
-      }
-    },
-    {
-      "category": "Sports",
-      "subject": "Basketball",
-      "tier": "$500-1K",
-      "cond": "Graded",
-      "onhand": 17,
-      "val": {
-        "cost": 9830,
-        "retail": 11875
+        "cost": 288,
+        "retail": 445
       },
       "p": {
         "daily": {
@@ -595,12 +532,12 @@
     {
       "category": "Sports",
       "subject": "Basketball",
-      "tier": "<$25",
-      "cond": "Raw",
-      "onhand": 578,
+      "tier": "$250-500",
+      "cond": "Graded",
+      "onhand": 36,
       "val": {
-        "cost": 5810.55,
-        "retail": 7709
+        "cost": 10249.48,
+        "retail": 12990
       },
       "p": {
         "daily": {
@@ -608,8 +545,71 @@
           "out": 4,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 30,
-          "soldRevenue": 50
+          "soldCost": 1005,
+          "soldRevenue": 1225
+        }
+      }
+    },
+    {
+      "category": "Sports",
+      "subject": "Basketball",
+      "tier": "$50-150",
+      "cond": "Graded",
+      "onhand": 45,
+      "val": {
+        "cost": 3810.5,
+        "retail": 4770
+      },
+      "p": {
+        "daily": {
+          "in": 0,
+          "out": 2,
+          "inCost": 0,
+          "inRetail": 0,
+          "soldCost": 170,
+          "soldRevenue": 205
+        }
+      }
+    },
+    {
+      "category": "Sports",
+      "subject": "Basketball",
+      "tier": "$500-1K",
+      "cond": "Graded",
+      "onhand": 16,
+      "val": {
+        "cost": 9350,
+        "retail": 11275
+      },
+      "p": {
+        "daily": {
+          "in": 0,
+          "out": 1,
+          "inCost": 0,
+          "inRetail": 0,
+          "soldCost": 480,
+          "soldRevenue": 600
+        }
+      }
+    },
+    {
+      "category": "Sports",
+      "subject": "Basketball",
+      "tier": "<$25",
+      "cond": "Raw",
+      "onhand": 576,
+      "val": {
+        "cost": 5797.55,
+        "retail": 7689
+      },
+      "p": {
+        "daily": {
+          "in": 0,
+          "out": 2,
+          "inCost": 0,
+          "inRetail": 0,
+          "soldCost": 13,
+          "soldRevenue": 20
         }
       }
     },
@@ -618,10 +618,10 @@
       "subject": "Basketball",
       "tier": "$150-250",
       "cond": "Raw",
-      "onhand": 131,
+      "onhand": 129,
       "val": {
-        "cost": 21420.68,
-        "retail": 24180
+        "cost": 21259.68,
+        "retail": 23765
       },
       "p": {
         "daily": {
@@ -629,8 +629,8 @@
           "out": 2,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 300,
-          "soldRevenue": 375
+          "soldCost": 161,
+          "soldRevenue": 415
         }
       }
     },
@@ -647,11 +647,11 @@
       "p": {
         "daily": {
           "in": 0,
-          "out": 1,
+          "out": 0,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 2000,
-          "soldRevenue": 2300
+          "soldCost": 0,
+          "soldRevenue": 0
         }
       }
     },
@@ -660,19 +660,19 @@
       "subject": "Basketball",
       "tier": "$25-50",
       "cond": "Raw",
-      "onhand": 339,
+      "onhand": 337,
       "val": {
-        "cost": 8415.94,
-        "retail": 11024
+        "cost": 8365.94,
+        "retail": 10954
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 4,
+          "out": 2,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 95,
-          "soldRevenue": 130
+          "soldCost": 50,
+          "soldRevenue": 70
         }
       }
     },
@@ -681,19 +681,19 @@
       "subject": "Basketball",
       "tier": "$250-500",
       "cond": "Raw",
-      "onhand": 109,
+      "onhand": 108,
       "val": {
-        "cost": 29969.74,
-        "retail": 35530
+        "cost": 29729.74,
+        "retail": 35255
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 2,
+          "out": 1,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 563.48,
-          "soldRevenue": 655
+          "soldCost": 240,
+          "soldRevenue": 275
         }
       }
     },
@@ -702,19 +702,19 @@
       "subject": "Basketball",
       "tier": "$50-150",
       "cond": "Raw",
-      "onhand": 416,
+      "onhand": 410,
       "val": {
-        "cost": 28010.85,
-        "retail": 34825
+        "cost": 27679.85,
+        "retail": 34385
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 3,
+          "out": 6,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 125,
-          "soldRevenue": 160
+          "soldCost": 331,
+          "soldRevenue": 430
         }
       }
     },
@@ -731,11 +731,11 @@
       "p": {
         "daily": {
           "in": 0,
-          "out": 1,
+          "out": 0,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 650,
-          "soldRevenue": 650
+          "soldCost": 0,
+          "soldRevenue": 0
         }
       }
     },
@@ -784,27 +784,6 @@
     {
       "category": "Sports",
       "subject": "F1",
-      "tier": "<$25",
-      "cond": "Graded",
-      "onhand": 0,
-      "val": {
-        "cost": 0,
-        "retail": 0
-      },
-      "p": {
-        "daily": {
-          "in": 0,
-          "out": 1,
-          "inCost": 0,
-          "inRetail": 0,
-          "soldCost": 10,
-          "soldRevenue": 15
-        }
-      }
-    },
-    {
-      "category": "Sports",
-      "subject": "F1",
       "tier": "$50-150",
       "cond": "Graded",
       "onhand": 1,
@@ -815,11 +794,11 @@
       "p": {
         "daily": {
           "in": 0,
-          "out": 1,
+          "out": 0,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 80,
-          "soldRevenue": 100
+          "soldCost": 0,
+          "soldRevenue": 0
         }
       }
     },
@@ -891,10 +870,10 @@
       "subject": "F1",
       "tier": "$50-150",
       "cond": "Raw",
-      "onhand": 8,
+      "onhand": 7,
       "val": {
-        "cost": 2412.6,
-        "retail": 725
+        "cost": 2362.6,
+        "retail": 660
       },
       "p": {
         "daily": {
@@ -903,7 +882,7 @@
           "inCost": 0,
           "inRetail": 0,
           "soldCost": 50,
-          "soldRevenue": 75
+          "soldRevenue": 65
         }
       }
     },
@@ -912,19 +891,19 @@
       "subject": "Football",
       "tier": "<$25",
       "cond": "Graded",
-      "onhand": 17,
+      "onhand": 7,
       "val": {
-        "cost": 165.17,
-        "retail": 260
+        "cost": 65,
+        "retail": 110
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 7,
+          "out": 9,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 71,
-          "soldRevenue": 105
+          "soldCost": 98.17,
+          "soldRevenue": 145
         }
       }
     },
@@ -933,19 +912,19 @@
       "subject": "Football",
       "tier": "$150-250",
       "cond": "Graded",
-      "onhand": 30,
+      "onhand": 28,
       "val": {
-        "cost": 4436.18,
-        "retail": 5635
+        "cost": 4132.18,
+        "retail": 5255
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 4,
+          "out": 3,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 615,
-          "soldRevenue": 765
+          "soldCost": 464,
+          "soldRevenue": 565
         }
       }
     },
@@ -954,10 +933,10 @@
       "subject": "Football",
       "tier": "$1K+",
       "cond": "Graded",
-      "onhand": 24,
+      "onhand": 23,
       "val": {
-        "cost": 103772,
-        "retail": 119610
+        "cost": 101272,
+        "retail": 116300
       },
       "p": {
         "daily": {
@@ -975,19 +954,19 @@
       "subject": "Football",
       "tier": "$25-50",
       "cond": "Graded",
-      "onhand": 8,
+      "onhand": 7,
       "val": {
-        "cost": 185,
-        "retail": 295
+        "cost": 165,
+        "retail": 270
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 19,
+          "out": 1,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 402,
-          "soldRevenue": 610
+          "soldCost": 20,
+          "soldRevenue": 25
         }
       }
     },
@@ -1004,11 +983,11 @@
       "p": {
         "daily": {
           "in": 0,
-          "out": 2,
+          "out": 0,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 400,
-          "soldRevenue": 500
+          "soldCost": 0,
+          "soldRevenue": 0
         }
       }
     },
@@ -1019,17 +998,17 @@
       "cond": "Graded",
       "onhand": 27,
       "val": {
-        "cost": 1947.34,
-        "retail": 2600
+        "cost": 1927.34,
+        "retail": 2575
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 24,
+          "out": 1,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 1529.95,
-          "soldRevenue": 2125
+          "soldCost": 65,
+          "soldRevenue": 80
         }
       }
     },
@@ -1038,10 +1017,10 @@
       "subject": "Football",
       "tier": "$500-1K",
       "cond": "Graded",
-      "onhand": 28,
+      "onhand": 26,
       "val": {
-        "cost": 14948.52,
-        "retail": 18890
+        "cost": 13748.52,
+        "retail": 17290
       },
       "p": {
         "daily": {
@@ -1049,8 +1028,8 @@
           "out": 1,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 800,
-          "soldRevenue": 900
+          "soldCost": 600,
+          "soldRevenue": 800
         }
       }
     },
@@ -1059,19 +1038,19 @@
       "subject": "Football",
       "tier": "<$25",
       "cond": "Raw",
-      "onhand": 689,
+      "onhand": 671,
       "val": {
-        "cost": 6770.04,
-        "retail": 9100
+        "cost": 6641.04,
+        "retail": 8850
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 26,
+          "out": 13,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 218,
-          "soldRevenue": 360
+          "soldCost": 109,
+          "soldRevenue": 175
         }
       }
     },
@@ -1080,19 +1059,19 @@
       "subject": "Football",
       "tier": "$150-250",
       "cond": "Raw",
-      "onhand": 180,
+      "onhand": 173,
       "val": {
-        "cost": 27792.3,
-        "retail": 32805
+        "cost": 26640.74,
+        "retail": 31480
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 2,
+          "out": 4,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 340,
-          "soldRevenue": 400
+          "soldCost": 715,
+          "soldRevenue": 795
         }
       }
     },
@@ -1122,19 +1101,19 @@
       "subject": "Football",
       "tier": "$25-50",
       "cond": "Raw",
-      "onhand": 513,
+      "onhand": 484,
       "val": {
-        "cost": 12972.2,
-        "retail": 17155
+        "cost": 12332.9,
+        "retail": 16150
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 28,
+          "out": 30,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 681.44,
-          "soldRevenue": 925
+          "soldCost": 729.3,
+          "soldRevenue": 1035
         }
       }
     },
@@ -1143,19 +1122,19 @@
       "subject": "Football",
       "tier": "$250-500",
       "cond": "Raw",
-      "onhand": 132,
+      "onhand": 131,
       "val": {
-        "cost": 39386.45,
-        "retail": 43635
+        "cost": 39126.45,
+        "retail": 43320
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 4,
+          "out": 1,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 1205,
-          "soldRevenue": 1200
+          "soldCost": 260,
+          "soldRevenue": 315
         }
       }
     },
@@ -1164,19 +1143,19 @@
       "subject": "Football",
       "tier": "$50-150",
       "cond": "Raw",
-      "onhand": 564,
+      "onhand": 551,
       "val": {
-        "cost": 38936.85,
-        "retail": 48310
+        "cost": 38252.86,
+        "retail": 46845
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 16,
+          "out": 13,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 1578.75,
-          "soldRevenue": 1635
+          "soldCost": 921.31,
+          "soldRevenue": 1135
         }
       }
     },
@@ -1185,19 +1164,19 @@
       "subject": "Football",
       "tier": "$500-1K",
       "cond": "Raw",
-      "onhand": 41,
+      "onhand": 38,
       "val": {
-        "cost": 23879.76,
-        "retail": 28410
+        "cost": 22179.76,
+        "retail": 26380
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 0,
+          "out": 2,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
+          "soldCost": 915,
+          "soldRevenue": 1080
         }
       }
     },
@@ -1424,11 +1403,11 @@
       "p": {
         "daily": {
           "in": 0,
-          "out": 0,
+          "out": 1,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
+          "soldCost": 120,
+          "soldRevenue": 150
         }
       }
     },
@@ -1479,19 +1458,19 @@
       "subject": "Hockey",
       "tier": "$250-500",
       "cond": "Graded",
-      "onhand": 6,
+      "onhand": 5,
       "val": {
-        "cost": 1385,
-        "retail": 1775
+        "cost": 1120,
+        "retail": 1425
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 0,
+          "out": 1,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
+          "soldCost": 265,
+          "soldRevenue": 350
         }
       }
     },
@@ -1500,19 +1479,19 @@
       "subject": "Hockey",
       "tier": "$50-150",
       "cond": "Graded",
-      "onhand": 6,
+      "onhand": 3,
       "val": {
-        "cost": 390,
-        "retail": 495
+        "cost": 150,
+        "retail": 195
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 0,
+          "out": 3,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
+          "soldCost": 240,
+          "soldRevenue": 300
         }
       }
     },
@@ -1571,11 +1550,11 @@
       "p": {
         "daily": {
           "in": 0,
-          "out": 0,
+          "out": 1,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
+          "soldCost": 190.59,
+          "soldRevenue": 220
         }
       }
     },
@@ -1655,11 +1634,11 @@
       "p": {
         "daily": {
           "in": 0,
-          "out": 0,
+          "out": 1,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
+          "soldCost": 110,
+          "soldRevenue": 145
         }
       }
     },
@@ -1689,19 +1668,19 @@
       "subject": "Multi-Sport",
       "tier": "$150-250",
       "cond": "Raw",
-      "onhand": 1,
+      "onhand": 0,
       "val": {
-        "cost": 140,
-        "retail": 150
+        "cost": 0,
+        "retail": 0
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 0,
+          "out": 1,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
+          "soldCost": 140,
+          "soldRevenue": 150
         }
       }
     },
@@ -1878,19 +1857,19 @@
       "subject": "Other Sports",
       "tier": "<$25",
       "cond": "Raw",
-      "onhand": 4,
+      "onhand": 3,
       "val": {
-        "cost": 54.09,
-        "retail": 65
+        "cost": 39.09,
+        "retail": 50
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 0,
+          "out": 1,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
+          "soldCost": 15,
+          "soldRevenue": 15
         }
       }
     },
@@ -2054,11 +2033,11 @@
       "p": {
         "daily": {
           "in": 0,
-          "out": 3,
+          "out": 0,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 70,
-          "soldRevenue": 95
+          "soldCost": 0,
+          "soldRevenue": 0
         }
       }
     },
@@ -2067,10 +2046,10 @@
       "subject": "Soccer",
       "tier": "$250-500",
       "cond": "Graded",
-      "onhand": 10,
+      "onhand": 9,
       "val": {
-        "cost": 3533.02,
-        "retail": 3940
+        "cost": 3148.02,
+        "retail": 3465
       },
       "p": {
         "daily": {
@@ -2078,8 +2057,8 @@
           "out": 1,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 324,
-          "soldRevenue": 420
+          "soldCost": 385,
+          "soldRevenue": 475
         }
       }
     },
@@ -2096,11 +2075,11 @@
       "p": {
         "daily": {
           "in": 0,
-          "out": 5,
+          "out": 0,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 268.7,
-          "soldRevenue": 280
+          "soldCost": 0,
+          "soldRevenue": 0
         }
       }
     },
@@ -2130,19 +2109,19 @@
       "subject": "Soccer",
       "tier": "<$25",
       "cond": "Raw",
-      "onhand": 117,
+      "onhand": 116,
       "val": {
-        "cost": 1476.54,
-        "retail": 1499
+        "cost": 1470.54,
+        "retail": 1489
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 0,
+          "out": 1,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
+          "soldCost": 6,
+          "soldRevenue": 10
         }
       }
     },
@@ -2235,19 +2214,19 @@
       "subject": "Soccer",
       "tier": "$50-150",
       "cond": "Raw",
-      "onhand": 129,
+      "onhand": 128,
       "val": {
-        "cost": 9597.05,
-        "retail": 11115
+        "cost": 9347.05,
+        "retail": 11015
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 0,
+          "out": 1,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
+          "soldCost": 250,
+          "soldRevenue": 100
         }
       }
     },
@@ -2327,11 +2306,11 @@
       "p": {
         "daily": {
           "in": 0,
-          "out": 1,
+          "out": 0,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 15,
-          "soldRevenue": 20
+          "soldCost": 0,
+          "soldRevenue": 0
         }
       }
     },
@@ -2655,19 +2634,19 @@
       "subject": "Wrestling",
       "tier": "$25-50",
       "cond": "Raw",
-      "onhand": 15,
+      "onhand": 12,
       "val": {
-        "cost": 401.24,
-        "retail": 505
+        "cost": 308.96,
+        "retail": 380
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 0,
+          "out": 3,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
+          "soldCost": 92.28,
+          "soldRevenue": 125
         }
       }
     },
@@ -3075,19 +3054,19 @@
       "subject": "Disney Topps",
       "tier": "$50-150",
       "cond": "Raw",
-      "onhand": 8,
+      "onhand": 6,
       "val": {
-        "cost": 445.65,
-        "retail": 580
+        "cost": 356.65,
+        "retail": 470
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 0,
+          "out": 1,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
+          "soldCost": 40,
+          "soldRevenue": 50
         }
       }
     },
@@ -3411,10 +3390,31 @@
       "subject": "Gundam",
       "tier": "$50-150",
       "cond": "Raw",
-      "onhand": 14,
+      "onhand": 15,
       "val": {
-        "cost": 874.9,
-        "retail": 1175
+        "cost": 934.9,
+        "retail": 1250
+      },
+      "p": {
+        "daily": {
+          "in": 0,
+          "out": 0,
+          "inCost": 0,
+          "inRetail": 0,
+          "soldCost": 0,
+          "soldRevenue": 0
+        }
+      }
+    },
+    {
+      "category": "TCG",
+      "subject": "Gundam",
+      "tier": "$500-1K",
+      "cond": "Raw",
+      "onhand": 1,
+      "val": {
+        "cost": 190,
+        "retail": 500
       },
       "p": {
         "daily": {
@@ -3474,19 +3474,19 @@
       "subject": "Magic the Gathering",
       "tier": "<$25",
       "cond": "Raw",
-      "onhand": 3246,
+      "onhand": 3275,
       "val": {
-        "cost": 21032,
-        "retail": 33947.5
+        "cost": 21218.7,
+        "retail": 34285.5
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 12,
+          "out": 8,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 114.1,
-          "soldRevenue": 165
+          "soldCost": 79,
+          "soldRevenue": 121
         }
       }
     },
@@ -3495,19 +3495,19 @@
       "subject": "Magic the Gathering",
       "tier": "$150-250",
       "cond": "Raw",
-      "onhand": 85,
+      "onhand": 89,
       "val": {
-        "cost": 10492.58,
-        "retail": 15800
+        "cost": 11036.18,
+        "retail": 16587
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 1,
+          "out": 0,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 127,
-          "soldRevenue": 180
+          "soldCost": 0,
+          "soldRevenue": 0
         }
       }
     },
@@ -3524,11 +3524,11 @@
       "p": {
         "daily": {
           "in": 0,
-          "out": 1,
+          "out": 0,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 60,
-          "soldRevenue": 65
+          "soldCost": 0,
+          "soldRevenue": 0
         }
       }
     },
@@ -3537,19 +3537,19 @@
       "subject": "Magic the Gathering",
       "tier": "$25-50",
       "cond": "Raw",
-      "onhand": 848,
+      "onhand": 859,
       "val": {
-        "cost": 17559.38,
-        "retail": 27702
+        "cost": 17787.08,
+        "retail": 28073
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 11,
+          "out": 4,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 201.2,
-          "soldRevenue": 315
+          "soldCost": 92.6,
+          "soldRevenue": 140
         }
       }
     },
@@ -3566,11 +3566,11 @@
       "p": {
         "daily": {
           "in": 0,
-          "out": 2,
+          "out": 0,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 222,
-          "soldRevenue": 610
+          "soldCost": 0,
+          "soldRevenue": 0
         }
       }
     },
@@ -3579,10 +3579,10 @@
       "subject": "Magic the Gathering",
       "tier": "$50-150",
       "cond": "Raw",
-      "onhand": 442,
+      "onhand": 446,
       "val": {
-        "cost": 21523.33,
-        "retail": 32671
+        "cost": 21647.13,
+        "retail": 32867
       },
       "p": {
         "daily": {
@@ -3590,8 +3590,8 @@
           "out": 3,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 159.8,
-          "soldRevenue": 230
+          "soldCost": 170,
+          "soldRevenue": 265
         }
       }
     },
@@ -3608,11 +3608,11 @@
       "p": {
         "daily": {
           "in": 0,
-          "out": 1,
+          "out": 0,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 400,
-          "soldRevenue": 500
+          "soldCost": 0,
+          "soldRevenue": 0
         }
       }
     },
@@ -3684,19 +3684,19 @@
       "subject": "Marvel",
       "tier": "$25-50",
       "cond": "Raw",
-      "onhand": 3,
+      "onhand": 2,
       "val": {
-        "cost": 88.85,
-        "retail": 111
+        "cost": 63.65,
+        "retail": 75
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 0,
+          "out": 1,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
+          "soldCost": 25.2,
+          "soldRevenue": 36
         }
       }
     },
@@ -3726,10 +3726,10 @@
       "subject": "Marvel",
       "tier": "$50-150",
       "cond": "Raw",
-      "onhand": 7,
+      "onhand": 8,
       "val": {
-        "cost": 520.09,
-        "retail": 615
+        "cost": 521.09,
+        "retail": 665
       },
       "p": {
         "daily": {
@@ -3747,10 +3747,10 @@
       "subject": "Media IP",
       "tier": "<$25",
       "cond": "Graded",
-      "onhand": 99,
+      "onhand": 93,
       "val": {
-        "cost": 990,
-        "retail": 1485
+        "cost": 930,
+        "retail": 1395
       },
       "p": {
         "daily": {
@@ -3831,19 +3831,19 @@
       "subject": "One Piece",
       "tier": "$150-250",
       "cond": "Graded",
-      "onhand": 90,
+      "onhand": 87,
       "val": {
-        "cost": 13554.76,
-        "retail": 17175
+        "cost": 13090.27,
+        "retail": 16600
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 1,
+          "out": 3,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 152,
-          "soldRevenue": 190
+          "soldCost": 464.49,
+          "soldRevenue": 575
         }
       }
     },
@@ -3852,10 +3852,10 @@
       "subject": "One Piece",
       "tier": "$1K+",
       "cond": "Graded",
-      "onhand": 24,
+      "onhand": 25,
       "val": {
-        "cost": 43199.2,
-        "retail": 47775
+        "cost": 44444.2,
+        "retail": 49350
       },
       "p": {
         "daily": {
@@ -3902,11 +3902,11 @@
       "p": {
         "daily": {
           "in": 0,
-          "out": 1,
+          "out": 0,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 200,
-          "soldRevenue": 250
+          "soldCost": 0,
+          "soldRevenue": 0
         }
       }
     },
@@ -3915,19 +3915,19 @@
       "subject": "One Piece",
       "tier": "$50-150",
       "cond": "Graded",
-      "onhand": 123,
+      "onhand": 124,
       "val": {
-        "cost": 10276.08,
-        "retail": 13125
+        "cost": 10324.08,
+        "retail": 13185
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 1,
+          "out": 0,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 84,
-          "soldRevenue": 100
+          "soldCost": 0,
+          "soldRevenue": 0
         }
       }
     },
@@ -3957,19 +3957,19 @@
       "subject": "One Piece",
       "tier": "<$25",
       "cond": "Raw",
-      "onhand": 541,
+      "onhand": 547,
       "val": {
-        "cost": 5532.74,
-        "retail": 5896
+        "cost": 5574.62,
+        "retail": 5975
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 6,
+          "out": 3,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 151.4,
-          "soldRevenue": 97
+          "soldCost": 38.82,
+          "soldRevenue": 50
         }
       }
     },
@@ -3978,19 +3978,19 @@
       "subject": "One Piece",
       "tier": "$150-250",
       "cond": "Raw",
-      "onhand": 69,
+      "onhand": 68,
       "val": {
-        "cost": 9374.46,
-        "retail": 12730
+        "cost": 9239.46,
+        "retail": 12540
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 0,
+          "out": 1,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
+          "soldCost": 135,
+          "soldRevenue": 150
         }
       }
     },
@@ -4020,19 +4020,19 @@
       "subject": "One Piece",
       "tier": "$25-50",
       "cond": "Raw",
-      "onhand": 295,
+      "onhand": 286,
       "val": {
-        "cost": 7790.22,
-        "retail": 10000
+        "cost": 7566.72,
+        "retail": 9711
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 7,
+          "out": 8,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 267.6,
-          "soldRevenue": 199
+          "soldCost": 199,
+          "soldRevenue": 249
         }
       }
     },
@@ -4064,17 +4064,17 @@
       "cond": "Raw",
       "onhand": 339,
       "val": {
-        "cost": 21342.2,
-        "retail": 28412
+        "cost": 21418.95,
+        "retail": 28520
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 3,
+          "out": 2,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 175.6,
-          "soldRevenue": 210
+          "soldCost": 114.25,
+          "soldRevenue": 138
         }
       }
     },
@@ -4104,199 +4104,10 @@
       "subject": "Pokemon",
       "tier": "<$25",
       "cond": "Graded",
-      "onhand": 3,
+      "onhand": 24,
       "val": {
-        "cost": 31.1,
-        "retail": 41
-      },
-      "p": {
-        "daily": {
-          "in": 0,
-          "out": 2,
-          "inCost": 0,
-          "inRetail": 0,
-          "soldCost": 28,
-          "soldRevenue": 35
-        }
-      }
-    },
-    {
-      "category": "TCG",
-      "subject": "Pokemon",
-      "tier": "$150-250",
-      "cond": "Graded",
-      "onhand": 226,
-      "val": {
-        "cost": 32279.6,
-        "retail": 42270
-      },
-      "p": {
-        "daily": {
-          "in": 0,
-          "out": 6,
-          "inCost": 0,
-          "inRetail": 0,
-          "soldCost": 802,
-          "soldRevenue": 1070
-        }
-      }
-    },
-    {
-      "category": "TCG",
-      "subject": "Pokemon",
-      "tier": "$1K+",
-      "cond": "Graded",
-      "onhand": 40,
-      "val": {
-        "cost": 81418.38,
-        "retail": 95450
-      },
-      "p": {
-        "daily": {
-          "in": 0,
-          "out": 1,
-          "inCost": 0,
-          "inRetail": 0,
-          "soldCost": 2240,
-          "soldRevenue": 2200
-        }
-      }
-    },
-    {
-      "category": "TCG",
-      "subject": "Pokemon",
-      "tier": "$25-50",
-      "cond": "Graded",
-      "onhand": 22,
-      "val": {
-        "cost": 528.7,
-        "retail": 804
-      },
-      "p": {
-        "daily": {
-          "in": 0,
-          "out": 5,
-          "inCost": 0,
-          "inRetail": 0,
-          "soldCost": 106.1,
-          "soldRevenue": 145
-        }
-      }
-    },
-    {
-      "category": "TCG",
-      "subject": "Pokemon",
-      "tier": "$250-500",
-      "cond": "Graded",
-      "onhand": 277,
-      "val": {
-        "cost": 73629.2,
-        "retail": 94467
-      },
-      "p": {
-        "daily": {
-          "in": 0,
-          "out": 3,
-          "inCost": 0,
-          "inRetail": 0,
-          "soldCost": 630.93,
-          "soldRevenue": 940
-        }
-      }
-    },
-    {
-      "category": "TCG",
-      "subject": "Pokemon",
-      "tier": "$50-150",
-      "cond": "Graded",
-      "onhand": 297,
-      "val": {
-        "cost": 23205.39,
-        "retail": 31120
-      },
-      "p": {
-        "daily": {
-          "in": 0,
-          "out": 10,
-          "inCost": 0,
-          "inRetail": 0,
-          "soldCost": 665.5,
-          "soldRevenue": 920
-        }
-      }
-    },
-    {
-      "category": "TCG",
-      "subject": "Pokemon",
-      "tier": "$500-1K",
-      "cond": "Graded",
-      "onhand": 130,
-      "val": {
-        "cost": 68974.85,
-        "retail": 85355
-      },
-      "p": {
-        "daily": {
-          "in": 0,
-          "out": 4,
-          "inCost": 0,
-          "inRetail": 0,
-          "soldCost": 1880,
-          "soldRevenue": 2330
-        }
-      }
-    },
-    {
-      "category": "TCG",
-      "subject": "Pokemon",
-      "tier": "<$25",
-      "cond": "Raw",
-      "onhand": 3308,
-      "val": {
-        "cost": 29189.32,
-        "retail": 42167
-      },
-      "p": {
-        "daily": {
-          "in": 0,
-          "out": 49,
-          "inCost": 0,
-          "inRetail": 0,
-          "soldCost": 511.17,
-          "soldRevenue": 747
-        }
-      }
-    },
-    {
-      "category": "TCG",
-      "subject": "Pokemon",
-      "tier": "$150-250",
-      "cond": "Raw",
-      "onhand": 309,
-      "val": {
-        "cost": 41570.96,
-        "retail": 56040
-      },
-      "p": {
-        "daily": {
-          "in": 0,
-          "out": 6,
-          "inCost": 0,
-          "inRetail": 0,
-          "soldCost": 855,
-          "soldRevenue": 1140
-        }
-      }
-    },
-    {
-      "category": "TCG",
-      "subject": "Pokemon",
-      "tier": "$1K+",
-      "cond": "Raw",
-      "onhand": 21,
-      "val": {
-        "cost": 19348.12,
-        "retail": 27675
+        "cost": 275.94,
+        "retail": 398
       },
       "p": {
         "daily": {
@@ -4312,21 +4123,210 @@
     {
       "category": "TCG",
       "subject": "Pokemon",
-      "tier": "$25-50",
-      "cond": "Raw",
-      "onhand": 1379,
+      "tier": "$150-250",
+      "cond": "Graded",
+      "onhand": 239,
       "val": {
-        "cost": 32354.89,
-        "retail": 45969
+        "cost": 33987.63,
+        "retail": 44645
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 22,
+          "out": 3,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 493.4,
-          "soldRevenue": 711
+          "soldCost": 467,
+          "soldRevenue": 595
+        }
+      }
+    },
+    {
+      "category": "TCG",
+      "subject": "Pokemon",
+      "tier": "$1K+",
+      "cond": "Graded",
+      "onhand": 40,
+      "val": {
+        "cost": 81180.38,
+        "retail": 96275
+      },
+      "p": {
+        "daily": {
+          "in": 0,
+          "out": 1,
+          "inCost": 0,
+          "inRetail": 0,
+          "soldCost": 1260,
+          "soldRevenue": 1800
+        }
+      }
+    },
+    {
+      "category": "TCG",
+      "subject": "Pokemon",
+      "tier": "$25-50",
+      "cond": "Graded",
+      "onhand": 59,
+      "val": {
+        "cost": 1464.84,
+        "retail": 2097
+      },
+      "p": {
+        "daily": {
+          "in": 0,
+          "out": 2,
+          "inCost": 0,
+          "inRetail": 0,
+          "soldCost": 45.5,
+          "soldRevenue": 65
+        }
+      }
+    },
+    {
+      "category": "TCG",
+      "subject": "Pokemon",
+      "tier": "$250-500",
+      "cond": "Graded",
+      "onhand": 290,
+      "val": {
+        "cost": 76957.59,
+        "retail": 99182
+      },
+      "p": {
+        "daily": {
+          "in": 0,
+          "out": 3,
+          "inCost": 0,
+          "inRetail": 0,
+          "soldCost": 956,
+          "soldRevenue": 1170
+        }
+      }
+    },
+    {
+      "category": "TCG",
+      "subject": "Pokemon",
+      "tier": "$50-150",
+      "cond": "Graded",
+      "onhand": 358,
+      "val": {
+        "cost": 26875.06,
+        "retail": 36125
+      },
+      "p": {
+        "daily": {
+          "in": 0,
+          "out": 8,
+          "inCost": 0,
+          "inRetail": 0,
+          "soldCost": 533.66,
+          "soldRevenue": 670
+        }
+      }
+    },
+    {
+      "category": "TCG",
+      "subject": "Pokemon",
+      "tier": "$500-1K",
+      "cond": "Graded",
+      "onhand": 137,
+      "val": {
+        "cost": 71450.53,
+        "retail": 89600
+      },
+      "p": {
+        "daily": {
+          "in": 0,
+          "out": 2,
+          "inCost": 0,
+          "inRetail": 0,
+          "soldCost": 1163.63,
+          "soldRevenue": 1450
+        }
+      }
+    },
+    {
+      "category": "TCG",
+      "subject": "Pokemon",
+      "tier": "<$25",
+      "cond": "Raw",
+      "onhand": 3329,
+      "val": {
+        "cost": 29338.02,
+        "retail": 42374
+      },
+      "p": {
+        "daily": {
+          "in": 0,
+          "out": 56,
+          "inCost": 0,
+          "inRetail": 0,
+          "soldCost": 624.1,
+          "soldRevenue": 900
+        }
+      }
+    },
+    {
+      "category": "TCG",
+      "subject": "Pokemon",
+      "tier": "$150-250",
+      "cond": "Raw",
+      "onhand": 310,
+      "val": {
+        "cost": 41620.46,
+        "retail": 56210
+      },
+      "p": {
+        "daily": {
+          "in": 0,
+          "out": 3,
+          "inCost": 0,
+          "inRetail": 0,
+          "soldCost": 394,
+          "soldRevenue": 540
+        }
+      }
+    },
+    {
+      "category": "TCG",
+      "subject": "Pokemon",
+      "tier": "$1K+",
+      "cond": "Raw",
+      "onhand": 20,
+      "val": {
+        "cost": 18398.12,
+        "retail": 26425
+      },
+      "p": {
+        "daily": {
+          "in": 0,
+          "out": 1,
+          "inCost": 0,
+          "inRetail": 0,
+          "soldCost": 950,
+          "soldRevenue": 1250
+        }
+      }
+    },
+    {
+      "category": "TCG",
+      "subject": "Pokemon",
+      "tier": "$25-50",
+      "cond": "Raw",
+      "onhand": 1393,
+      "val": {
+        "cost": 32692.53,
+        "retail": 46374
+      },
+      "p": {
+        "daily": {
+          "in": 0,
+          "out": 29,
+          "inCost": 0,
+          "inRetail": 0,
+          "soldCost": 640,
+          "soldRevenue": 887
         }
       }
     },
@@ -4335,19 +4335,19 @@
       "subject": "Pokemon",
       "tier": "$250-500",
       "cond": "Raw",
-      "onhand": 194,
+      "onhand": 198,
       "val": {
-        "cost": 47330.31,
-        "retail": 64345
+        "cost": 48627.31,
+        "retail": 66150
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 5,
+          "out": 1,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 1355.75,
-          "soldRevenue": 1575
+          "soldCost": 189,
+          "soldRevenue": 270
         }
       }
     },
@@ -4356,19 +4356,19 @@
       "subject": "Pokemon",
       "tier": "$50-150",
       "cond": "Raw",
-      "onhand": 1245,
+      "onhand": 1257,
       "val": {
-        "cost": 70649.04,
-        "retail": 97292
+        "cost": 71396.94,
+        "retail": 98312
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 30,
+          "out": 15,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 1640.84,
-          "soldRevenue": 2605
+          "soldCost": 821.1,
+          "soldRevenue": 1133
         }
       }
     },
@@ -4377,19 +4377,19 @@
       "subject": "Pokemon",
       "tier": "$500-1K",
       "cond": "Raw",
-      "onhand": 64,
+      "onhand": 66,
       "val": {
-        "cost": 34067.04,
-        "retail": 42880
+        "cost": 34837.04,
+        "retail": 43975
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 3,
+          "out": 0,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 1916,
-          "soldRevenue": 2200
+          "soldCost": 0,
+          "soldRevenue": 0
         }
       }
     },
@@ -4524,19 +4524,19 @@
       "subject": "Riftbound",
       "tier": "<$25",
       "cond": "Raw",
-      "onhand": 134,
+      "onhand": 130,
       "val": {
-        "cost": 828.5,
-        "retail": 1204
+        "cost": 811.7,
+        "retail": 1180
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 0,
+          "out": 4,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
+          "soldCost": 16.8,
+          "soldRevenue": 24
         }
       }
     },
@@ -4547,17 +4547,17 @@
       "cond": "Raw",
       "onhand": 4,
       "val": {
-        "cost": 457,
-        "retail": 630
+        "cost": 461.6,
+        "retail": 660
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 0,
+          "out": 1,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
+          "soldCost": 120,
+          "soldRevenue": 150
         }
       }
     },
@@ -4566,10 +4566,10 @@
       "subject": "Riftbound",
       "tier": "$25-50",
       "cond": "Raw",
-      "onhand": 16,
+      "onhand": 19,
       "val": {
-        "cost": 381.1,
-        "retail": 516
+        "cost": 450.5,
+        "retail": 614
       },
       "p": {
         "daily": {
@@ -4608,10 +4608,10 @@
       "subject": "Riftbound",
       "tier": "$50-150",
       "cond": "Raw",
-      "onhand": 31,
+      "onhand": 38,
       "val": {
-        "cost": 1639.4,
-        "retail": 2590
+        "cost": 1938.4,
+        "retail": 3023
       },
       "p": {
         "daily": {
@@ -4734,19 +4734,19 @@
       "subject": "Star Wars Unlimited",
       "tier": "<$25",
       "cond": "Raw",
-      "onhand": 380,
+      "onhand": 378,
       "val": {
-        "cost": 3629.4,
-        "retail": 2524
+        "cost": 3591.8,
+        "retail": 2509
       },
       "p": {
         "daily": {
           "in": 0,
-          "out": 0,
+          "out": 2,
           "inCost": 0,
           "inRetail": 0,
-          "soldCost": 0,
-          "soldRevenue": 0
+          "soldCost": 37.6,
+          "soldRevenue": 15
         }
       }
     },
@@ -18768,6 +18768,56 @@
           "soldRevenue": 19819
         }
       }
+    },
+    {
+      "date": "2026-09-20",
+      "onhandKnown": true,
+      "totals": {
+        "onhand": 25243,
+        "cost": 2340739.76,
+        "retail": 2928189.5,
+        "in": 0,
+        "inCost": 0,
+        "inRetail": 0,
+        "out": 327,
+        "soldCost": 30298.99,
+        "soldRevenue": 38038
+      },
+      "byCategory": {
+        "Other": {
+          "onhand": 20,
+          "cost": 5252,
+          "retail": 6555,
+          "in": 0,
+          "inCost": 0,
+          "inRetail": 0,
+          "out": 7,
+          "soldCost": 1478,
+          "soldRevenue": 1750
+        },
+        "Sports": {
+          "onhand": 9912,
+          "cost": 1420051.47,
+          "retail": 1717727,
+          "in": 0,
+          "inCost": 0,
+          "inRetail": 0,
+          "out": 149,
+          "soldCost": 19184.24,
+          "soldRevenue": 23505
+        },
+        "TCG": {
+          "onhand": 15311,
+          "cost": 915436.29,
+          "retail": 1203907.5,
+          "in": 0,
+          "inCost": 0,
+          "inRetail": 0,
+          "out": 171,
+          "soldCost": 9636.75,
+          "soldRevenue": 12783
+        }
+      }
     }
   ],
   "snapshots": [
@@ -18849,7 +18899,8 @@
     "2026-09-15",
     "2026-09-16",
     "2026-09-17",
-    "2026-09-19"
+    "2026-09-19",
+    "2026-09-20"
   ],
   "anomalies": []
 }
