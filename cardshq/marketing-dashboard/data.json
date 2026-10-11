@@ -1,6 +1,6 @@
 {
- "date": "2026-10-10",
- "generatedAt": "2026-10-10T17:25:02.875Z",
+ "date": "2026-10-11",
+ "generatedAt": "2026-10-11T17:44:25.339Z",
  "quarter": "Q4 2026",
  "quarterStart": "2026-10-01",
  "scope": "Online Store + CardsHQ Headless API (locked ecom definition)",
@@ -104,39 +104,39 @@
   }
  ],
  "tier4": {
-  "revenue": 566073.83,
-  "unitsSold": 5973,
-  "orders": 1443
+  "revenue": 604885.94,
+  "unitsSold": 6301,
+  "orders": 1551
  },
  "attribution": {
-  "onlineOrders": 1443,
-  "ordersWithUtm": 765,
-  "utmCoverage": 53,
+  "onlineOrders": 1551,
+  "ordersWithUtm": 820,
+  "utmCoverage": 52.9,
   "channels": [
    {
     "label": "Direct / unknown",
-    "orders": 577,
-    "revenue": 224717.82
-   },
-   {
-    "label": "google / Google Shopping",
-    "orders": 124,
-    "revenue": 63975.32
+    "orders": 626,
+    "revenue": 249177.8
    },
    {
     "label": "google",
-    "orders": 135,
-    "revenue": 62618.17
+    "orders": 145,
+    "revenue": 66089.86
+   },
+   {
+    "label": "google / Google Shopping",
+    "orders": 134,
+    "revenue": 65993.29
    },
    {
     "label": "Google (referrer only)",
-    "orders": 58,
-    "revenue": 36063.76
+    "orders": 60,
+    "revenue": 36365.66
    },
    {
     "label": "google / 24123778505",
-    "orders": 70,
-    "revenue": 25982.07
+    "orders": 74,
+    "revenue": 26694.5
    },
    {
     "label": "google / 23745441284",
@@ -145,13 +145,18 @@
    },
    {
     "label": "fb / Bowman Chrome Football Pre-Order 9.24.26",
-    "orders": 16,
-    "revenue": 9363.7
+    "orders": 18,
+    "revenue": 9542.86
    },
    {
     "label": "fb / National New Inventory Campaign",
     "orders": 26,
     "revenue": 9261.9
+   },
+   {
+    "label": "facebook / 120251051950530761",
+    "orders": 23,
+    "revenue": 7591.21
    },
    {
     "label": "google / 22593909256",
@@ -160,18 +165,13 @@
    },
    {
     "label": "https://simplycodes.com/ (referrer only)",
-    "orders": 7,
-    "revenue": 6774.51
-   },
-   {
-    "label": "google / 23808979675",
-    "orders": 4,
-    "revenue": 5188.28
+    "orders": 8,
+    "revenue": 7250.5
    },
    {
     "label": "shop_app",
-    "orders": 18,
-    "revenue": 5148.56
+    "orders": 20,
+    "revenue": 5634.1
    }
   ]
  }
