@@ -1,6 +1,6 @@
 {
- "date": "2026-10-16",
- "generatedAt": "2026-10-16T16:50:49.151Z",
+ "date": "2026-10-17",
+ "generatedAt": "2026-10-17T15:47:57.062Z",
  "quarter": "Q4 2026",
  "quarterStart": "2026-10-01",
  "scope": "Online Store + CardsHQ Headless API (locked ecom definition)",
@@ -61,10 +61,10 @@
    "status": "ACTIVE",
    "image": "https://cdn.shopify.com/s/files/1/0625/7623/0563/files/a30c4297-8549-407a-9a07-430a0034607f_120x.png?v=1789426283",
    "price": 89.99,
-   "onhand": 0,
-   "unitsSold": 90,
-   "revenue": 8558.26,
-   "orders": 52,
+   "onhand": 15,
+   "unitsSold": 92,
+   "revenue": 8738.24,
+   "orders": 54,
    "daily": {
     "2026-10-01": {
      "units": 8,
@@ -113,6 +113,14 @@
     "2026-10-15": {
      "units": 5,
      "rev": 449.95
+    },
+    "2026-10-16": {
+     "units": 1,
+     "rev": 89.99
+    },
+    "2026-10-17": {
+     "units": 1,
+     "rev": 89.99
     }
    }
   },
@@ -126,7 +134,7 @@
    "status": "ACTIVE",
    "image": "https://cdn.shopify.com/s/files/1/0625/7623/0563/files/ed03a63a-150c-4b63-8eda-f36012a5083c_3eaa7bef-553e-4e3b-af85-1d2932eef9d0_120x.webp?v=1790784679",
    "price": 19.99,
-   "onhand": 17,
+   "onhand": 2,
    "unitsSold": 68,
    "revenue": 1592.9,
    "orders": 27,
@@ -220,10 +228,10 @@
    "status": "ACTIVE",
    "image": "https://cdn.shopify.com/s/files/1/0625/7623/0563/files/ed03a63a-150c-4b63-8eda-f36012a5083c_120x.webp?v=1790784026",
    "price": 69.99,
-   "onhand": 8,
-   "unitsSold": 14,
-   "revenue": 995.43,
-   "orders": 12,
+   "onhand": 6,
+   "unitsSold": 15,
+   "revenue": 1065.42,
+   "orders": 13,
    "daily": {
     "2026-10-01": {
      "units": 5,
@@ -252,6 +260,10 @@
     "2026-10-14": {
      "units": 2,
      "rev": 139.98
+    },
+    "2026-10-17": {
+     "units": 1,
+     "rev": 69.99
     }
    }
   },
@@ -353,34 +365,34 @@
   }
  ],
  "tier4": {
-  "revenue": 947938.85,
-  "unitsSold": 8789,
-  "orders": 2263
+  "revenue": 979195.96,
+  "unitsSold": 9149,
+  "orders": 2349
  },
  "attribution": {
-  "onlineOrders": 2366,
-  "ordersWithUtm": 1243,
-  "utmCoverage": 52.5,
+  "onlineOrders": 2455,
+  "ordersWithUtm": 1301,
+  "utmCoverage": 53,
   "channels": [
    {
     "label": "Direct / unknown",
-    "orders": 991,
-    "revenue": 488868.81
+    "orders": 1020,
+    "revenue": 494176.61
    },
    {
     "label": "google",
-    "orders": 243,
-    "revenue": 99788.6
+    "orders": 260,
+    "revenue": 117596.14
    },
    {
     "label": "google / Google Shopping",
-    "orders": 220,
-    "revenue": 92694.53
+    "orders": 233,
+    "revenue": 95962.82
    },
    {
     "label": "google / 24123778505",
-    "orders": 115,
-    "revenue": 41787.74
+    "orders": 120,
+    "revenue": 42604.9
    },
    {
     "label": "Google (referrer only)",
@@ -389,8 +401,8 @@
    },
    {
     "label": "fb / National New Inventory Campaign",
-    "orders": 37,
-    "revenue": 20026.62
+    "orders": 40,
+    "revenue": 20540.17
    },
    {
     "label": "facebook / 120251051950530761",
@@ -414,13 +426,13 @@
    },
    {
     "label": "google / 22593909256",
-    "orders": 26,
-    "revenue": 8549.8
+    "orders": 28,
+    "revenue": 8772.36
    },
    {
-    "label": "https://simplycodes.com/ (referrer only)",
-    "orders": 9,
-    "revenue": 7250.5
+    "label": "facebook / 120243193865400761",
+    "orders": 4,
+    "revenue": 7509.06
    }
   ]
  }
