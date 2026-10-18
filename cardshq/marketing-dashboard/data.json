@@ -1,6 +1,6 @@
 {
- "date": "2026-10-17",
- "generatedAt": "2026-10-17T15:47:57.062Z",
+ "date": "2026-10-18",
+ "generatedAt": "2026-10-18T16:02:38.040Z",
  "quarter": "Q4 2026",
  "quarterStart": "2026-10-01",
  "scope": "Online Store + CardsHQ Headless API (locked ecom definition)",
@@ -61,10 +61,10 @@
    "status": "ACTIVE",
    "image": "https://cdn.shopify.com/s/files/1/0625/7623/0563/files/a30c4297-8549-407a-9a07-430a0034607f_120x.png?v=1789426283",
    "price": 89.99,
-   "onhand": 15,
-   "unitsSold": 92,
-   "revenue": 8738.24,
-   "orders": 54,
+   "onhand": -4,
+   "unitsSold": 99,
+   "revenue": 9368.17,
+   "orders": 57,
    "daily": {
     "2026-10-01": {
      "units": 8,
@@ -119,8 +119,12 @@
      "rev": 89.99
     },
     "2026-10-17": {
-     "units": 1,
-     "rev": 89.99
+     "units": 3,
+     "rev": 269.97
+    },
+    "2026-10-18": {
+     "units": 5,
+     "rev": 449.95
     }
    }
   },
@@ -134,10 +138,10 @@
    "status": "ACTIVE",
    "image": "https://cdn.shopify.com/s/files/1/0625/7623/0563/files/ed03a63a-150c-4b63-8eda-f36012a5083c_3eaa7bef-553e-4e3b-af85-1d2932eef9d0_120x.webp?v=1790784679",
    "price": 19.99,
-   "onhand": 2,
-   "unitsSold": 68,
-   "revenue": 1592.9,
-   "orders": 27,
+   "onhand": 17,
+   "unitsSold": 72,
+   "revenue": 1672.86,
+   "orders": 29,
    "daily": {
     "2026-10-01": {
      "units": 9,
@@ -194,6 +198,14 @@
     "2026-10-16": {
      "units": 2,
      "rev": 39.98
+    },
+    "2026-10-17": {
+     "units": 2,
+     "rev": 39.98
+    },
+    "2026-10-18": {
+     "units": 2,
+     "rev": 39.98
     }
    }
   },
@@ -228,7 +240,7 @@
    "status": "ACTIVE",
    "image": "https://cdn.shopify.com/s/files/1/0625/7623/0563/files/ed03a63a-150c-4b63-8eda-f36012a5083c_120x.webp?v=1790784026",
    "price": 69.99,
-   "onhand": 6,
+   "onhand": 0,
    "unitsSold": 15,
    "revenue": 1065.42,
    "orders": 13,
@@ -365,39 +377,39 @@
   }
  ],
  "tier4": {
-  "revenue": 979195.96,
-  "unitsSold": 9149,
-  "orders": 2349
+  "revenue": 1018741.04,
+  "unitsSold": 9584,
+  "orders": 2435
  },
  "attribution": {
-  "onlineOrders": 2455,
-  "ordersWithUtm": 1301,
-  "utmCoverage": 53,
+  "onlineOrders": 2546,
+  "ordersWithUtm": 1354,
+  "utmCoverage": 53.2,
   "channels": [
    {
     "label": "Direct / unknown",
-    "orders": 1020,
-    "revenue": 494176.61
+    "orders": 1055,
+    "revenue": 518971.31
    },
    {
     "label": "google",
-    "orders": 260,
-    "revenue": 117596.14
+    "orders": 269,
+    "revenue": 119117.08
    },
    {
     "label": "google / Google Shopping",
-    "orders": 233,
-    "revenue": 95962.82
+    "orders": 250,
+    "revenue": 104513.01
    },
    {
     "label": "google / 24123778505",
-    "orders": 120,
-    "revenue": 42604.9
+    "orders": 125,
+    "revenue": 43750.99
    },
    {
     "label": "Google (referrer only)",
-    "orders": 71,
-    "revenue": 38894.8
+    "orders": 73,
+    "revenue": 39385.55
    },
    {
     "label": "fb / National New Inventory Campaign",
@@ -411,8 +423,8 @@
    },
    {
     "label": "fb / Bowman Chrome Football Pre-Order 9.24.26",
-    "orders": 26,
-    "revenue": 12641.33
+    "orders": 27,
+    "revenue": 12731.32
    },
    {
     "label": "google / 23745441284",
@@ -426,8 +438,8 @@
    },
    {
     "label": "google / 22593909256",
-    "orders": 28,
-    "revenue": 8772.36
+    "orders": 29,
+    "revenue": 8888.96
    },
    {
     "label": "facebook / 120243193865400761",
