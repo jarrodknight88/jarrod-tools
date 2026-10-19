@@ -1,6 +1,6 @@
 {
- "date": "2026-10-18",
- "generatedAt": "2026-10-18T16:02:38.040Z",
+ "date": "2026-10-19",
+ "generatedAt": "2026-10-19T18:47:07.490Z",
  "quarter": "Q4 2026",
  "quarterStart": "2026-10-01",
  "scope": "Online Store + CardsHQ Headless API (locked ecom definition)",
@@ -61,10 +61,10 @@
    "status": "ACTIVE",
    "image": "https://cdn.shopify.com/s/files/1/0625/7623/0563/files/a30c4297-8549-407a-9a07-430a0034607f_120x.png?v=1789426283",
    "price": 89.99,
-   "onhand": -4,
+   "onhand": 0,
    "unitsSold": 99,
    "revenue": 9368.17,
-   "orders": 57,
+   "orders": 58,
    "daily": {
     "2026-10-01": {
      "units": 8,
@@ -129,87 +129,6 @@
    }
   },
   {
-   "id": "15396685578403",
-   "title": "2026 Bowman Football Hobby Box Pack",
-   "handle": "2026-bowman-football-hobby-box-pack",
-   "tier": 1,
-   "vendor": "CardsHQ",
-   "productType": "",
-   "status": "ACTIVE",
-   "image": "https://cdn.shopify.com/s/files/1/0625/7623/0563/files/ed03a63a-150c-4b63-8eda-f36012a5083c_3eaa7bef-553e-4e3b-af85-1d2932eef9d0_120x.webp?v=1790784679",
-   "price": 19.99,
-   "onhand": 17,
-   "unitsSold": 72,
-   "revenue": 1672.86,
-   "orders": 29,
-   "daily": {
-    "2026-10-01": {
-     "units": 9,
-     "rev": 246.39
-    },
-    "2026-10-02": {
-     "units": 3,
-     "rev": 74.97
-    },
-    "2026-10-03": {
-     "units": 10,
-     "rev": 249.9
-    },
-    "2026-10-04": {
-     "units": 2,
-     "rev": 49.98
-    },
-    "2026-10-05": {
-     "units": 2,
-     "rev": 49.98
-    },
-    "2026-10-06": {
-     "units": 2,
-     "rev": 49.98
-    },
-    "2026-10-07": {
-     "units": 5,
-     "rev": 149.55
-    },
-    "2026-10-08": {
-     "units": 2,
-     "rev": 49.98
-    },
-    "2026-10-09": {
-     "units": 2,
-     "rev": 49.98
-    },
-    "2026-10-10": {
-     "units": 13,
-     "rev": 262.37
-    },
-    "2026-10-12": {
-     "units": 5,
-     "rev": 99.95
-    },
-    "2026-10-14": {
-     "units": 1,
-     "rev": 19.99
-    },
-    "2026-10-15": {
-     "units": 10,
-     "rev": 199.9
-    },
-    "2026-10-16": {
-     "units": 2,
-     "rev": 39.98
-    },
-    "2026-10-17": {
-     "units": 2,
-     "rev": 39.98
-    },
-    "2026-10-18": {
-     "units": 2,
-     "rev": 39.98
-    }
-   }
-  },
-  {
    "id": "9254179995811",
    "title": "2026 Bowman Football Delight Box",
    "handle": "2026-bowman-football-delight-box",
@@ -227,55 +146,6 @@
     "2026-10-09": {
      "units": 1,
      "rev": 1249.99
-    }
-   }
-  },
-  {
-   "id": "15396638228643",
-   "title": "2026 Bowman Football Jumbo Pack",
-   "handle": "2026-bowman-football-jumbo-pack",
-   "tier": 1,
-   "vendor": "CardsHQ",
-   "productType": "",
-   "status": "ACTIVE",
-   "image": "https://cdn.shopify.com/s/files/1/0625/7623/0563/files/ed03a63a-150c-4b63-8eda-f36012a5083c_120x.webp?v=1790784026",
-   "price": 69.99,
-   "onhand": 0,
-   "unitsSold": 15,
-   "revenue": 1065.42,
-   "orders": 13,
-   "daily": {
-    "2026-10-01": {
-     "units": 5,
-     "rev": 365.52
-    },
-    "2026-10-02": {
-     "units": 1,
-     "rev": 69.99
-    },
-    "2026-10-03": {
-     "units": 2,
-     "rev": 139.98
-    },
-    "2026-10-05": {
-     "units": 1,
-     "rev": 69.99
-    },
-    "2026-10-12": {
-     "units": 2,
-     "rev": 139.98
-    },
-    "2026-10-13": {
-     "units": 1,
-     "rev": 69.99
-    },
-    "2026-10-14": {
-     "units": 2,
-     "rev": 139.98
-    },
-    "2026-10-17": {
-     "units": 1,
-     "rev": 69.99
     }
    }
   },
@@ -377,34 +247,34 @@
   }
  ],
  "tier4": {
-  "revenue": 1018741.04,
-  "unitsSold": 9584,
-  "orders": 2435
+  "revenue": 1066200.23,
+  "unitsSold": 10142,
+  "orders": 2592
  },
  "attribution": {
-  "onlineOrders": 2546,
-  "ordersWithUtm": 1354,
-  "utmCoverage": 53.2,
+  "onlineOrders": 2662,
+  "ordersWithUtm": 1413,
+  "utmCoverage": 53.1,
   "channels": [
    {
     "label": "Direct / unknown",
-    "orders": 1055,
-    "revenue": 518971.31
+    "orders": 1111,
+    "revenue": 545819.1
    },
    {
     "label": "google",
-    "orders": 269,
-    "revenue": 119117.08
+    "orders": 278,
+    "revenue": 123724.65
    },
    {
     "label": "google / Google Shopping",
-    "orders": 250,
-    "revenue": 104513.01
+    "orders": 264,
+    "revenue": 108991.53
    },
    {
     "label": "google / 24123778505",
-    "orders": 125,
-    "revenue": 43750.99
+    "orders": 134,
+    "revenue": 45247.53
    },
    {
     "label": "Google (referrer only)",
@@ -413,8 +283,8 @@
    },
    {
     "label": "fb / National New Inventory Campaign",
-    "orders": 40,
-    "revenue": 20540.17
+    "orders": 44,
+    "revenue": 21786.33
    },
    {
     "label": "facebook / 120251051950530761",
@@ -433,13 +303,13 @@
    },
    {
     "label": "shop_app",
-    "orders": 26,
-    "revenue": 10017.89
+    "orders": 28,
+    "revenue": 10336.61
    },
    {
     "label": "google / 22593909256",
-    "orders": 29,
-    "revenue": 8888.96
+    "orders": 31,
+    "revenue": 9210.84
    },
    {
     "label": "facebook / 120243193865400761",
