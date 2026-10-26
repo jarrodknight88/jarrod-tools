@@ -176,6 +176,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 <script>
 var MEETINGS = {
+  "ga4-topps-attribution-oct-26-2026": {
+    label: "GA4 x Topps Test - Paid vs Organic Attribution - October 26, 2026",
+    sections: [
+      {g:"Attribution Rerun",i:[
+        {id:"ga-001",t:"Rerun GA4 attribution for Star Wars, Bowman and Update on one method - test presale-start vs go-live windows and visits vs sales, pick the most conservative defensible option and apply it to all 3 (Jarrod)",d:"Today",c:"urgent"},
+        {id:"ga-002",t:"Send Kelly and Geoff the updated numbers plus a plain-language methodology paragraph Kelly can forward to Topps - flag Performance Max (Cross-network) treatment as the decision point (Jarrod)",d:"Today",c:"urgent"},
+        {id:"ga-003",t:"Once Kelly and Geoff sign off on the method, update 2.06 and 2.08 on all three launch tabs with notes (Jarrod, John)",d:"After sign-off",c:"soon"},
+      ]},
+      {g:"Topps Response",i:[
+        {id:"ga-004",t:"Kelly responds to Topps by end of day - if numbers are not final, answer the other points and commit to restated attribution later this week (Kelly)",d:"Today",c:"urgent"},
+      ]},
+      {g:"Tracking Follow-ups",i:[
+        {id:"ga-005",t:"Check whether the homepage launch setup (live the week after the 9/30 attribution fix) is skewing attribution (Jarrod)",d:"This week",c:"soon"},
+        {id:"ga-006",t:"Confirm the HQ-437 attribution fix deploy date with Mikhail before Day 30 reporting (Jarrod)",d:"Before Day 30",c:"soon"},
+        {id:"ga-007",t:"Reconcile Nick's monthly paid-attribution deck against GA4 - Geoff flagged paid search at 80-90% of sales and channel totals over 100% (owner TBD; John and Nick discussing)",d:"Before next monthly review",c:"ongoing",linkedTo:["mr-019"]},
+      ]},
+    ]
+  },
   "kelly-touchbase-oct-06-2026": {
     label: "Jarrod + Kelly - October 6, 2026",
     sections: [
@@ -615,7 +633,7 @@ var MEETINGS = {
       ]},
       { name: "Analytics & Attribution", i: [
         { id:"mr-018", t:"Drive the UTM checkout drop-off fix with Nathaniel - six-week target (~Sep 2); escalate via Kelly and Jen if acceleration is needed", d:"By Sep 2", c:"soon" },
-        { id:"mr-019", t:"Reconcile paid social attribution with Nick - GA4 shows $47K vs Nick's much higher number; confirm UTM misconfiguration and cannibalization into Direct/Unassigned", d:"Within 2 weeks", c:"soon" }
+        { id:"mr-019", t:"Reconcile paid social attribution with Nick - GA4 shows $47K vs Nick's much higher number; confirm UTM misconfiguration and cannibalization into Direct/Unassigned", d:"Within 2 weeks", c:"soon", linkedTo:["ga-007"] }
       ]},
       { name: "Surveys & Loyalty", i: [
         { id:"mr-020", t:"Evaluate free shipping over a spend threshold as a loyalty tier perk (recurring post-sale survey ask)", d:"Loyalty launch planning", c:"ongoing" },
