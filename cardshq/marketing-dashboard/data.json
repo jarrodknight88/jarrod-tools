@@ -1,6 +1,6 @@
 {
- "date": "2026-10-30",
- "generatedAt": "2026-10-30T18:07:49.527Z",
+ "date": "2026-10-31",
+ "generatedAt": "2026-10-31T17:19:11.002Z",
  "quarter": "Q4 2026",
  "quarterStart": "2026-10-01",
  "scope": "Online Store + CardsHQ Headless API (locked ecom definition)",
@@ -16,7 +16,7 @@
    "status": "ACTIVE",
    "image": "https://cdn.shopify.com/s/files/1/0625/7623/0563/files/6a4d2cad-a724-4bba-8ac1-c5354d97d7d2_120x.png?v=1788187929",
    "price": 599.99,
-   "onhand": 0,
+   "onhand": -3,
    "unitsSold": 62,
    "revenue": 36039.38,
    "orders": 11,
@@ -149,44 +149,49 @@
   }
  ],
  "tier4": {
-  "revenue": 1531346.98,
-  "unitsSold": 14376,
-  "orders": 3723
+  "revenue": 1557241.78,
+  "unitsSold": 14624,
+  "orders": 3804
  },
  "attribution": {
-  "onlineOrders": 3734,
-  "ordersWithUtm": 2095,
-  "utmCoverage": 56.1,
+  "onlineOrders": 3815,
+  "ordersWithUtm": 2144,
+  "utmCoverage": 56.2,
   "channels": [
    {
     "label": "Direct / unknown",
-    "orders": 1490,
-    "revenue": 754110.98
+    "orders": 1517,
+    "revenue": 763527.81
    },
    {
     "label": "google",
-    "orders": 390,
-    "revenue": 193387.62
+    "orders": 399,
+    "revenue": 196886.84
    },
    {
     "label": "google / Google Shopping",
-    "orders": 367,
-    "revenue": 150721.21
+    "orders": 374,
+    "revenue": 152472.38
    },
    {
     "label": "google / 24123778505",
-    "orders": 199,
-    "revenue": 66347.55
+    "orders": 201,
+    "revenue": 66753.35
    },
    {
     "label": "Google (referrer only)",
-    "orders": 80,
-    "revenue": 40913.56
+    "orders": 82,
+    "revenue": 42134.6
    },
    {
     "label": "fb / National New Inventory Campaign",
-    "orders": 58,
-    "revenue": 24647.49
+    "orders": 59,
+    "revenue": 24697.26
+   },
+   {
+    "label": "fb / Bowman Chrome Football Pre-Order 9.24.26",
+    "orders": 41,
+    "revenue": 20654.51
    },
    {
     "label": "shop_app",
@@ -194,14 +199,9 @@
     "revenue": 16901.41
    },
    {
-    "label": "fb / Bowman Chrome Football Pre-Order 9.24.26",
-    "orders": 37,
-    "revenue": 16378.45
-   },
-   {
     "label": "google / 22593909256",
-    "orders": 50,
-    "revenue": 16057.88
+    "orders": 51,
+    "revenue": 16157.88
    },
    {
     "label": "chatgpt.com",
@@ -209,14 +209,14 @@
     "revenue": 14545.47
    },
    {
+    "label": "fb / 2026 Topps Update Baseball 10.7.26",
+    "orders": 48,
+    "revenue": 13248.21
+   },
+   {
     "label": "facebook / 120251051950530761",
     "orders": 49,
     "revenue": 13088.07
-   },
-   {
-    "label": "fb / 2026 Topps Update Baseball 10.7.26",
-    "orders": 46,
-    "revenue": 12929.48
    }
   ]
  }
