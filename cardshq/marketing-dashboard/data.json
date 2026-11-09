@@ -1,56 +1,11 @@
 {
- "date": "2026-11-08",
- "generatedAt": "2026-11-08T18:00:32.540Z",
+ "date": "2026-11-09",
+ "generatedAt": "2026-11-09T22:37:24.191Z",
  "quarter": "Q4 2026",
  "quarterStart": "2026-10-01",
  "scope": "Online Store + CardsHQ Headless API (locked ecom definition)",
  "isSample": false,
  "products": [
-  {
-   "id": "9237036138659",
-   "title": "2026 Topps Chrome Star Wars Delight Box",
-   "handle": "2026-topps-chrome-star-wars-delight-box",
-   "tier": 1,
-   "vendor": "CardsHQ",
-   "productType": "",
-   "status": "ACTIVE",
-   "image": "https://cdn.shopify.com/s/files/1/0625/7623/0563/files/6a4d2cad-a724-4bba-8ac1-c5354d97d7d2_120x.png?v=1788187929",
-   "price": 599.99,
-   "onhand": -3,
-   "unitsSold": 62,
-   "revenue": 36039.38,
-   "orders": 11,
-   "daily": {
-    "2026-10-01": {
-     "units": 46,
-     "rev": 26679.54
-    },
-    "2026-10-02": {
-     "units": 6,
-     "rev": 3479.94
-    },
-    "2026-10-06": {
-     "units": 1,
-     "rev": 579.99
-    },
-    "2026-10-07": {
-     "units": 5,
-     "rev": 2899.95
-    },
-    "2026-10-10": {
-     "units": 1,
-     "rev": 599.99
-    },
-    "2026-10-11": {
-     "units": 2,
-     "rev": 1199.98
-    },
-    "2026-10-15": {
-     "units": 1,
-     "rev": 599.99
-    }
-   }
-  },
   {
    "id": "9267898712227",
    "title": "2026 Topps Star Wars Chrome Hobby 8-Box Case",
@@ -149,49 +104,49 @@
   }
  ],
  "tier4": {
-  "revenue": 1885018.28,
-  "unitsSold": 17419,
-  "orders": 4688
+  "revenue": 1963979.64,
+  "unitsSold": 17966,
+  "orders": 4840
  },
  "attribution": {
-  "onlineOrders": 4699,
-  "ordersWithUtm": 2741,
-  "utmCoverage": 58.3,
+  "onlineOrders": 4840,
+  "ordersWithUtm": 2838,
+  "utmCoverage": 58.6,
   "channels": [
    {
     "label": "Direct / unknown",
-    "orders": 1785,
-    "revenue": 876499.3
+    "orders": 1821,
+    "revenue": 887716.94
    },
    {
     "label": "google",
-    "orders": 501,
-    "revenue": 272106.73
+    "orders": 519,
+    "revenue": 279403.42
    },
    {
     "label": "google / Google Shopping",
-    "orders": 426,
-    "revenue": 173825.94
+    "orders": 437,
+    "revenue": 175554.4
    },
    {
     "label": "google / 24123778505",
-    "orders": 271,
-    "revenue": 89155.73
+    "orders": 282,
+    "revenue": 92371.89
    },
    {
     "label": "Google (referrer only)",
-    "orders": 90,
-    "revenue": 43782.99
+    "orders": 94,
+    "revenue": 44057.4
    },
    {
     "label": "fb / National New Inventory Campaign",
-    "orders": 86,
-    "revenue": 34007.85
+    "orders": 91,
+    "revenue": 38218.08
    },
    {
     "label": "google / 22593909256",
-    "orders": 78,
-    "revenue": 25595.06
+    "orders": 81,
+    "revenue": 26715.21
    },
    {
     "label": "fb / Bowman Chrome Football Pre-Order 9.24.26",
@@ -204,19 +159,19 @@
     "revenue": 18567.85
    },
    {
-    "label": "fb / 2026 Topps Update Baseball 10.7.26",
-    "orders": 60,
-    "revenue": 16085.74
-   },
-   {
     "label": "chatgpt.com",
     "orders": 38,
     "revenue": 15790.02
    },
    {
+    "label": "fb / 2026 Topps Update Baseball 10.7.26",
+    "orders": 60,
+    "revenue": 15762.06
+   },
+   {
     "label": "fb / Pokemon Manual (boxes)",
-    "orders": 117,
-    "revenue": 14626.87
+    "orders": 121,
+    "revenue": 15208.52
    }
   ]
  }
