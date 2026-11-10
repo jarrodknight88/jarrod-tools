@@ -1,6 +1,6 @@
 {
- "date": "2026-11-09",
- "generatedAt": "2026-11-09T22:37:24.191Z",
+ "date": "2026-11-10",
+ "generatedAt": "2026-11-10T19:54:48.052Z",
  "quarter": "Q4 2026",
  "quarterStart": "2026-10-01",
  "scope": "Online Store + CardsHQ Headless API (locked ecom definition)",
@@ -104,44 +104,44 @@
   }
  ],
  "tier4": {
-  "revenue": 1963979.64,
-  "unitsSold": 17966,
-  "orders": 4840
+  "revenue": 2056694.55,
+  "unitsSold": 18318,
+  "orders": 4956
  },
  "attribution": {
-  "onlineOrders": 4840,
-  "ordersWithUtm": 2838,
-  "utmCoverage": 58.6,
+  "onlineOrders": 4956,
+  "ordersWithUtm": 2911,
+  "utmCoverage": 58.7,
   "channels": [
    {
     "label": "Direct / unknown",
-    "orders": 1821,
-    "revenue": 887716.94
+    "orders": 1858,
+    "revenue": 937741.78
    },
    {
     "label": "google",
-    "orders": 519,
-    "revenue": 279403.42
+    "orders": 535,
+    "revenue": 288801.77
    },
    {
     "label": "google / Google Shopping",
-    "orders": 437,
-    "revenue": 175554.4
+    "orders": 438,
+    "revenue": 175617.79
    },
    {
     "label": "google / 24123778505",
-    "orders": 282,
-    "revenue": 92371.89
+    "orders": 290,
+    "revenue": 95419.77
    },
    {
     "label": "Google (referrer only)",
-    "orders": 94,
-    "revenue": 44057.4
+    "orders": 96,
+    "revenue": 44343.47
    },
    {
     "label": "fb / National New Inventory Campaign",
-    "orders": 91,
-    "revenue": 38218.08
+    "orders": 93,
+    "revenue": 38877.31
    },
    {
     "label": "google / 22593909256",
@@ -150,8 +150,13 @@
    },
    {
     "label": "fb / Bowman Chrome Football Pre-Order 9.24.26",
-    "orders": 44,
-    "revenue": 22110.74
+    "orders": 45,
+    "revenue": 22216.73
+   },
+   {
+    "label": "CardsHQ / 146b96616f-EMAIL_CAMPAIGN_2026_10_19_08_51",
+    "orders": 19,
+    "revenue": 18796.44
    },
    {
     "label": "shop_app",
@@ -159,19 +164,14 @@
     "revenue": 18567.85
    },
    {
+    "label": "fb / 2026 Topps Update Baseball 10.7.26",
+    "orders": 61,
+    "revenue": 17430.98
+   },
+   {
     "label": "chatgpt.com",
     "orders": 38,
     "revenue": 15790.02
-   },
-   {
-    "label": "fb / 2026 Topps Update Baseball 10.7.26",
-    "orders": 60,
-    "revenue": 15762.06
-   },
-   {
-    "label": "fb / Pokemon Manual (boxes)",
-    "orders": 121,
-    "revenue": 15208.52
    }
   ]
  }
