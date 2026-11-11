@@ -1,137 +1,40 @@
 {
- "date": "2026-11-10",
- "generatedAt": "2026-11-10T19:54:48.052Z",
+ "date": "2026-11-11",
+ "generatedAt": "2026-11-11T19:46:56.184Z",
  "quarter": "Q4 2026",
  "quarterStart": "2026-10-01",
  "scope": "Online Store + CardsHQ Headless API (locked ecom definition)",
  "isSample": false,
- "products": [
-  {
-   "id": "9267898712227",
-   "title": "2026 Topps Star Wars Chrome Hobby 8-Box Case",
-   "handle": "2026-topps-star-wars-chrome-hobby-8-box-case",
-   "tier": 1,
-   "vendor": "CardsHQ",
-   "productType": "",
-   "status": "ACTIVE",
-   "image": null,
-   "price": 999999.99,
-   "onhand": 0,
-   "unitsSold": 0,
-   "revenue": 0,
-   "orders": 0,
-   "daily": {}
-  },
-  {
-   "id": "9267906412707",
-   "title": "2026 Topps Star Wars Chrome Delight 6-Box Case",
-   "handle": "2026-topps-star-wars-chrome-delight-6-box-case",
-   "tier": 1,
-   "vendor": "CardsHQ",
-   "productType": "",
-   "status": "ACTIVE",
-   "image": null,
-   "price": 999999.99,
-   "onhand": 0,
-   "unitsSold": 0,
-   "revenue": 0,
-   "orders": 0,
-   "daily": {}
-  },
-  {
-   "id": "9267975356579",
-   "title": "2026 Topps Chrome Star Wars Blaster 40-Box Case",
-   "handle": "2026-topps-chrome-star-wars-blaster-40-box-case",
-   "tier": 1,
-   "vendor": "CardsHQ",
-   "productType": "",
-   "status": "ACTIVE",
-   "image": null,
-   "price": 999999.99,
-   "onhand": 0,
-   "unitsSold": 0,
-   "revenue": 0,
-   "orders": 0,
-   "daily": {}
-  },
-  {
-   "id": "9269124399267",
-   "title": "2026 Bowman Football Jumbo 8-Box Case",
-   "handle": "2026-bowman-football-jumbo-8-box-case",
-   "tier": 1,
-   "vendor": "CardsHQ",
-   "productType": "",
-   "status": "ACTIVE",
-   "image": null,
-   "price": 999999.99,
-   "onhand": 0,
-   "unitsSold": 0,
-   "revenue": 0,
-   "orders": 0,
-   "daily": {}
-  },
-  {
-   "id": "9269126922403",
-   "title": "2026 Bowman Football Hobby 12-Box Case",
-   "handle": "2026-bowman-football-hobby-12-box-case",
-   "tier": 1,
-   "vendor": "CardsHQ",
-   "productType": "",
-   "status": "ACTIVE",
-   "image": null,
-   "price": 999999.99,
-   "onhand": 0,
-   "unitsSold": 0,
-   "revenue": 0,
-   "orders": 0,
-   "daily": {}
-  },
-  {
-   "id": "9269132361891",
-   "title": "2026 Bowman Football Delight 6-Box Case",
-   "handle": "2026-bowman-football-delight-6-box-case",
-   "tier": 1,
-   "vendor": "CardsHQ",
-   "productType": "",
-   "status": "ACTIVE",
-   "image": null,
-   "price": 999999.99,
-   "onhand": 0,
-   "unitsSold": 0,
-   "revenue": 0,
-   "orders": 0,
-   "daily": {}
-  }
- ],
+ "products": [],
  "tier4": {
-  "revenue": 2056694.55,
-  "unitsSold": 18318,
-  "orders": 4956
+  "revenue": 2112806.96,
+  "unitsSold": 18628,
+  "orders": 5103
  },
  "attribution": {
-  "onlineOrders": 4956,
-  "ordersWithUtm": 2911,
-  "utmCoverage": 58.7,
+  "onlineOrders": 5103,
+  "ordersWithUtm": 3009,
+  "utmCoverage": 59,
   "channels": [
    {
     "label": "Direct / unknown",
-    "orders": 1858,
-    "revenue": 937741.78
+    "orders": 1904,
+    "revenue": 958697.77
    },
    {
     "label": "google",
-    "orders": 535,
-    "revenue": 288801.77
+    "orders": 549,
+    "revenue": 297843
    },
    {
     "label": "google / Google Shopping",
-    "orders": 438,
-    "revenue": 175617.79
+    "orders": 452,
+    "revenue": 183807.08
    },
    {
     "label": "google / 24123778505",
-    "orders": 290,
-    "revenue": 95419.77
+    "orders": 298,
+    "revenue": 98013.92
    },
    {
     "label": "Google (referrer only)",
@@ -140,18 +43,18 @@
    },
    {
     "label": "fb / National New Inventory Campaign",
-    "orders": 93,
-    "revenue": 38877.31
+    "orders": 99,
+    "revenue": 41766.01
    },
    {
     "label": "google / 22593909256",
-    "orders": 81,
-    "revenue": 26715.21
+    "orders": 87,
+    "revenue": 28111.79
    },
    {
     "label": "fb / Bowman Chrome Football Pre-Order 9.24.26",
-    "orders": 45,
-    "revenue": 22216.73
+    "orders": 47,
+    "revenue": 22433.08
    },
    {
     "label": "CardsHQ / 146b96616f-EMAIL_CAMPAIGN_2026_10_19_08_51",
@@ -170,8 +73,8 @@
    },
    {
     "label": "chatgpt.com",
-    "orders": 38,
-    "revenue": 15790.02
+    "orders": 40,
+    "revenue": 16225.13
    }
   ]
  }

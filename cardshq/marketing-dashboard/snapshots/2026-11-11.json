@@ -1,0 +1,81 @@
+{
+ "date": "2026-11-11",
+ "generatedAt": "2026-11-11T19:46:56.184Z",
+ "quarter": "Q4 2026",
+ "quarterStart": "2026-10-01",
+ "scope": "Online Store + CardsHQ Headless API (locked ecom definition)",
+ "isSample": false,
+ "products": [],
+ "tier4": {
+  "revenue": 2112806.96,
+  "unitsSold": 18628,
+  "orders": 5103
+ },
+ "attribution": {
+  "onlineOrders": 5103,
+  "ordersWithUtm": 3009,
+  "utmCoverage": 59,
+  "channels": [
+   {
+    "label": "Direct / unknown",
+    "orders": 1904,
+    "revenue": 958697.77
+   },
+   {
+    "label": "google",
+    "orders": 549,
+    "revenue": 297843
+   },
+   {
+    "label": "google / Google Shopping",
+    "orders": 452,
+    "revenue": 183807.08
+   },
+   {
+    "label": "google / 24123778505",
+    "orders": 298,
+    "revenue": 98013.92
+   },
+   {
+    "label": "Google (referrer only)",
+    "orders": 96,
+    "revenue": 44343.47
+   },
+   {
+    "label": "fb / National New Inventory Campaign",
+    "orders": 99,
+    "revenue": 41766.01
+   },
+   {
+    "label": "google / 22593909256",
+    "orders": 87,
+    "revenue": 28111.79
+   },
+   {
+    "label": "fb / Bowman Chrome Football Pre-Order 9.24.26",
+    "orders": 47,
+    "revenue": 22433.08
+   },
+   {
+    "label": "CardsHQ / 146b96616f-EMAIL_CAMPAIGN_2026_10_19_08_51",
+    "orders": 19,
+    "revenue": 18796.44
+   },
+   {
+    "label": "shop_app",
+    "orders": 48,
+    "revenue": 18567.85
+   },
+   {
+    "label": "fb / 2026 Topps Update Baseball 10.7.26",
+    "orders": 61,
+    "revenue": 17430.98
+   },
+   {
+    "label": "chatgpt.com",
+    "orders": 40,
+    "revenue": 16225.13
+   }
+  ]
+ }
+}
