@@ -11,7 +11,7 @@ export default async (req) => {
     if (req.method === 'GET') {
       const { data, error } = await db().from('granola_notes').select('*').order('processed_at', { ascending: false }).limit(20);
       if (error) throw new Error(error.message);
-      return json({ configured: !!Netlify.env.get('GRANOLA_API_KEY') && !!Netlify.env.get('ANTHROPIC_API_KEY'), recent: data });
+      return json({ configured: !!Netlify.env.get('GRANOLA_API_KEY'), recent: data });
     }
     if (req.method === 'POST') {
       let body = {}; try { body = await req.json(); } catch {}

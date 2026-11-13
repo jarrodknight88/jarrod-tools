@@ -1,5 +1,6 @@
-// Turns a Granola note into a structured recap (JSON) via the Anthropic API, then into HTML for Drive to convert to a Google Doc.
-const MODEL = 'claude-sonnet-4-6';
+// Builds the recap prompt for a Granola note, validates the JSON recap Claude writes back
+// through the claude_queue table (no API key involved), and renders it as HTML for Drive to
+// convert into a Google Doc.
 
 const GLOSSARY = `Transcription corrections (always apply): "Tops" or "TOPS" = Topps; "Dizzy" or "busy" = Digi (Steven Polizzi, design vendor); "Jeff" = Geoff (CEO); "Colin" = Collin (Shipping Manager); "Lloyds Online" or "loyalty line" = LoyaltyLion; "Gorgeous" = Gorgias; "Macau", "Miguel", "McGow" = Mikhail (developer); "Teapot" = Tyler; "Nate" = Nathaniel (lead developer); "Zac" = Zach; "Grady Grails" = Graded Grails; "meth" = Meta.
 People: Kelly (EVP Media and Marketing), Geoff (CEO), Carter (Owner-operator), Matthew (CFO), Dan (VP Product), Nathaniel and Mikhail (developers at Sevenbrand - all dev, API, and Zapier work goes to Nathaniel, never John), John (Digital Marketing Manager), Jared (Head of UX/UI - distinct from Jarrod), Jawad (IT), Collin (Shipping), Lei/Layton (social), Jimmy (Inventory, COGS), Zach (sports inventory), Jasmine (TCG inventory), Mike (Director of Buying, TCG), Sammy (LoyaltyLion), Parker (events co-host).
@@ -38,17 +39,17 @@ Return ONLY a JSON object, no markdown fences, with this exact shape:
 Rules: urgent = today, tomorrow, or this week; soon = within two weeks or a named date; ongoing = open-ended. Only include tasks someone actually committed to. Attribute each task to the person who said they would do it in the transcript. Include tasks owned by other people too - Jarrod tracks what he is waiting on. Add a section only if it has content; you may add one topic-specific section (e.g. "Shop Channel Performance") before Decisions Made when the meeting reported numbers. Keep every number exactly as stated; if figures are quoted per-day but do not sum to a stated total, say the list is as read out rather than implying it sums.`;
 }
 
-export async function generateRecap(note, meetingTitle) {
-  const key = Netlify.env.get('ANTHROPIC_API_KEY');
-  if (!key) throw new Error('ANTHROPIC_API_KEY is not set');
-  const r = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
-    body: JSON.stringify({ model: MODEL, max_tokens: 6000, messages: [{ role: 'user', content: buildPrompt(note, meetingTitle) }] }) });
-  const j = await r.json();
-  if (!r.ok) throw new Error('Anthropic ' + r.status + ': ' + (j.error?.message || 'error'));
-  const text = (j.content || []).filter(c => c.type === 'text').map(c => c.text).join('');
-  const clean = text.replace(/^```(?:json)?\s*|\s*```$/g, '').trim();
-  const start = clean.indexOf('{');
-  const recap = JSON.parse(clean.slice(start));
+// Accepts the recap Claude wrote into claude_queue.result (object or JSON string) and normalizes it.
+export function normalizeRecap(raw) {
+  let recap = raw;
+  if (typeof raw === 'string') {
+    const clean = raw.replace(/^```(?:json)?\s*|\s*```$/g, '').trim();
+    recap = JSON.parse(clean.slice(clean.indexOf('{')));
+  }
+  if (!recap || typeof recap !== 'object' || !recap.summary) throw new Error('recap is missing a summary');
+  recap.headline = recap.headline || '';
+  recap.sections = Array.isArray(recap.sections) ? recap.sections : [];
+  recap.keyDates = Array.isArray(recap.keyDates) ? recap.keyDates : [];
   recap.tasks = (recap.tasks || []).filter(t => t && t.title).map(t => ({ title: String(t.title).slice(0, 200), owner: t.owner || 'Jarrod', urgency: ['urgent', 'soon', 'ongoing'].includes(t.urgency) ? t.urgency : 'soon', due_date: /^\d{4}-\d{2}-\d{2}$/.test(t.due_date || '') ? t.due_date : null, notes: t.notes || null }));
   return recap;
 }

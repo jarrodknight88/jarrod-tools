@@ -20,7 +20,6 @@ Personal daily dashboard for Jarrod: today's meetings, tasks with Akiflow-style 
 | `GOOGLE_CLIENT_ID` | OAuth client ID from Google Cloud (Web application type) |
 | `GOOGLE_CLIENT_SECRET` | OAuth client secret |
 | `GRANOLA_API_KEY` | Personal API key from Granola (Settings > API) |
-| `ANTHROPIC_API_KEY` | Anthropic API key used to write recaps |
 | `AUTH_DISABLED` | Set to `true` to turn the login off entirely (site becomes open to anyone with the URL) |
 
 ## Phases
@@ -28,4 +27,4 @@ Personal daily dashboard for Jarrod: today's meetings, tasks with Akiflow-style 
 1. Static shell on Supabase (this) - tasks, projects, meetings, settings, calendar blocks all persist.
 2. Google (built) - visit `/api/google/connect` once to authorize. Today's meetings come from the primary calendar and match tracked meetings by title pattern; unmatched events show read-only. Recaps merge the `recaps` table with Docs in each meeting's mapped Drive folder. Time blocks become tagged Calendar events. Redirect URI: `https://<site>/api/google/callback`.
 3. Jira - assigned HQ tickets.
-4. Granola automation (built) - `granola-scheduled` runs every 30 minutes: lists new Granola notes, skips excluded meetings, auto-tracks unknown ones, writes a Google Doc recap into the mapped Drive folder, and inserts tasks linked to the meeting. Ledger in `granola_notes`. Manual run: settings > "Sync Granola now" or `POST /api/granola/sync`.
+4. Granola automation (built) - `granola-scheduled` runs every 30 minutes. It lists new Granola notes, skips excluded meetings, auto-tracks unknown ones, and queues each note as a `pending` recap job in `claude_queue` (with the full prompt). A Claude scheduled task on Jarrod's plan (no API key) writes the recap JSON into the job and marks it `ready`; the next run turns ready jobs into a Google Doc in the mapped Drive folder plus tasks linked to the meeting. Ledger in `granola_notes`. Manual run: settings > "Sync Granola now" or `POST /api/granola/sync`.

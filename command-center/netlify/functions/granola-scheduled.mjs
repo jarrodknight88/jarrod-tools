@@ -1,4 +1,4 @@
-// Runs every 30 minutes. Picks up new Granola notes and turns them into recaps + tasks.
+// Runs every 30 minutes. Queues new Granola notes for Claude and turns finished recaps into Docs + tasks.
 import { runSync } from '../../lib/sync.mjs';
 
 export default async () => {
