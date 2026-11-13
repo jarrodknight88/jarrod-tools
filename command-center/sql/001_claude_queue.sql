@@ -22,3 +22,6 @@ create index if not exists claude_queue_kind_status_idx on public.claude_queue (
 
 -- Only the service role (Netlify functions) and the Supabase connector touch this table.
 alter table public.claude_queue enable row level security;
+
+-- granola_notes ledger: notes handed to Claude are recorded as 'queued' until their recap is filed.
+alter type public.granola_status add value if not exists 'queued';
