@@ -7,6 +7,8 @@ Personal daily dashboard for Jarrod: today's meetings, tasks with Akiflow-style 
 - `src/template.html` + `src/logic.js` - the UI, exported from Claude Design and running on its bundled runtime (`static/support.js`). `npm run build` assembles them into `dist/index.html`.
 - `netlify/functions/` - the API. `login` / `logout` manage a signed session cookie; `state` reads and writes the whole dashboard document to Supabase.
 - `lib/db.mjs` - translation between the UI's state shape and the Supabase tables.
+- `lib/thread.mjs` + `netlify/functions/task-thread.mjs` - task comments and attachments (`/api/tasks/:id/thread`, `/comments`, `/attachments`). Files go to the private `task-attachments` bucket through signed upload URLs. A comment mentioning @Claude queues the task in `claude_queue`.
+- `sql/` - schema changes, applied in order.
 - `dev/mock-server.mjs` - local smoke-test server with a fake `/api/state` (`node build.mjs && node dev/mock-server.mjs`, then open http://localhost:8787).
 
 ## Environment variables (Netlify)
@@ -21,6 +23,10 @@ Personal daily dashboard for Jarrod: today's meetings, tasks with Akiflow-style 
 | `GOOGLE_CLIENT_SECRET` | OAuth client secret |
 | `GRANOLA_API_KEY` | Personal API key from Granola (Settings > API) |
 | `AUTH_DISABLED` | Set to `true` to turn the login off entirely (site becomes open to anyone with the URL) |
+
+## Data model (phase 1, Nov 2026)
+
+Everything belongs to one of four areas (`areas`: CardsHQ, Teranga, Wugi, Home) through `area_id` on projects and tasks. Tasks also carry `assignee` (jarrod or jalea), `board` + `board_date` for the Today board, and `claude_status` for Claude hand-offs. Comments and files live in `task_comments` and `task_attachments`. Pre-migration copies of the data are in the `backup` schema.
 
 ## Phases
 

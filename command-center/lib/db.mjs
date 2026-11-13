@@ -33,7 +33,7 @@ const to24 = t => { if (!t) return null; const m = t.match(/(\d{1,2}):(\d{2})\s*
 
 export async function loadState() {
   const s = db();
-  const [settings, meetings, projects, tasks, tm, tp, recaps, patterns] = await Promise.all([
+  const [settings, meetings, projects, tasks, tm, tp, recaps, patterns, areas, comments, files] = await Promise.all([
     s.from('settings').select('key,value'),
     s.from('meetings').select('*').eq('active', true).order('sort_order').order('default_time'),
     s.from('projects').select('*').eq('active', true).order('sort_order').order('created_at'),
@@ -41,9 +41,14 @@ export async function loadState() {
     s.from('task_meetings').select('task_id,meeting_id'),
     s.from('task_projects').select('task_id,project_id'),
     s.from('recaps').select('*').order('meeting_date', { ascending: false }),
-    s.from('recap_patterns').select('*').order('priority')
+    s.from('recap_patterns').select('*').order('priority'),
+    s.from('areas').select('*').order('sort_order'),
+    s.from('task_comments').select('task_id'),
+    s.from('task_attachments').select('task_id')
   ]);
-  for (const r of [settings, meetings, projects, tasks, tm, tp, recaps, patterns]) if (r.error) throw new Error(r.error.message);
+  for (const r of [settings, meetings, projects, tasks, tm, tp, recaps, patterns, areas, comments, files]) if (r.error) throw new Error(r.error.message);
+  const countBy = rows => rows.reduce((o, r) => (o[r.task_id] = (o[r.task_id] || 0) + 1, o), {});
+  const commentCount = countBy(comments.data), fileCount = countBy(files.data);
 
   const cfg = Object.fromEntries(settings.data.map(r => [r.key, r.value]));
   const tz = cfg.timezone || 'America/New_York';
@@ -100,13 +105,16 @@ export async function loadState() {
     let block = null;
     if (t.block_start) { const p = tzParts(new Date(t.block_start), tz); if (p.date === today) block = { start: p.minutes, dur: t.block_dur_min || 30 }; }
     return { id: t.id, title: t.title, owner: t.owner, urgency: t.urgency, done: t.done, scope: t.scope, source: t.source, notes: t.notes || '',
-      dueDate: t.due_date, dueTime: t.due_time ? t.due_time.slice(0, 5) : null, meetings: mById[t.id] || [], projects: pById[t.id] || [], block };
+      dueDate: t.due_date, dueTime: t.due_time ? t.due_time.slice(0, 5) : null, meetings: mById[t.id] || [], projects: pById[t.id] || [], block,
+      area: t.area_id, assignee: t.assignee, board: t.board_date === today ? t.board : 'none', claudeStatus: t.claude_status || null,
+      commentCount: commentCount[t.id] || 0, fileCount: fileCount[t.id] || 0 };
   });
 
-  const projectsOut = projects.data.map(p => ({ id: p.id, name: p.name, health: p.health, pct: p.pct_baseline, baselineOpen: p.baseline_open_count, milestone: p.milestone || '', date: p.milestone_date || '', update: p.latest_update || '' }));
+  const projectsOut = projects.data.map(p => ({ id: p.id, name: p.name, health: p.health, pct: p.pct_baseline, baselineOpen: p.baseline_open_count, milestone: p.milestone || '', date: p.milestone_date || '', update: p.latest_update || '', area: p.area_id }));
 
   return {
     today, tz, googleConfigured, calendarConnected: !!token, warnings,
+    areas: areas.data.map(a => ({ id: a.id, name: a.name, color: a.color })),
     meetings: meetingsOut, tasks: tasksOut, projects: projectsOut, tickets: [],
     folderTree: tree || cfg.folder_tree || { id: 'root', name: 'My Drive', children: [] },
     settings: { defaultFolder: (cfg.default_recap_folder || {}).id || null, mappings, patterns: patterns.data.map(p => ({ id: 'p:' + p.id, pattern: p.pattern, folder: p.folder_id, mode: p.mode })) }
@@ -143,7 +151,8 @@ export async function saveState(doc) {
   // Projects
   if (Array.isArray(doc.projects)) {
     const rows = doc.projects.map((p, i) => ({ id: p.id, name: p.name, health: p.health || 'Green', pct_baseline: Math.max(0, Math.min(100, Math.round(p.pct || 0))), baseline_open_count: p.baselineOpen || 0,
-      milestone: p.milestone || null, milestone_date: p.date || null, latest_update: p.update || null, active: true, sort_order: i }));
+      milestone: p.milestone || null, milestone_date: p.date || null, latest_update: p.update || null, active: true, sort_order: i,
+      ...(p.area ? { area_id: p.area } : {}) }));
     if (rows.length) fail(await s.from('projects').upsert(rows, { onConflict: 'id' }));
     const gone = (doc.deletedProjects || []).filter(Boolean);
     if (gone.length) fail(await s.from('projects').update({ active: false }).in('id', gone));
@@ -158,7 +167,10 @@ export async function saveState(doc) {
       const was = prev[t.id];
       return { id: t.id, title: t.title, owner: t.owner || 'Jarrod', urgency: t.urgency || 'soon', done: !!t.done, done_at: t.done ? ((was && was.done_at) || now) : null,
         due_date: t.dueDate || null, due_time: t.dueTime || null, scope: !!t.scope, source: t.source || 'manual', notes: t.notes || null,
-        block_start: t.block ? zonedToIso(today, t.block.start, tz) : null, block_dur_min: t.block ? t.block.dur : null, calendar_event_id: was ? was.calendar_event_id : null };
+        block_start: t.block ? zonedToIso(today, t.block.start, tz) : null, block_dur_min: t.block ? t.block.dur : null, calendar_event_id: was ? was.calendar_event_id : null,
+        // Newer fields are written only when the client sends them, so an older page can't reset them.
+        ...(t.area ? { area_id: t.area } : {}), ...(t.assignee ? { assignee: t.assignee } : {}),
+        ...(t.board ? { board: t.board, board_date: t.board === 'none' ? null : today } : {}) };
     });
     await syncBlocks(rows, prev);
     if (rows.length) {
