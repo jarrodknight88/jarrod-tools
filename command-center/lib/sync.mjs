@@ -104,7 +104,7 @@ async function finalize(s, { cfg, token, log }) {
       const recapRow = fail(await s.from('recaps').upsert({ meeting_id: p.meeting_id, drive_file_id: doc.id, drive_url: doc.webViewLink, title: docName, meeting_date: p.meeting_date, summary: recap.summary, source: 'granola' }, { onConflict: 'drive_file_id' }).select('id').single()).data;
       rec.recap_id = recapRow.id;
       if (recap.tasks.length) {
-        const rows = fail(await s.from('tasks').insert(recap.tasks.map(t => ({ title: t.title, owner: t.owner, urgency: t.urgency, due_date: t.due_date, notes: t.notes, source: 'granola' }))).select('id')).data;
+        const rows = fail(await s.from('tasks').insert(recap.tasks.map(t => ({ title: t.title, owner: t.owner, urgency: t.urgency, due_date: t.due_date, notes: t.notes, source: 'granola', area_id: meeting?.area_id || 'cardshq' }))).select('id')).data;
         if (p.meeting_id) fail(await s.from('task_meetings').insert(rows.map(r => ({ task_id: r.id, meeting_id: p.meeting_id }))));
         rec.task_count = rows.length;
       }

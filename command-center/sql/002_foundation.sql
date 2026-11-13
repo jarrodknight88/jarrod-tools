@@ -62,3 +62,7 @@ alter table public.task_attachments enable row level security;
 insert into storage.buckets (id, name, public, file_size_limit)
 values ('task-attachments', 'task-attachments', false, 26214400)
 on conflict (id) do nothing;
+
+-- Meetings carry an area too, so tasks from a meeting's recap land in the right place.
+alter table public.meetings add column if not exists area_id text not null default 'cardshq' references public.areas(id);
+update public.meetings set area_id = 'teranga' where title ilike '%teranga%' or title ilike '%afro district%' or title ilike '%bartender%';
