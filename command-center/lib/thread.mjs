@@ -35,6 +35,21 @@ export async function getThread(taskId) {
   };
 }
 
+// When Claude's task worker next checks the queue (Eastern time). Mirrors its two scheduled runs:
+// 35 past every hour 6 am to 10 pm daily, plus 5 past 8 am to 6 pm Monday to Saturday.
+export function nextClaudeRun(now = new Date()) {
+  const fmt = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', weekday: 'short', hour: 'numeric', minute: '2-digit', hourCycle: 'h23' });
+  for (let i = 1; i <= 24 * 60; i++) {
+    const d = new Date(now.getTime() + i * 60000), p = Object.fromEntries(fmt.formatToParts(d).map(x => [x.type, x.value]));
+    const h = Number(p.hour), m = Number(p.minute);
+    if ((m === 35 && h >= 6 && h <= 22) || (m === 5 && h >= 8 && h <= 18 && p.weekday !== 'Sun')) {
+      const t = `${h % 12 || 12}:${p.minute} ${h < 12 ? 'am' : 'pm'}`;
+      return i > 6 * 60 ? `tomorrow at ${t}` : `at ${t}`;
+    }
+  }
+  return 'within the hour';
+}
+
 const mentionsClaude = body => /(^|\s)@claude\b/i.test(body || '');
 
 // Adds a comment. Attachments already uploaded (via signUpload) are linked by id.
@@ -58,7 +73,7 @@ export async function addComment(taskId, { body = '', attachmentIds = [] } = {})
     else if (open) fail(await s.from('claude_queue').update({ status: 'pending', payload, result: null, error: null, claimed_at: null, ready_at: null, completed_at: null, title: task.title }).eq('id', open.id));
     else fail(await s.from('claude_queue').insert({ kind: 'task', status: 'pending', source_ref: ref, title: task.title, payload }));
     fail(await s.from('tasks').update({ claude_status: 'queued' }).eq('id', taskId));
-    fail(await s.from('task_comments').insert({ task_id: taskId, author: 'system', body: 'Claude picked this up and will reply here.' }));
+    fail(await s.from('task_comments').insert({ task_id: taskId, author: 'system', body: `Queued for Claude. The next run is ${nextClaudeRun()}, and the reply will show up here.` }));
     queued = true;
   }
   return { comment: { id: comment.id, author: comment.author, body: comment.body, at: comment.created_at }, queued };
