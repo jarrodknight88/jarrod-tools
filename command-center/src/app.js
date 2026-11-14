@@ -20,7 +20,7 @@ let S = null, AREAS = {}, PROJECTS = [], TASKS = [], MEETINGS = [], EVENTS = [],
 let resizing = false;
 let who = LS.get('who', 'jarrod'), view = 'board', calMode = 'day', calStart = 0, curId = null, drag = null, lastArea = LS.get('area', 'cardshq'), H = 44, briefMode = 'am', loadedAt = 0;
 const START = 6, END = 21;
-const openAreas = LS.get('open', {});
+const openAreas = LS.get('open', {}), showFin = {};
 const q = { area:'cardshq', due:0, who:'jarrod' };
 const phone = matchMedia('(max-width:760px)');
 
@@ -52,6 +52,7 @@ async function api(method, path, body) {
     return j;
   } finally { if (write) busy(-1); }
 }
+const normProj = p => ({ ...p, due: off(p.due) });
 const normTask = t => ({ ...t, due: off(t.due), block: t.block ? { d: off(t.block.date), start: t.block.start, dur: t.block.dur, work: t.block.work } : null });
 const wire = p => { const o = { ...p }; if ('due' in o) o.due = o.due == null ? null : ymd(o.due); if ('block' in o) o.block = o.block ? { date: ymd(o.block.d), start: o.block.start, dur: o.block.dur, work: o.block.work } : null; return o; };
 function addEvents(r) {
@@ -60,7 +61,7 @@ function addEvents(r) {
   (r.events || []).forEach(e => { if (!have.has(e.id + e.date)) EVENTS.push({ ...e, d: off(e.date) }); });
 }
 function ingest(state) {
-  S = state; AREAS = Object.fromEntries(state.areas.map(a => [a.id, a])); PROJECTS = state.projects; MEETINGS = state.meetings;
+  S = state; AREAS = Object.fromEntries(state.areas.map(a => [a.id, a])); PROJECTS = state.projects.map(normProj); MEETINGS = state.meetings;
   const keep = Object.fromEntries(TASKS.map(t => [t.id, t]));
   TASKS = state.tasks.map(t => { const n = normTask(t), old = keep[t.id]; if (old && old.thread) { n.thread = old.thread; n.fileList = old.fileList; } return n; });
   EVENTS = []; evDays = new Set(); addEvents(state);
@@ -101,7 +102,8 @@ function dueInfo(t) {
 }
 function setBoard(t, b) { t.board = b; t.done = b === 'done'; if (t.done) { t.doneAt = new Date().toISOString(); t.claude = null; } else t.doneAt = null; return save(t, { board:b }); }
 let tt; function toast(msg, undo) { const el = $('#toast'), u = $('#toastUndo'); $('#toastMsg').textContent = msg; u.hidden = !undo; u.onclick = () => { undo(); el.classList.remove('show'); }; el.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => el.classList.remove('show'), undo ? 6000 : 2400); }
-function closeAll() { ['#scrim','#notif','#detail','#qa','#qp','#info','#search','#fp'].forEach(s => $(s).classList.remove('show'));
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition; let rec = null;
+function closeAll() { if (rec) rec.stop(); ['#scrim','#notif','#detail','#qa','#qp','#info','#search','#fp'].forEach(s => $(s).classList.remove('show'));
   const f = document.activeElement; if (f && f.closest && f.closest('.qa,.detail,.notif')) f.blur(); } // so the N and / shortcuts work again straight away
 const opt = (v, l, sel) => `<option value="${esc(v)}"${String(sel ?? '') === String(v) ? ' selected' : ''}>${l}</option>`;
 
@@ -125,10 +127,11 @@ function renderSide() {
   $$('[data-who]').forEach(el => el.innerHTML = [['jarrod','Me'],['jalea','Jalea'],['both','Both']].map(([v, l]) => `<button data-act="who" data-v="${v}" aria-pressed="${who === v}">${l}</button>`).join(''));
   $('#tree').innerHTML = S.areas.map((a, i) => {
     const id = a.id, open = TASKS.filter(t => t.area === id && mine(t) && !isDone(t)), isOpen = id in openAreas ? openAreas[id] : i < 2;
-    const groups = [...PROJECTS.filter(p => p.area === id).map(p => [p.name, open.filter(t => t.proj === p.id)]), ['No project', open.filter(t => !t.proj || !PROJECTS.some(p => p.id === t.proj && p.area === id))]];
+    const live = PROJECTS.filter(p => p.area === id && !p.done), fin = PROJECTS.filter(p => p.area === id && p.done);
+    const groups = [...live.map(p => [p, open.filter(t => t.proj === p.id)]), [null, open.filter(t => !t.proj || !live.some(p => p.id === t.proj))]];
     return `<div class="area" data-open="${isOpen}"><button data-act="area" data-v="${id}" aria-expanded="${isOpen}"><svg class="chev" viewBox="0 0 10 10"><path d="M2 3.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span class="dot" style="background:${a.color}"></span>${esc(a.name)}<span class="count">${open.length}</span><span class="plus" role="button" tabindex="0" data-act="addprojtop" data-v="${id}" title="Add a project to ${esc(a.name)}" aria-label="Add a project to ${esc(a.name)}">+</span></button>
-      <div class="projects">${groups.filter(([n, ts]) => n !== 'No project' || ts.length).map(([n, ts]) => `<div class="proj">${esc(n)}</div>${ts.map(t => `<div class="ptask" draggable="true" data-id="${t.id}"><button class="chk" data-act="check" data-id="${t.id}" aria-label="Mark done: ${esc(t.title)}"></button><span>${esc(t.title)}</span></div>`).join('') || '<div class="none">Nothing open</div>'}`).join('')}
-      <button class="addp" data-act="addproj" data-v="${id}">+ Add project</button></div></div>`;
+      <div class="projects">${groups.filter(([p, ts]) => p || ts.length).map(([p, ts]) => `${p ? `<button class="proj" data-act="project" data-v="${p.id}" title="Open project">${esc(p.name)}${p.due != null ? `<small class="${p.due < 0 ? 'late' : ''}">${p.due < 0 ? 'Overdue' : 'Due ' + dueInfo(p).label.replace('Due ', '').replace('Today', 'today').replace('Tomorrow', 'tomorrow')}</small>` : ''}</button>` : '<div class="proj plain">No project</div>'}${ts.map(t => `<div class="ptask" draggable="true" data-id="${t.id}"><button class="chk" data-act="check" data-id="${t.id}" aria-label="Mark done: ${esc(t.title)}"></button><span>${esc(t.title)}</span></div>`).join('') || '<div class="none">Nothing open</div>'}`).join('')}
+      <button class="addp" data-act="addproj" data-v="${id}">+ Add project</button>${fin.length ? `<button class="addp" data-act="showfin" data-v="${id}">${showFin[id] ? 'Hide' : 'Show'} finished (${fin.length})</button>${showFin[id] ? fin.map(p => `<button class="proj fin" data-act="project" data-v="${p.id}">${esc(p.name)}</button>`).join('') : ''}` : ''}</div></div>`;
   }).join('');
   const c = S.connections, bad = (c.googleConfigured && (!c.calendar || !c.drive)) ? 1 : 0, pg = document.body.dataset.page;
   $('#navSet').innerHTML = 'Settings' + (bad ? `<span class="pill late" title="Needs attention">${bad}</span>` : '');
@@ -277,7 +280,7 @@ function renderDetail() {
     <dl class="fields">
       <dt>Status</dt><dd><select data-f="board" aria-label="Status">${opt('none','Not on today\'s board',status)}${opt('todo','To do',status)}${opt('doing','Doing',status)}${opt('done','Done',status)}</select></dd>
       <dt>Area</dt><dd><select data-f="area" aria-label="Area">${S.areas.map(a => opt(a.id, esc(a.name), t.area)).join('')}</select></dd>
-      <dt>Project</dt><dd><select data-f="proj" aria-label="Project">${opt('','No project',t.proj || '')}${PROJECTS.filter(p => p.area === t.area).map(p => opt(p.id, esc(p.name), t.proj)).join('')}</select></dd>
+      <dt>Project</dt><dd><select data-f="proj" aria-label="Project">${opt('','No project',t.proj || '')}${PROJECTS.filter(p => p.area === t.area && (!p.done || p.id === t.proj)).map(p => opt(p.id, esc(p.name), t.proj)).join('')}</select></dd>
       <dt>Due</dt><dd><input type="date" data-f="due" value="${t.due == null ? '' : ymd(t.due)}" aria-label="Due date">${d && !isDone(t) ? `<span class="due ${d.cls}">${d.label}</span>` : ''}</dd>
       <dt>Assigned to</dt><dd><div class="seg"><button data-act="assign" data-v="jarrod" aria-pressed="${t.who === 'jarrod'}">Jarrod</button><button data-act="assign" data-v="jalea" aria-pressed="${t.who === 'jalea'}">Jalea</button></div></dd>
       <dt>Waiting on</dt><dd><input type="text" data-f="owner" value="${esc(t.owner || '')}" placeholder="Nobody, this one is mine" aria-label="Waiting on"></dd>
@@ -370,7 +373,25 @@ function renderPage() {
 $('#page').addEventListener('change', async e => { const el = e.target;
   if (el.dataset.s === 'wrap' && el.value) { S.settings.wrap = el.value; renderBrief(nowMin() >= hhmm(el.value) ? 'pm' : 'am'); try { await api('PUT', '/api/app/settings', { wrap:el.value }); toast(`Evening wrap-up now starts at ${tmLong(hhmm(el.value)).replace(':00', '')}`); } catch (err) { toast('That didn\'t save. ' + err.message); } } });
 function showInfo(crumb, html) { closeAll(); $('#iCrumb').innerHTML = crumb; $('#iBody').innerHTML = html; $('#info').classList.add('show'); $('#scrim').classList.add('show'); }
-$('#iBody').addEventListener('change', async e => { const m = MEETINGS.find(x => x.id === e.target.dataset.m); if (!m) return;
+// ---------- project panel ----------
+let curProj = null, pendingFinish = null;
+const proj = () => PROJECTS.find(p => p.id === curProj);
+function saveProj(p, patch) { const o = { ...patch }; if ('due' in o) o.due = o.due == null ? null : ymd(o.due);
+  return api('PATCH', '/api/app/projects/' + p.id, o).then(r => { const keep = { name:p.name, notes:p.notes }; Object.assign(p, normProj(r.project)); if (document.activeElement && document.activeElement.dataset.pf) Object.assign(p, keep); return r; }).catch(e => { toast('That didn\'t save. ' + e.message); refresh(true); }); }
+function saveProjSoon(p, field, value) { clearTimeout(timers['p' + p.id + field]); timers['p' + p.id + field] = setTimeout(() => saveProj(p, { [field]: value }), 600); }
+async function loadProjFiles(id) {
+  try { const r = await api('GET', `/api/app/projects/${id}/files`), p = PROJECTS.find(x => x.id === id); if (!p) return; p.fileList = r.files; p.files = r.files.length; if (curProj === id && $('#pFiles')) $('#pFiles').innerHTML = r.files.map(fileTile).join('') + '<button class="file add" data-act="attach" data-v="project">+ Add file</button>'; }
+  catch (e) { if (curProj === id && $('#pFiles')) $('#pFiles').innerHTML = `<div class="none">Couldn't load files. ${esc(e.message)}</div>`; }
+}
+$('#iBody').addEventListener('input', e => { const f = e.target.dataset.pf, p = proj(); if (!p || !f) return;
+  if (f === 'name') { const v = e.target.value.replace(/\n/g, ' '); if (v.trim()) { p.name = v; saveProjSoon(p, 'name', v.trim()); renderSide(); } }
+  else if (f === 'notes') { p.notes = e.target.value; saveProjSoon(p, 'notes', p.notes); } });
+$('#iBody').addEventListener('keydown', async e => { if (e.key !== 'Enter' || e.target.id !== 'pQuick' || !e.target.value.trim()) return; const p = proj(), title = e.target.value.trim(); e.target.value = '';
+  if (await addTask({ title, area:p.area, proj:p.id, due:null, board:'none' })) { ACT.project(p.id); setTimeout(() => $('#pQuick') && $('#pQuick').focus(), 80); } });
+$('#iBody').addEventListener('change', async e => { const pf = e.target.dataset.pf, p = proj();
+  if (pf === 'due' && p) { p.due = off(e.target.value); await saveProj(p, { due:p.due }); renderSide(); ACT.project(p.id); return; }
+  if (pf === 'area' && p) { p.area = e.target.value; TASKS.forEach(t => { if (t.proj === p.id) t.area = p.area; }); await saveProj(p, { area:p.area }); openAreas[p.area] = true; render(); ACT.project(p.id); toast(`Moved to ${an(p.area)} with its tasks`); return; }
+  const m = MEETINGS.find(x => x.id === e.target.dataset.m); if (!m) return;
   m.area = e.target.value; renderPage(); EVENTS.forEach(ev => { if (ev.meeting === m.id) ev.area = m.area; }); renderCal(); ACT.meeting(m.id);
   try { await api('PATCH', '/api/app/meetings/' + m.id, { area:m.area }); toast(`New action items will land in ${an(m.area)}`); } catch (err) { toast('That didn\'t save. ' + err.message); } });
 
@@ -407,7 +428,7 @@ const renderQp = () => $('#qpArea').innerHTML = S.areas.map(a => `<button data-a
 // ---------- quick add ----------
 function renderQa() {
   $('#qArea').innerHTML = S.areas.map(a => `<button data-act="qset" data-k="area" data-v="${a.id}" aria-pressed="${q.area === a.id}"><i style="background:${a.color}"></i>${esc(a.name)}</button>`).join('');
-  $('#qProj').innerHTML = opt('', 'No project', '') + PROJECTS.filter(p => p.area === q.area).map(p => opt(p.id, esc(p.name), '')).join('');
+  $('#qProj').innerHTML = opt('', 'No project', '') + PROJECTS.filter(p => p.area === q.area && !p.done).map(p => opt(p.id, esc(p.name), '')).join('');
   $('#qDue').innerHTML = [[0,'Today'],[1,'Tomorrow'],[7,'Next week'],['','No date']].map(([v, l]) => `<button data-act="qset" data-k="due" data-v="${v}" aria-pressed="${String(q.due ?? '') === String(v)}">${l}</button>`).join('');
   $('#qWho').innerHTML = [['jarrod','Me'],['jalea','Jalea']].map(([v, l]) => `<button data-act="qset" data-k="who" data-v="${v}" aria-pressed="${q.who === v}">${l}</button>`).join('');
 }
@@ -425,15 +446,50 @@ const ACT = {
   area: v => { const el = $(`[data-act=area][data-v="${v}"]`).parentElement; openAreas[v] = el.dataset.open !== 'true'; LS.set('open', openAreas); renderSide(); },
   addproj: (v, el) => { const i = document.createElement('input'); i.className = 'addp-in'; i.placeholder = 'Project name, then Enter'; i.setAttribute('aria-label', 'New project name'); el.replaceWith(i); i.focus();
     i.onkeydown = async e => { if (e.key === 'Escape') renderSide(); if (e.key !== 'Enter' || !i.value.trim()) return; i.disabled = true;
-      try { const r = await api('POST', '/api/app/projects', { name:i.value.trim(), area:v }); PROJECTS.push(r.project); toast('Project added'); } catch (err) { toast('Couldn\'t add that. ' + err.message); } renderSide(); };
+      try { const r = await api('POST', '/api/app/projects', { name:i.value.trim(), area:v }); PROJECTS.push(normProj(r.project)); toast('Project added'); } catch (err) { toast('Couldn\'t add that. ' + err.message); } renderSide(); };
     i.onblur = () => setTimeout(() => { if (!i.disabled) renderSide(); }, 150); },
   addprojtop: (v, el, e) => { e.stopPropagation(); openAreas[v] = true; LS.set('open', openAreas); renderSide(); const b = $(`.addp[data-v="${v}"]`); if (b) ACT.addproj(v, b); },
   newproj: v => { const carry = v === 'keep' ? $('#qTitle').value : ''; closeAll(); qpArea = v === 'keep' ? q.area : lastArea; $('#qpName').value = carry; renderQp(); $('#qp').classList.add('show'); $('#scrim').classList.add('show'); setTimeout(() => $('#qpName').focus(), 60); },
   qpset: v => { qpArea = v; renderQp(); },
   qpadd: async () => { const name = $('#qpName').value.trim(); if (!name) { $('#qpName').focus(); return; } closeAll();
-    try { const r = await api('POST', '/api/app/projects', { name, area:qpArea }); PROJECTS.push(r.project); openAreas[qpArea] = true; LS.set('open', openAreas); lastArea = qpArea; LS.set('area', lastArea); renderSide(); if (phone.matches) ACT.tab('projects'); toast(`${name} added to ${an(qpArea)}`); }
+    try { const r = await api('POST', '/api/app/projects', { name, area:qpArea }); PROJECTS.push(normProj(r.project)); openAreas[qpArea] = true; LS.set('open', openAreas); lastArea = qpArea; LS.set('area', lastArea); renderSide(); if (phone.matches) ACT.tab('projects'); toast(`${name} added to ${an(qpArea)}`); }
     catch (e) { toast('Couldn\'t add that. ' + e.message); } },
   mcheck: (v, el) => { ACT.check(v, el); ACT.meeting(el.dataset.m); },
+  showfin: v => { showFin[v] = !showFin[v]; renderSide(); },
+  project: v => { const p = PROJECTS.find(x => x.id === v); if (!p) return; if (curProj !== v) pendingFinish = null; curProj = v;
+    const ts = TASKS.filter(t => t.proj === v), open = ts.filter(t => !isDone(t)), d = p.due == null ? null : dueInfo(p);
+    showInfo(`<i style="background:${ac(p.area)}"></i>${esc(an(p.area))} / Project`, `<textarea class="d-title" data-pf="name" rows="2" aria-label="Project name">${esc(p.name)}</textarea>
+      ${p.done ? `<div class="rvbox working"><b>Finished ${stamp(p.doneAt)}</b><p>It's out of your project list. Reopen it to bring it back.</p><div class="btns" style="margin-top:10px"><button class="ghost" data-act="preopen">Reopen project</button></div></div>`
+        : pendingFinish === v ? `<div class="rvbox"><b>${open.length} task${open.length === 1 ? ' is' : 's are'} still open</b><p>Finish the project anyway?</p><div class="btns"><button class="send" data-act="pfinish" data-v="close">Finish and close ${open.length === 1 ? 'it' : 'them'}</button><button class="ghost" data-act="pfinish" data-v="leave">Finish, leave ${open.length === 1 ? 'it' : 'them'} open</button><button class="ghost" data-act="pcancel">Cancel</button></div></div>` : ''}
+      <dl class="fields">
+        <dt>Status</dt><dd><b>${p.done ? 'Finished' : 'Open'}</b>${p.done || pendingFinish === v ? '' : '<button class="mini" data-act="pfinish">Finish project</button>'}</dd>
+        <dt>Area</dt><dd><select data-pf="area" aria-label="Area">${S.areas.map(a => opt(a.id, esc(a.name), p.area)).join('')}</select></dd>
+        <dt>Due</dt><dd><input type="date" data-pf="due" value="${p.due == null ? '' : ymd(p.due)}" aria-label="Project due date">${d && !p.done ? `<span class="due ${d.cls}">${d.label}</span>` : ''}</dd>
+        <dt>Progress</dt><dd>${ts.length ? `${ts.length - open.length} of ${ts.length} task${ts.length === 1 ? '' : 's'} done` : 'No tasks yet'}</dd>
+      </dl>
+      <h3 class="d-sec">Notes</h3><textarea class="notes" data-pf="notes" placeholder="Add notes" aria-label="Project notes">${esc(p.notes)}</textarea>
+      <h3 class="d-sec">Attachments</h3><div class="files" id="pFiles">${(p.fileList || []).map(fileTile).join('')}<button class="file add" data-act="attach" data-v="project">+ Add file</button></div>
+      <h3 class="d-sec">Open tasks</h3>${p.done ? '' : '<input class="qa-in pq" id="pQuick" placeholder="Add a task to this project, then press Enter" autocomplete="off" aria-label="Add a task to this project">'}
+      ${open.map(t => { const dd2 = dueInfo(t); return `<div class="row" data-id="${t.id}" style="--c:${ac(t.area)}"><button class="chk" data-act="pcheck" data-id="${t.id}" aria-label="Mark done"></button><div><div class="t">${esc(t.title)}</div><div class="m">${t.owner ? `<span>Waiting on ${esc(t.owner)}</span>` : ''}${t.claude ? `<span class="cl ${t.claude}">${SPARK}${t.claude === 'review' ? 'Needs your review' : 'Claude is on it'}</span>` : ''}</div></div><span class="due ${dd2 ? dd2.cls : ''}">${dd2 ? dd2.label : ''}</span><span></span></div>`; }).join('') || '<div class="none">Nothing open in this project</div>'}
+      <button class="del" data-act="pdelete" style="margin-top:18px">Delete project</button>`);
+    loadProjFiles(v); },
+  pcheck: (v, el) => { ACT.check(v, el); ACT.project(curProj); },
+  pcancel: () => { pendingFinish = null; ACT.project(curProj); },
+  pfinish: async v => { const p = proj(), open = TASKS.filter(t => t.proj === p.id && !isDone(t)).length;
+    if (!v && open) { pendingFinish = p.id; ACT.project(p.id); return; }
+    pendingFinish = null; p.done = true; p.doneAt = new Date().toISOString(); renderSide(); ACT.project(p.id);
+    const r = await saveProj(p, { done:true, closeTasks: v === 'close' }); if (r && r.closed) await refresh(true);
+    ACT.project(p.id); toast(r && r.closed ? `Project finished, ${r.closed} task${r.closed === 1 ? '' : 's'} closed` : 'Project finished'); },
+  preopen: async () => { const p = proj(); p.done = false; p.doneAt = null; renderSide(); ACT.project(p.id); await saveProj(p, { done:false }); toast('Project reopened'); },
+  pdelete: async () => { const p = proj(), i = PROJECTS.indexOf(p); PROJECTS.splice(i, 1); closeAll(); render();
+    try { await api('DELETE', '/api/app/projects/' + p.id); toast('Project deleted. Its tasks are kept.', async () => { try { const r = await api('POST', `/api/app/projects/${p.id}/restore`); PROJECTS.splice(i, 0, normProj(r.project)); render(); } catch (e) { toast('Couldn\'t undo. ' + e.message); } }); }
+    catch (e) { PROJECTS.splice(i, 0, p); render(); toast('Couldn\'t delete. ' + e.message); } },
+  mic: () => { if (rec) { rec.stop(); return; } if (!SR) return; const i = $('#dInput'), base = i.value ? i.value.replace(/\s*$/, ' ') : '';
+    rec = new SR(); rec.lang = navigator.language || 'en-US'; rec.interimResults = true; rec.continuous = true;
+    rec.onresult = e => { let txt = ''; for (let k = 0; k < e.results.length; k++) txt += e.results[k][0].transcript; i.value = base + txt.replace(/^\s+/, '').replace(/\bat claude\b/gi, '@Claude'); };
+    rec.onerror = e => { if (e.error === 'not-allowed' || e.error === 'service-not-allowed') toast('Microphone access is blocked for this site. Allow it in your browser settings.'); else if (e.error !== 'aborted' && e.error !== 'no-speech') toast('Dictation stopped. ' + e.error); };
+    rec.onend = () => { rec = null; $('#micBtn').setAttribute('aria-pressed', 'false'); $('#micLabel').textContent = 'Dictate'; i.focus(); };
+    try { rec.start(); $('#micBtn').setAttribute('aria-pressed', 'true'); $('#micLabel').textContent = 'Listening, tap to stop'; } catch (err) { rec = null; toast('Dictation couldn\'t start here'); } },
   tab: v => { if (v === 'meetings') { document.body.dataset.tab = 'today'; setPage('meetings'); } else { document.body.dataset.tab = v; if (v === 'today') setPage('home'); else markTabs(); } scrollTo(0, 0); },
   page: v => { if (calMode === 'week') { calMode = 'day'; document.body.dataset.cal = 'day'; renderCal(); } closeAll(); document.body.dataset.tab = 'today'; setPage(v); scrollTo(0, 0); },
   calmode: v => { calMode = v; document.body.dataset.cal = v; renderCal(); ensureEvents(); },
@@ -445,7 +501,7 @@ const ACT = {
   nview: v => { closeAll(); ACT.tab('today'); ACT.view(v); },
   close: closeAll,
   search: () => { closeAll(); $('#sInput').value = ''; renderSearch(); $('#search').classList.add('show'); $('#scrim').classList.add('show'); setTimeout(() => $('#sInput').focus(), 60); },
-  sproj: v => { const p = PROJECTS.find(x => x.id === v); openAreas[p.area] = true; closeAll(); renderSide(); if (phone.matches) ACT.tab('projects'); toast(`${p.name} is under ${an(p.area)}`); },
+  sproj: v => ACT.project(v),
   new: v => { const carry = v === 'keep' ? $('#qpName').value : ''; closeAll(); q.area = v === 'keep' ? qpArea : lastArea; q.due = 0; q.who = who === 'jalea' ? 'jalea' : 'jarrod'; $('#qTitle').value = carry; $('#qBoard').checked = true; renderQa(); $('#qa').classList.add('show'); $('#scrim').classList.add('show'); setTimeout(() => $('#qTitle').focus(), 60); },
   qset: (v, el) => { const k = el.dataset.k; q[k] = k === 'due' ? (v === '' ? null : +v) : v; if (k === 'due') $('#qBoard').checked = q.due === 0; renderQa(); },
   qadd: async () => { const title = $('#qTitle').value.trim(); if (!title) { $('#qTitle').focus(); return; } closeAll();
@@ -464,7 +520,7 @@ const ACT = {
     catch (e) { TASKS.splice(i, 0, t); render(); toast('Couldn\'t delete. ' + e.message); } },
   attach: v => { fileTarget = v; $('#fileInput').click(); },
   mention: () => { const i = $('#dInput'); i.value = (i.value ? i.value.trim() + ' ' : '') + '@Claude '; i.focus(); },
-  comment: async () => { const i = $('#dInput'), text = i.value.trim(), t = cur(), btn = $('#commentBtn'); if (!t || (!text && !pending.length)) return;
+  comment: async () => { if (rec) rec.stop(); const i = $('#dInput'), text = i.value.trim(), t = cur(), btn = $('#commentBtn'); if (!t || (!text && !pending.length)) return;
     btn.disabled = true;
     try { const r = await api('POST', `/api/tasks/${t.id}/comments`, { body:text, attachmentIds:pending.map(f => f.id) }); i.value = ''; pending = []; renderPending();
       if (r.queued) t.claude = 'working'; toast(r.queued ? 'Handed to Claude' : 'Comment added'); await loadThread(t.id); if (r.queued) render(); }
@@ -512,7 +568,13 @@ document.addEventListener('keydown', async e => {
   else if ((e.key || '').toLowerCase() === 'n' && !typing && !e.metaKey && !e.ctrlKey && !e.altKey) { e.preventDefault(); ACT.new(); }
   else if (e.key === '/' && !typing) { e.preventDefault(); ACT.search(); }
 });
-$('#fileInput').onchange = async () => { const t = cur(), fi = $('#fileInput'), files = [...fi.files]; fi.value = ''; if (!t || !files.length) return;
+$('#fileInput').onchange = async () => { const fi = $('#fileInput'), files = [...fi.files]; fi.value = ''; if (!files.length) return;
+  if (fileTarget === 'project') { const p = proj(); if (!p) return; toast(`Uploading ${files.length === 1 ? files[0].name : files.length + ' files'}`);
+    for (const f of files) { try { if (f.size > 25 * 1024 * 1024) throw new Error(`${f.name} is over 25 MB`); const r = await api('POST', `/api/app/projects/${p.id}/files`, { name:f.name, type:f.type, size:f.size });
+      const up = await fetch(r.uploadUrl, { method:'PUT', headers:{ 'content-type': f.type || 'application/octet-stream', 'x-upsert':'false' }, body:f });
+      if (!up.ok) { await api('DELETE', `/api/app/projects/${p.id}/files/${r.attachmentId}`).catch(() => {}); throw new Error(`${f.name} didn't upload (${up.status})`); } } catch (e) { toast(e.message); await loadProjFiles(p.id); return; } }
+    await loadProjFiles(p.id); toast('File attached'); return; }
+  const t = cur(); if (!t) return;
   toast(`Uploading ${files.length === 1 ? files[0].name : files.length + ' files'}`);
   for (const f of files) { try { const up = await uploadFile(t, f, fileTarget === 'comment'); if (fileTarget === 'comment') { pending.push(up); renderPending(); } } catch (e) { toast(e.message); return; } }
   if (fileTarget === 'task') { await loadThread(t.id); toast('File attached'); } else toast('File added to your comment'); };
@@ -539,6 +601,7 @@ document.addEventListener('mousedown', e => { const hnd = e.target.closest('.rz'
 async function start() {
   try { ingest(await api('GET', '/api/app/state')); }
   catch (e) { if (e.message === 'Signed out') return; $('#bootMsg').innerHTML = `The dashboard couldn't load. ${esc(e.message)}<br><button class="mini" data-act="retry">Try again</button><a class="mini" href="/classic.html" style="text-decoration:none;color:inherit">Open the classic view</a>`; return; }
+  if (SR) $('#micBtn').hidden = false;
   if (!CLAUDE_TASKS) $('#viewHint').textContent = ''; else { $('#viewHint').textContent = 'Mention @Claude in a comment to hand a task off'; $('#mentionBtn').hidden = false; $('#dInput').placeholder = 'Add a comment. Mention @Claude to hand it off.'; }
   delete document.body.dataset.boot;
   ACT.tab('today'); renderBrief(nowMin() >= hhmm(S.settings.wrap) ? 'pm' : 'am'); renderNotifs(); render();

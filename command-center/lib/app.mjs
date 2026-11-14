@@ -1,6 +1,7 @@
 // Server side of the redesigned dashboard (Nov 2026): one state read plus small, targeted writes.
 // The classic page still uses loadState/saveState in db.mjs; nothing here depends on that whole-document save.
 import { db, todayIn, tzParts, zonedToIso } from './db.mjs';
+import { BUCKET } from './thread.mjs';
 import { accessToken, rangeEvents, folderTree, folderFiles, upsertBlockEvent, deleteBlockEvent, globMatch, tokenScopes } from './google.mjs';
 
 const fail = r => { if (r.error) throw new Error(r.error.message); return r; };
@@ -59,6 +60,7 @@ function whenLabel(m) {
   const time = m.default_time ? 'at ' + fmt12(m.default_time) : '';
   return [days || m.cadence || '', time].filter(Boolean).join(' ') || 'No set time';
 }
+const projectOut = (p, files = 0) => ({ id: p.id, name: p.name, area: p.area_id, due: p.due_date || null, notes: p.notes || '', done: !!p.done, doneAt: p.done_at || null, files });
 const recapOut = r => ({ date: r.meeting_date, summary: r.summary || '', url: r.drive_url, title: r.title });
 const groupBy = (rows, k, v) => rows.reduce((o, r) => ((o[r[k]] ||= []).push(r[v]), o), {});
 const countBy = rows => rows.reduce((o, r) => (o[r.task_id] = (o[r.task_id] || 0) + 1, o), {});
@@ -78,7 +80,7 @@ export async function loadApp({ start, days = 7 } = {}) {
   const today = todayIn(tz);
   const res = await Promise.all([
     s.from('areas').select('*').order('sort_order'),
-    s.from('projects').select('id,name,area_id,sort_order,created_at').eq('active', true).order('sort_order').order('created_at'),
+    s.from('projects').select('*').eq('active', true).order('sort_order').order('created_at'),
     s.from('tasks').select('*').is('deleted_at', null).order('created_at'),
     s.from('task_projects').select('task_id,project_id'),
     s.from('task_meetings').select('task_id,meeting_id'),
@@ -86,10 +88,12 @@ export async function loadApp({ start, days = 7 } = {}) {
     s.from('recaps').select('id,meeting_id,meeting_date,summary,drive_url,title').order('meeting_date', { ascending: false }),
     s.from('task_comments').select('task_id'),
     s.from('task_attachments').select('task_id'),
-    s.from('claude_queue').select('kind,status')
+    s.from('claude_queue').select('kind,status'),
+    s.from('project_attachments').select('project_id')
   ]);
   res.forEach(fail);
-  const [areas, projects, tasks, tp, tm, meetings, recaps, comments, files, queue] = res.map(r => r.data || []);
+  const [areas, projects, tasks, tp, tm, meetings, recaps, comments, files, queue, pfiles] = res.map(r => r.data || []);
+  const pfc = pfiles.reduce((o, r) => (o[r.project_id] = (o[r.project_id] || 0) + 1, o), {});
 
   const ctx = { tz, today, projBy: groupBy(tp, 'task_id', 'project_id'), meetBy: groupBy(tm, 'task_id', 'meeting_id'), cc: countBy(comments), fc: countBy(files) };
   const cutoff = new Date(Date.now() - 90 * 864e5).toISOString(); // finished tasks older than this stay in the database but aren't sent
@@ -106,7 +110,7 @@ export async function loadApp({ start, days = 7 } = {}) {
   return {
     today, tz, me: 'jarrod', warnings,
     areas: areas.map(a => ({ id: a.id, name: a.name, color: a.color })),
-    projects: projects.map(p => ({ id: p.id, name: p.name, area: p.area_id })),
+    projects: projects.map(p => projectOut(p, pfc[p.id] || 0)),
     tasks: tasks.filter(t => !t.done || !t.done_at || t.done_at > cutoff).map(t => taskOut(t, ctx)),
     meetings: meetings.map(m => ({ id: m.id, title: m.title, area: m.area_id, when: whenLabel(m), people: (m.attendees || []).join(', '), on: !m.exclude_from_recaps,
       folderId: m.recap_folder_id && !m.recap_folder_id.startsWith('ph:') ? m.recap_folder_id : null, folderPath: m.recap_folder_path || null, recaps: (recapsBy[m.id] || []).slice(0, 5) })),
@@ -265,8 +269,72 @@ export async function createProject(b = {}) {
   const s = db();
   const name = String(b.name || '').trim().slice(0, 120);
   if (!name) throw bad('A project needs a name');
-  const p = fail(await s.from('projects').insert({ name, area_id: b.area || 'cardshq', sort_order: 99 }).select('id,name,area_id').single()).data;
-  return { project: { id: p.id, name: p.name, area: p.area_id } };
+  const p = fail(await s.from('projects').insert({ name, area_id: b.area || 'cardshq', sort_order: 99 }).select('*').single()).data;
+  return { project: projectOut(p) };
+}
+
+// Rename, move, set a due date or notes, finish or reopen. Moving a project moves its tasks with it;
+// finishing can close its open tasks in the same step.
+export async function patchProject(id, b = {}) {
+  const s = db();
+  const { tz } = await config(s);
+  const today = todayIn(tz), now = new Date().toISOString();
+  const was = fail(await s.from('projects').select('*').eq('id', id).eq('active', true).maybeSingle()).data;
+  if (!was) return null;
+  const u = {};
+  if ('name' in b) { const n = String(b.name || '').trim().slice(0, 120); if (n) u.name = n; }
+  if ('notes' in b) u.notes = String(b.notes || '').slice(0, 20000) || null;
+  if ('due' in b) u.due_date = DATE.test(b.due || '') ? b.due : null;
+  if ('area' in b && b.area && b.area !== was.area_id) u.area_id = b.area;
+  if ('done' in b) { u.done = !!b.done; u.done_at = b.done ? (was.done && was.done_at ? was.done_at : now) : null; }
+  if (Object.keys(u).length) fail(await s.from('projects').update(u).eq('id', id));
+  const ids = (u.area_id || (b.done && b.closeTasks)) ? (fail(await s.from('task_projects').select('task_id').eq('project_id', id)).data || []).map(r => r.task_id) : [];
+  let closed = 0;
+  if (ids.length && u.area_id) fail(await s.from('tasks').update({ area_id: u.area_id }).in('id', ids).is('deleted_at', null));
+  if (ids.length && b.done && b.closeTasks) closed = (fail(await s.from('tasks').update({ done: true, done_at: now, board: 'done', board_date: today, claude_status: null }).in('id', ids).eq('done', false).is('deleted_at', null).select('id')).data || []).length;
+  const p = fail(await s.from('projects').select('*').eq('id', id).single()).data;
+  const n = (fail(await s.from('project_attachments').select('id').eq('project_id', id)).data || []).length;
+  return { project: projectOut(p, n), closed, moved: !!u.area_id };
+}
+
+// Deleting a project hides it; its tasks stay and simply show without a project.
+export async function deleteProject(id) {
+  const r = fail(await db().from('projects').update({ active: false }).eq('id', id).select('id'));
+  return (r.data || []).length ? { ok: true } : null;
+}
+export async function restoreProject(id) {
+  const s = db();
+  const r = fail(await s.from('projects').update({ active: true }).eq('id', id).select('*'));
+  if (!(r.data || []).length) return null;
+  const n = (fail(await s.from('project_attachments').select('id').eq('project_id', id)).data || []).length;
+  return { project: projectOut(r.data[0], n) };
+}
+
+// Project files live in the same private bucket as task files, under project/<id>/.
+export async function projectFiles(id) {
+  const s = db();
+  const rows = fail(await s.from('project_attachments').select('*').eq('project_id', id).order('created_at')).data || [];
+  const signed = rows.length ? fail(await s.storage.from(BUCKET).createSignedUrls(rows.map(f => f.storage_path), 3600)).data : [];
+  const urlFor = Object.fromEntries((signed || []).map(x => [x.path, x.signedUrl]));
+  return { files: rows.map(f => ({ id: f.id, name: f.file_name, type: f.mime_type, size: f.size_bytes, at: f.created_at, url: urlFor[f.storage_path] || null })) };
+}
+export async function addProjectFile(id, b = {}) {
+  const s = db();
+  if (!(fail(await s.from('projects').select('id').eq('id', id).maybeSingle()).data)) return null;
+  if (!b.name) throw bad('file name is required');
+  if (b.size && b.size > 25 * 1024 * 1024) throw bad('files can be up to 25 MB');
+  const path = `project/${id}/${crypto.randomUUID()}-${String(b.name).replace(/[^\w.\- ]+/g, '_').slice(-120)}`;
+  const up = fail(await s.storage.from(BUCKET).createSignedUploadUrl(path)).data;
+  const row = fail(await s.from('project_attachments').insert({ project_id: id, file_name: String(b.name).slice(0, 255), mime_type: b.type || null, size_bytes: b.size || null, storage_path: path }).select('id').single()).data;
+  return { attachmentId: row.id, uploadUrl: up.signedUrl };
+}
+export async function removeProjectFile(id, fileId) {
+  const s = db();
+  const f = fail(await s.from('project_attachments').select('id,storage_path').eq('project_id', id).eq('id', fileId).maybeSingle()).data;
+  if (!f) return null;
+  await s.storage.from(BUCKET).remove([f.storage_path]);
+  fail(await s.from('project_attachments').delete().eq('id', f.id));
+  return { ok: true };
 }
 
 export async function patchMeeting(id, b = {}) {

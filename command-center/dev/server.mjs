@@ -14,13 +14,14 @@ const ymd = (n = 0) => { const d = new Date(Date.now() + n * 864e5); return new 
 const DEFAULTS = {
   tasks: () => ({ id: randomUUID(), created_at: now(), owner: 'Jarrod', urgency: 'soon', done: false, done_at: null, due_date: null, scope: false, source: 'manual', notes: null, block_start: null, block_dur_min: null, calendar_event_id: null,
     area_id: 'cardshq', assignee: 'jarrod', board: 'none', board_date: null, claude_status: null, repeat: null, deleted_at: null, block_on_calendar: true }),
-  projects: () => ({ id: randomUUID(), created_at: now(), active: true, sort_order: 0, area_id: 'cardshq' }),
+  projects: () => ({ id: randomUUID(), created_at: now(), active: true, sort_order: 0, area_id: 'cardshq', due_date: null, notes: null, done: false, done_at: null }),
+  project_attachments: () => ({ id: randomUUID(), created_at: now(), uploaded_by: 'jarrod' }),
   task_comments: () => ({ id: randomUUID(), created_at: now(), body: '' }),
   task_attachments: () => ({ id: randomUUID(), created_at: now(), comment_id: null, uploaded_by: 'jarrod' }),
   claude_queue: () => ({ id: randomUUID(), created_at: now(), status: 'pending', attempts: 0 }),
   settings: () => ({}), task_projects: () => ({}), task_meetings: () => ({})
 };
-const T = { areas: [], projects: [], tasks: [], task_projects: [], task_meetings: [], meetings: [], recaps: [], task_comments: [], task_attachments: [], claude_queue: [], settings: [] };
+const T = { areas: [], projects: [], tasks: [], task_projects: [], task_meetings: [], meetings: [], recaps: [], task_comments: [], task_attachments: [], project_attachments: [], claude_queue: [], settings: [] };
 
 class Q {
   constructor(table) { this.table = table; this.rows = T[table] ||= []; this.f = []; this.op = 'select'; this.ord = []; }
@@ -122,7 +123,7 @@ createServer(async (req, res) => {
   const send = async r => { res.statusCode = r.status; r.headers.forEach((v, k) => res.setHeader(k, v)); res.end(Buffer.from(await r.arrayBuffer())); };
   try {
     const request = () => new Request(url, { method: req.method, headers: { 'content-type': req.headers['content-type'] || 'application/json' }, body });
-    if (parts[0] === 'api' && parts[1] === 'app') return send(await appFn(request(), { params: { a: parts[2], b: parts[3], c: parts[4] } }));
+    if (parts[0] === 'api' && parts[1] === 'app') return send(await appFn(request(), { params: { a: parts[2], b: parts[3], c: parts[4], d: parts[5] } }));
     if (parts[0] === 'api' && parts[1] === 'tasks') return send(await threadFn(request(), { params: { id: parts[2], kind: parts[3], fileId: parts[4] } }));
     if (parts[0] === '__sim' && parts[1] === 'claude') { // stand-in for the Claude worker: reply on a queued task
       const { title, reply } = JSON.parse(body.toString()), t = T.tasks.find(x => x.title === title), j = t && T.claude_queue.find(x => x.source_ref === 'task:' + t.id);

@@ -4,6 +4,8 @@
 // GET    /api/app/folders                           Drive folder tree (for picking a recap folder)
 // PUT    /api/app/settings          { wrap?, defaultFolder? }
 // POST   /api/app/projects          { name, area }
+// PATCH  /api/app/projects/:id      { name?, area?, due?, notes?, done?, closeTasks? }   DELETE hides it, POST .../restore undoes that
+// GET    /api/app/projects/:id/files   POST the same path { name, type, size } to add one   DELETE .../files/:fileId
 // POST   /api/app/tasks             { title, area, proj?, who?, owner?, due?, board?, notes?, repeat?, meeting? }
 // PATCH  /api/app/tasks/:id         any of the fields above, plus block ({ date, start, dur, work } or null) and approve
 // DELETE /api/app/tasks/:id         soft delete      POST /api/app/tasks/:id/restore  undo it
@@ -16,7 +18,7 @@ const UUID = /^[0-9a-f-]{36}$/i;
 
 export default async (req, context) => {
   if (!isAuthed(req)) return unauthorized();
-  const { a, b, c } = context.params || {};
+  const { a, b, c, d } = context.params || {};
   const m = req.method, url = new URL(req.url);
   try {
     let body = {};
@@ -29,6 +31,14 @@ export default async (req, context) => {
     else if (a === 'settings' && m === 'PUT' && !b) out = await app.saveSettings(body);
     else if (a === 'projects' && m === 'POST' && !b) out = await app.createProject(body);
     else if (a === 'tasks' && m === 'POST' && !b) out = await app.createTask(body);
+    else if (a === 'projects' && UUID.test(b || '')) {
+      if (m === 'PATCH' && !c) out = await app.patchProject(b, body);
+      else if (m === 'DELETE' && !c) out = await app.deleteProject(b);
+      else if (m === 'POST' && c === 'restore') out = await app.restoreProject(b);
+      else if (c === 'files' && m === 'GET' && !d) out = await app.projectFiles(b);
+      else if (c === 'files' && m === 'POST' && !d) out = await app.addProjectFile(b, body);
+      else if (c === 'files' && m === 'DELETE' && UUID.test(d || '')) out = await app.removeProjectFile(b, d);
+    }
     else if (a === 'tasks' && UUID.test(b || '')) {
       if (m === 'PATCH' && !c) out = await app.patchTask(b, body);
       else if (m === 'DELETE' && !c) out = await app.deleteTask(b);
@@ -45,4 +55,4 @@ export default async (req, context) => {
   }
 };
 
-export const config = { path: ['/api/app/:a', '/api/app/:a/:b', '/api/app/:a/:b/:c'] };
+export const config = { path: ['/api/app/:a', '/api/app/:a/:b', '/api/app/:a/:b/:c', '/api/app/:a/:b/:c/:d'] };
