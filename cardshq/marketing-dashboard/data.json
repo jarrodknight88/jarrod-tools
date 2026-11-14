@@ -1,55 +1,55 @@
 {
- "date": "2026-11-13",
- "generatedAt": "2026-11-13T19:56:20.204Z",
+ "date": "2026-11-14",
+ "generatedAt": "2026-11-14T18:23:25.730Z",
  "quarter": "Q4 2026",
  "quarterStart": "2026-10-01",
  "scope": "Online Store + CardsHQ Headless API (locked ecom definition)",
  "isSample": false,
  "products": [],
  "tier4": {
-  "revenue": 2182121.33,
-  "unitsSold": 19217,
-  "orders": 5301
+  "revenue": 2223956.18,
+  "unitsSold": 19516,
+  "orders": 5390
  },
  "attribution": {
-  "onlineOrders": 5301,
-  "ordersWithUtm": 3125,
-  "utmCoverage": 59,
+  "onlineOrders": 5390,
+  "ordersWithUtm": 3186,
+  "utmCoverage": 59.1,
   "channels": [
    {
     "label": "Direct / unknown",
-    "orders": 1974,
-    "revenue": 983379.25
+    "orders": 1999,
+    "revenue": 1004984.83
    },
    {
     "label": "google",
-    "orders": 573,
-    "revenue": 307057.52
+    "orders": 584,
+    "revenue": 308999.77
    },
    {
     "label": "google / Google Shopping",
-    "orders": 458,
-    "revenue": 186859.28
+    "orders": 461,
+    "revenue": 187546.04
    },
    {
     "label": "google / 24123778505",
-    "orders": 308,
-    "revenue": 100382.41
-   },
-   {
-    "label": "Google (referrer only)",
-    "orders": 99,
-    "revenue": 46101.89
+    "orders": 312,
+    "revenue": 100828.15
    },
    {
     "label": "fb / National New Inventory Campaign",
-    "orders": 107,
-    "revenue": 44046.26
+    "orders": 117,
+    "revenue": 55572.72
+   },
+   {
+    "label": "Google (referrer only)",
+    "orders": 100,
+    "revenue": 46237.84
    },
    {
     "label": "google / 22593909256",
-    "orders": 89,
-    "revenue": 29796.53
+    "orders": 91,
+    "revenue": 30033.71
    },
    {
     "label": "fb / Bowman Chrome Football Pre-Order 9.24.26",
@@ -63,18 +63,18 @@
    },
    {
     "label": "shop_app",
-    "orders": 49,
-    "revenue": 18832.85
+    "orders": 51,
+    "revenue": 19041.86
+   },
+   {
+    "label": "fb / Pokemon Manual (boxes)",
+    "orders": 146,
+    "revenue": 18639.82
    },
    {
     "label": "fb / 2026 Topps Update Baseball 10.7.26",
     "orders": 61,
     "revenue": 17430.98
-   },
-   {
-    "label": "fb / Pokemon Manual (boxes)",
-    "orders": 136,
-    "revenue": 17234.81
    }
   ]
  }
