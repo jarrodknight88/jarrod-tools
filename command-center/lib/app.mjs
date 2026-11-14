@@ -49,7 +49,7 @@ function taskOut(t, c) {
     who: t.assignee || 'jarrod', owner: isSelf(t.owner) ? null : t.owner, due: t.due_date || null, board,
     carried: board !== 'none' && !t.done && !!t.board_date && t.board_date < c.today,
     done: !!t.done, doneAt: t.done_at || null, block, claude: t.claude_status === 'needs_review' ? 'review' : t.claude_status ? 'working' : null,
-    repeat: t.repeat || '', notes: t.notes || '', source: t.source, comments: c.cc[t.id] || 0, files: c.fc[t.id] || 0, created: t.created_at
+    repeat: t.repeat || '', notes: t.notes || '', source: t.source, parent: t.parent_id || null, comments: c.cc[t.id] || 0, files: c.fc[t.id] || 0, created: t.created_at
   };
 }
 function whenLabel(m) {
@@ -157,6 +157,13 @@ export async function createTask(b = {}) {
   if (!title) throw bad('A task needs a title');
   const who = b.who === 'jalea' ? 'jalea' : 'jarrod';
   const board = ['todo', 'doing'].includes(b.board) ? b.board : 'none';
+  // A sub-task belongs to its parent: same area and person, never on the board by itself, one level deep.
+  let parent = null;
+  if (b.parent) { parent = fail(await s.from('tasks').select('id,area_id,assignee,parent_id').eq('id', b.parent).is('deleted_at', null).maybeSingle()).data; if (!parent || parent.parent_id) throw bad('That task can\'t take sub-tasks'); }
+  if (parent) {
+    const st = fail(await s.from('tasks').insert({ title, area_id: parent.area_id, assignee: parent.assignee, owner: NAMES[parent.assignee] || NAMES.jarrod, board: 'none', source: 'manual', parent_id: parent.id }).select('*').single()).data;
+    return { task: await oneTask(s, st.id, tz, today) };
+  }
   const t = fail(await s.from('tasks').insert({
     title, area_id: b.area || 'cardshq', assignee: who, owner: String(b.owner || '').trim().slice(0, 120) || NAMES[who], due_date: DATE.test(b.due || '') ? b.due : null,
     board, board_date: board === 'none' ? null : today, notes: String(b.notes || '').slice(0, 20000) || null, repeat: REPEATS.includes(b.repeat) ? b.repeat : null, source: 'manual'

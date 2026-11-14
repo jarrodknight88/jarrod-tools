@@ -16,7 +16,7 @@ const NAMES = { jarrod:'Jarrod', jalea:'Jalea', claude:'Claude' };
 const LS = { get(k, d) { try { const v = localStorage.getItem('cc.' + k); return v == null ? d : JSON.parse(v); } catch { return d; } }, set(k, v) { try { localStorage.setItem('cc.' + k, JSON.stringify(v)); } catch {} } };
 
 // ---------- state ----------
-let S = null, AREAS = {}, PROJECTS = [], TASKS = [], MEETINGS = [], EVENTS = [], evDays = new Set();
+let S = null, AREAS = {}, PROJECTS = [], TASKS = [], SUBS = [], MEETINGS = [], EVENTS = [], evDays = new Set();
 let resizing = false;
 let who = LS.get('who', 'jarrod'), view = 'board', calMode = 'day', calStart = 0, curId = null, drag = null, lastArea = LS.get('area', 'cardshq'), H = 44, briefMode = 'am', loadedAt = 0;
 const START = 6, END = 21;
@@ -65,7 +65,8 @@ function addEvents(r) {
 function ingest(state) {
   S = state; AREAS = Object.fromEntries(state.areas.map(a => [a.id, a])); PROJECTS = state.projects.map(normProj); MEETINGS = state.meetings;
   const keep = Object.fromEntries(TASKS.map(t => [t.id, t]));
-  TASKS = state.tasks.map(t => { const n = normTask(t), old = keep[t.id]; if (old && old.thread) { n.thread = old.thread; n.fileList = old.fileList; } return n; });
+  const all = state.tasks.map(t => { const n = normTask(t), old = keep[t.id]; if (old && old.thread) { n.thread = old.thread; n.fileList = old.fileList; } return n; });
+  TASKS = all.filter(t => !t.parent); SUBS = all.filter(t => t.parent);
   EVENTS = []; evDays = new Set(); addEvents(state);
   if (!AREAS[lastArea]) lastArea = state.areas[0] ? state.areas[0].id : 'cardshq';
   loadedAt = Date.now();
@@ -89,6 +90,7 @@ async function refresh(force) {
 
 // ---------- small helpers ----------
 const byId = id => TASKS.find(t => t.id === id), cur = () => byId(curId);
+const subsOf = t => SUBS.filter(x => x.parent === t.id);
 const ac = id => (AREAS[id] || {}).color || '#8A93A6';
 const an = id => (AREAS[id] || {}).name || 'No area';
 const isDone = t => !!t.done;
@@ -113,6 +115,7 @@ const opt = (v, l, sel) => `<option value="${esc(v)}"${String(sel ?? '') === Str
 function meta(t, { due = true } = {}) {
   const p = projName(t), d = dueInfo(t); let h = `<span class="atag"><i></i>${esc(an(t.area))}</span>`;
   if (p) h += `<span>${esc(p)}</span>`;
+  const sb = subsOf(t); if (sb.length) h += `<span class="subc">${sb.filter(x => x.done).length}/${sb.length} sub-tasks</span>`;
   if (t.claude) h += `<span class="cl ${t.claude}">${SPARK}${t.claude === 'review' ? 'Needs your review' : 'Claude is on it'}</span>`;
   if (due && d && !isDone(t)) h += `<span class="due ${d.cls}">${d.label}</span>`;
   if (isDone(t) && t.doneAt) h += `<span>Done ${stamp(t.doneAt)}</span>`;
@@ -290,6 +293,7 @@ function renderDetail() {
       <dt>Time block</dt><dd>${b ? `<div class="bed"><select data-f="bday" aria-label="Day">${blockDays.map(i => opt(i, dayName(i), b.d)).join('')}</select><input type="time" data-f="bstart" step="900" value="${pad(Math.floor(b.start / 60))}:${pad(b.start % 60)}" aria-label="Start time"><select data-f="bdur" aria-label="Length">${[...new Set([15,30,45,60,90,120,180,b.dur])].sort((x, y) => x - y).map(m => opt(m, durLabel(m), b.dur)).join('')}</select><button class="linkbtn" data-act="unblock">Remove</button><label class="ck" style="width:100%"><input type="checkbox" data-f="bwork"${b.work ? ' checked' : ''}> Also block it on my Google Calendar</label></div>` : '<button class="mini" data-act="block">Block time</button>'}</dd>
       ${meeting ? `<dt>From</dt><dd><button class="linkbtn" data-act="meeting" data-v="${meeting.id}" style="padding:0">${esc(meeting.title)}</button></dd>` : ''}
     </dl>
+    <h3 class="d-sec">Sub-tasks${subsOf(t).length ? ` <small>${subsOf(t).filter(x => x.done).length} of ${subsOf(t).length} done</small>` : ''}</h3><div class="subs">${subsOf(t).map(x => `<div class="sub" data-done="${!!x.done}"><button class="chk" data-act="subcheck" data-v="${x.id}" aria-label="${x.done ? 'Reopen' : 'Mark done'}: ${esc(x.title)}" aria-pressed="${!!x.done}"></button><input type="text" data-sub="${x.id}" value="${esc(x.title)}" aria-label="Sub-task"><button class="subx" data-act="subdel" data-v="${x.id}" aria-label="Remove sub-task">&times;</button></div>`).join('')}<input class="subadd" id="subAdd" placeholder="Add a sub-task, then press Enter" autocomplete="off" aria-label="Add a sub-task"></div>
     <h3 class="d-sec">Notes</h3><textarea class="notes" data-f="notes" placeholder="Add notes">${esc(t.notes)}</textarea>
     <h3 class="d-sec">Attachments</h3><div class="files" id="dFiles"></div>
     <h3 class="d-sec">Comments</h3><div class="thread" id="dThread"></div>
@@ -321,7 +325,10 @@ async function uploadFile(t, f, onComment) {
   if (!up.ok) { await api('DELETE', `/api/tasks/${t.id}/attachments/${r.attachmentId}`).catch(() => {}); throw new Error(`${f.name} didn't upload (${up.status})`); }
   return { id:r.attachmentId, name:f.name };
 }
-$('#dBody').addEventListener('input', e => { const f = e.target.dataset.f, t = cur(); if (!t) return;
+$('#dBody').addEventListener('keydown', async e => { if (e.key !== 'Enter' || e.target.id !== 'subAdd' || !e.target.value.trim()) return; const t = cur(), title = e.target.value.trim(); e.target.value = '';
+  try { const r = await api('POST', '/api/app/tasks', { title, parent: t.id }); SUBS.push(normTask(r.task)); renderDetail(); renderBehind(); setTimeout(() => $('#subAdd') && $('#subAdd').focus(), 50); } catch (err) { toast('Couldn\'t add that. ' + err.message); } });
+$('#dBody').addEventListener('input', e => { const sid = e.target.dataset.sub; if (sid) { const x = SUBS.find(y => y.id === sid), v = e.target.value.trim(); if (x && v) { x.title = v; saveSoon(x, 'title', v); } return; }
+  const f = e.target.dataset.f, t = cur(); if (!t) return;
   if (f === 'title') { const v = e.target.value.replace(/\n/g, ' '); if (v.trim()) { t.title = v; saveSoon(t, 'title', v.trim()); } }
   else if (f === 'notes') { t.notes = e.target.value; saveSoon(t, 'notes', t.notes); }
   else if (f === 'owner') { t.owner = e.target.value.trim() || null; saveSoon(t, 'owner', t.owner || ''); }
@@ -431,7 +438,8 @@ const renderQp = () => $('#qpArea').innerHTML = S.areas.map(a => `<button data-a
 function renderQa() {
   $('#qArea').innerHTML = S.areas.map(a => `<button data-act="qset" data-k="area" data-v="${a.id}" aria-pressed="${q.area === a.id}"><i style="background:${a.color}"></i>${esc(a.name)}</button>`).join('');
   $('#qProj').innerHTML = opt('', 'No project', '') + PROJECTS.filter(p => p.area === q.area && !p.done).map(p => opt(p.id, esc(p.name), '')).join('');
-  $('#qDue').innerHTML = [[0,'Today'],[1,'Tomorrow'],[7,'Next week'],['','No date']].map(([v, l]) => `<button data-act="qset" data-k="due" data-v="${v}" aria-pressed="${String(q.due ?? '') === String(v)}">${l}</button>`).join('');
+  $('#qDue').innerHTML = [[0,'Today'],[1,'Tomorrow'],[7,'Next week'],['','No date']].map(([v, l]) => `<button data-act="qset" data-k="due" data-v="${v}" aria-pressed="${String(q.due ?? '') === String(v)}">${l}</button>`).join('') + `<input type="date" id="qDate" class="qdate" value="${q.due == null ? '' : ymd(q.due)}" aria-label="Pick a due date" data-on="${q.due != null && ![0, 1, 7].includes(q.due)}">`;
+  $('#qDate').onchange = e => { q.due = e.target.value ? off(e.target.value) : null; $('#qBoard').checked = q.due === 0; renderQa(); };
   $('#qWho').innerHTML = [['jarrod','Me'],['jalea','Jalea']].map(([v, l]) => `<button data-act="qset" data-k="who" data-v="${v}" aria-pressed="${q.who === v}">${l}</button>`).join('');
 }
 async function addTask(o) {
@@ -463,6 +471,9 @@ const ACT = {
     const html = `<html xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><title>${esc(t.title)}</title><style>body{font-family:Calibri,Arial,sans-serif;font-size:11pt;line-height:1.4}h1{font-size:16pt;margin-bottom:2pt}.meta{color:#666;font-size:9.5pt;margin-bottom:14pt}b{font-weight:600}</style></head><body><h1>${esc(t.title)}</h1><div class="meta">${esc(an(t.area))}, ${new Date(c.at).toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' })}</div>${body}</body></html>`;
     const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['\ufeff', html], { type:'application/msword' })); a.download = t.title.replace(/[^\w\- ]+/g, '').trim().slice(0, 70) + '.doc'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); toast('Saved to your downloads'); },
   projfold: v => { if (shutProj[v]) delete shutProj[v]; else shutProj[v] = true; LS.set('shutProj', shutProj); renderSide(); },
+  subcheck: v => { const x = SUBS.find(y => y.id === v); if (!x) return; x.done = !x.done; save(x, { board: x.done ? 'done' : 'none' }, { quiet:true }); renderDetail(); renderBehind(); },
+  subdel: async v => { const i = SUBS.findIndex(y => y.id === v); if (i < 0) return; const [x] = SUBS.splice(i, 1); renderDetail(); renderBehind();
+    try { await api('DELETE', '/api/app/tasks/' + x.id); toast('Sub-task removed', async () => { try { await api('POST', `/api/app/tasks/${x.id}/restore`); SUBS.splice(i, 0, x); renderDetail(); renderBehind(); } catch (e) { toast('Couldn\'t undo. ' + e.message); } }); } catch (e) { SUBS.splice(i, 0, x); renderDetail(); toast('Couldn\'t remove. ' + e.message); } },
   showfin: v => { showFin[v] = !showFin[v]; renderSide(); },
   project: v => { const p = PROJECTS.find(x => x.id === v); if (!p) return; if (curProj !== v) pendingFinish = null; curProj = v;
     const ts = TASKS.filter(t => t.proj === v), open = ts.filter(t => !isDone(t)), d = p.due == null ? null : dueInfo(p);

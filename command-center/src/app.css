@@ -362,6 +362,19 @@ body[data-page=home] #page{display:none}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
 /* ---- additions for the live app ---- */
+.qdate{border:1px solid var(--line);border-radius:999px;padding:5px 10px;font:inherit;font-size:13px;background:var(--surface);color:var(--ink)}
+.qdate[data-on=true]{background:var(--ink);color:#fff;border-color:var(--ink);color-scheme:dark}
+.subs{display:flex;flex-direction:column;gap:4px;margin-bottom:18px}
+.sub{display:flex;align-items:center;gap:8px}
+.sub input{flex:1;min-width:0;border:1px solid transparent;border-radius:7px;padding:5px 7px;font:inherit;font-size:13.5px;background:none;color:var(--ink)}
+.sub input:hover,.sub input:focus{border-color:var(--line);background:var(--surface)}
+.sub[data-done=true] input{text-decoration:line-through;color:var(--muted)}
+.sub[data-done=true] .chk{background:var(--home);border-color:var(--home)}
+.subx{border:0;background:none;color:var(--muted);font-size:17px;line-height:1;padding:2px 6px;border-radius:6px}
+.subx:hover{background:var(--soft);color:var(--late)}
+.subadd{border:1px dashed var(--line);border-radius:8px;padding:7px 9px;font:inherit;font-size:13.5px;background:none;margin-top:2px}
+.d-sec small{font-weight:500;color:var(--muted);margin-left:6px}
+.subc{white-space:nowrap}
 .ibtn[aria-pressed=true]{background:var(--late);color:#fff}
 .ibtn[aria-pressed=true] svg{animation:pulse 1.2s infinite}
 .pq{display:block!important;margin-bottom:6px}
