@@ -83,9 +83,15 @@ async function enqueue(s, { sync, tz, noteIds, limit, log }) {
 
 // Pass 2: recaps Claude has written -> Google Doc, recaps row, tasks.
 async function finalize(s, { cfg, token, log }) {
+  // A filing that died part-way (function timeout) is put back after 15 minutes.
+  await s.from('claude_queue').update({ status: 'ready' }).eq('kind', 'recap').eq('status', 'filing').lt('claimed_at', new Date(Date.now() - 15 * 60000).toISOString());
   const { data: ready } = await s.from('claude_queue').select('*').eq('kind', 'recap').eq('status', 'ready').order('created_at').limit(10);
   const results = [];
   for (const job of ready || []) {
+    // Claim the job first. Two runs can overlap (the 30-minute schedule and "Check now"); only the one whose
+    // update changes the row files it, so a recap can never produce two Docs or two sets of tasks.
+    const claim = await s.from('claude_queue').update({ status: 'filing', claimed_at: new Date().toISOString() }).eq('id', job.id).eq('status', 'ready').select('id');
+    if (claim.error || !(claim.data || []).length) continue;
     const p = job.payload || {}; const noteId = (job.source_ref || '').replace(/^granola:/, '');
     const rec = { note_id: noteId, status: 'error', title: p.note?.title || job.title, meeting_id: p.meeting_id || null, task_count: 0 };
     try {
