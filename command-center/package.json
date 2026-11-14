@@ -4,7 +4,8 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "build": "node build.mjs"
+    "build": "node build.mjs",
+    "dev": "node build.mjs && node dev/server.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0"

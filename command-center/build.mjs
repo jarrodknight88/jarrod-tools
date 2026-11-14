@@ -1,32 +1,36 @@
-// Assembles dist/ from src/ and static/. The page is a Claude Design export running on its
-// bundled dc-runtime (support.js): template.html is the markup, logic.js is the component.
+// Assembles dist/ from src/ and static/.
+//   index.html    the dashboard (src/app.html with app.css and app.js inlined)
+//   classic.html  the previous dashboard, kept as a fallback. It is a Claude Design export running on
+//                 its bundled dc-runtime (support.js): template.html is the markup, logic.js the component.
 import { readFileSync, writeFileSync, mkdirSync, cpSync } from 'node:fs';
 
+const read = f => readFileSync(f, 'utf8');
+const inline = s => s.replace(/<\/script/gi, '<\\/script');
 
-const template = readFileSync('src/template.html', 'utf8');
-const logic = readFileSync('src/logic.js', 'utf8').replace(/<\/script/gi, '<\\/script');
+const app = read('src/app.html').replace('/*__CSS__*/', () => read('src/app.css')).replace('/*__JS__*/', () => inline(read('src/app.js')));
 
-const page = `<!DOCTYPE html>
+const classic = `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Command Center</title>
+<title>Command Center (classic)</title>
 <link rel="icon" href="data:,">
 <script src="./support.js"></script>
 </head>
 <body>
 <x-dc>
-${template}
+${read('src/template.html')}
 </x-dc>
 <script type="text/x-dc" data-dc-script>
-${logic}
+${inline(read('src/logic.js'))}
 </script>
 </body>
 </html>
 `;
 
 mkdirSync('dist', { recursive: true });
-writeFileSync('dist/index.html', page);
+writeFileSync('dist/index.html', app);
+writeFileSync('dist/classic.html', classic);
 cpSync('static', 'dist', { recursive: true });
-console.log('built dist/index.html (' + page.length + ' bytes)');
+console.log(`built dist/index.html (${app.length} bytes) and dist/classic.html (${classic.length} bytes)`);

@@ -28,6 +28,14 @@ Personal daily dashboard for Jarrod: today's meetings, tasks with Akiflow-style 
 
 Everything belongs to one of four areas (`areas`: CardsHQ, Teranga, Wugi, Home) through `area_id` on projects and tasks. Tasks also carry `assignee` (jarrod or jalea), `board` + `board_date` for the Today board, and `claude_status` for Claude hand-offs. Comments and files live in `task_comments` and `task_attachments`. Pre-migration copies of the data are in the `backup` schema.
 
+## The dashboard (phase 2, Nov 2026)
+
+- `src/app.html`, `src/app.css`, `src/app.js` - the dashboard: plain HTML, CSS and JavaScript, inlined into `dist/index.html` by `build.mjs`. No framework.
+- `lib/app.mjs` + `netlify/functions/app.mjs` - its API under `/api/app/*`: one state read, then small targeted writes (create or patch a task, add a project, change a meeting, save a setting). Comments and files use `/api/tasks/:id/*`.
+- `dist/classic.html` - the previous dashboard (`src/template.html` + `src/logic.js` on the dc-runtime), kept as a fallback. It still uses `/api/state`.
+- `npm run dev` - builds, then serves the page on http://localhost:8787 running the real function code against an in-memory stand-in for Supabase (`dev/server.mjs`). No live data or Google calls.
+- Not built yet: Claude working tasks from comments (flag `CLAUDE_TASKS` in `app.js`), AI-written briefing, phone alerts and quiet hours, Jira, scheduled-run results, separate logins, the family calendar.
+
 ## Phases
 
 1. Static shell on Supabase (this) - tasks, projects, meetings, settings, calendar blocks all persist.

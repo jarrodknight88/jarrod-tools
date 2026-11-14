@@ -4,12 +4,13 @@ import { createClient } from '@supabase/supabase-js';
 import { accessToken, todayEvents, folderTree, folderFiles, upsertBlockEvent, deleteBlockEvent, globMatch } from './google.mjs';
 
 export function db() {
+  if (globalThis.__ccTest && globalThis.__ccTest.db) return globalThis.__ccTest.db; // local test harness only (dev/server.mjs)
   return createClient(Netlify.env.get('SUPABASE_URL'), Netlify.env.get('SUPABASE_SERVICE_ROLE_KEY'), { auth: { persistSession: false } });
 }
 
 // ---- time zone helpers (blocks are stored as timestamps, the UI thinks in minutes-of-today) ----
 
-function tzParts(date, tz) {
+export function tzParts(date, tz) {
   const f = new Intl.DateTimeFormat('en-US', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false });
   const p = Object.fromEntries(f.formatToParts(date).map(x => [x.type, x.value]));
   return { date: `${p.year}-${p.month}-${p.day}`, minutes: (Number(p.hour) % 24) * 60 + Number(p.minute) };
@@ -18,7 +19,7 @@ function tzParts(date, tz) {
 export function todayIn(tz) { return tzParts(new Date(), tz).date; }
 
 // Convert a local (tz) date + minutes to a UTC ISO string.
-function zonedToIso(dateStr, minutes, tz) {
+export function zonedToIso(dateStr, minutes, tz) {
   const guess = new Date(`${dateStr}T00:00:00Z`).getTime() + minutes * 60000;
   const local = tzParts(new Date(guess), tz);
   const localMs = new Date(`${local.date}T00:00:00Z`).getTime() + local.minutes * 60000;
@@ -37,7 +38,7 @@ export async function loadState() {
     s.from('settings').select('key,value'),
     s.from('meetings').select('*').eq('active', true).order('sort_order').order('default_time'),
     s.from('projects').select('*').eq('active', true).order('sort_order').order('created_at'),
-    s.from('tasks').select('*').order('created_at'),
+    s.from('tasks').select('*').is('deleted_at', null).order('created_at'),
     s.from('task_meetings').select('task_id,meeting_id'),
     s.from('task_projects').select('task_id,project_id'),
     s.from('recaps').select('*').order('meeting_date', { ascending: false }),

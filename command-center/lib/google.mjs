@@ -70,6 +70,24 @@ export async function todayEvents(token, tz) {
     });
 }
 
+// Events on the primary calendar for a run of days starting at startDate (YYYY-MM-DD, in tz).
+// Time blocks this app created are left out; the dashboard draws those from its own tasks.
+export async function rangeEvents(token, tz, startDate, days = 7) {
+  const end = new Date(startDate + 'T12:00:00Z'); end.setUTCDate(end.getUTCDate() + Math.max(1, days) - 1);
+  const endDate = end.toISOString().slice(0, 10);
+  const p = new URLSearchParams({ timeMin: `${startDate}T00:00:00${tzOffsetString(new Date(`${startDate}T12:00:00Z`), tz)}`, timeMax: `${endDate}T23:59:59${tzOffsetString(new Date(`${endDate}T12:00:00Z`), tz)}`, singleEvents: 'true', orderBy: 'startTime', maxResults: '250', timeZone: tz });
+  const j = await g(token, 'https://www.googleapis.com/calendar/v3/calendars/primary/events?' + p);
+  const dayFmt = new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' });
+  const timeFmt = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: false });
+  return (j.items || []).filter(e => e.status !== 'cancelled' && e.start && e.start.dateTime && !(e.extendedProperties && e.extendedProperties.private && e.extendedProperties.private.ccTask))
+    .map(e => {
+      const st = new Date(e.start.dateTime), en = new Date(e.end.dateTime);
+      const parts = Object.fromEntries(timeFmt.formatToParts(st).map(x => [x.type, x.value]));
+      return { eventId: e.id, title: e.summary || '(No title)', date: dayFmt.format(st), startMin: (Number(parts.hour) % 24) * 60 + Number(parts.minute), dur: Math.max(5, Math.round((en - st) / 60000)),
+        attendees: (e.attendees || []).filter(a => !a.self && !a.resource).map(a => a.displayName || (a.email || '').split('@')[0]).slice(0, 8), link: e.htmlLink };
+    });
+}
+
 function tzOffsetString(date, tz) {
   const p = new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'longOffset' }).formatToParts(date).find(x => x.type === 'timeZoneName').value; // e.g. GMT-04:00
   const m = p.match(/([+-]\d{2}):?(\d{2})/); return m ? `${m[1]}:${m[2]}` : 'Z';
