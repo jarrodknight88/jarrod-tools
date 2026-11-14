@@ -84,8 +84,8 @@ export function extractText(buf, name, mime = '') {
     else if (e === 'xlsx' || e === 'xlsm') text = xlsx(buf);
     else if (e === 'pptx') text = pptx(buf);
     else if (TEXT_EXT.has(e) || m.startsWith('text/') || m === 'application/json') text = buf.toString('utf8').replace(/^﻿/, '');
-    else if (e === 'pdf' || m === 'application/pdf') return { note: 'PDF: the dashboard cannot read PDFs for Claude yet. Ask Jarrod to paste the key parts or attach it as Word, Excel, CSV or text.' };
-    else if (m.startsWith('image/') || ['png', 'jpg', 'jpeg', 'gif', 'webp', 'heic'].includes(e)) return { note: 'Image: Claude cannot see pictures attached in the dashboard yet. Ask Jarrod to describe what it shows.' };
+    else if (e === 'pdf' || m === 'application/pdf') return { viaDrive: true, note: 'PDF: this file could not be passed to Claude. Ask Jarrod to paste the key parts or attach it as Word, Excel, CSV or text.' };
+    else if (m.startsWith('image/') || ['png', 'jpg', 'jpeg', 'gif', 'webp', 'heic'].includes(e)) return { viaDrive: true, note: 'Image: this picture could not be passed to Claude. Ask Jarrod to describe what it shows.' };
     else return { note: `This file type (${e || m || 'unknown'}) cannot be read for Claude yet.` };
     text = text.replace(/\u0000/g, '').trim();
     if (!text) return { note: 'The file had no readable text.' };

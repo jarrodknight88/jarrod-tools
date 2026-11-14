@@ -2,6 +2,7 @@
 // the browser uploads straight to a signed URL, so large files never pass through a Netlify function.
 import { db } from './db.mjs';
 import { extractText } from './extract.mjs';
+import { accessToken, uploadFile, shareWithReader, deleteFile, ensureFolder } from './google.mjs';
 
 export const BUCKET = 'task-attachments';
 const MAX_BYTES = 25 * 1024 * 1024;
@@ -46,11 +47,43 @@ export async function prepareForClaude(s, taskId, budgetMs = 6000) {
     let out;
     try {
       if ((f.size_bytes || 0) > 15 * 1024 * 1024) out = { note: 'The file is too large to read for Claude (over 15 MB).' };
-      else { const dl = await s.storage.from(BUCKET).download(f.storage_path); if (dl.error || !dl.data) throw new Error(dl.error ? dl.error.message : 'download failed'); out = extractText(Buffer.from(await dl.data.arrayBuffer()), f.file_name, f.mime_type); }
+      else { const dl = await s.storage.from(BUCKET).download(f.storage_path); if (dl.error || !dl.data) throw new Error(dl.error ? dl.error.message : 'download failed'); const buf = Buffer.from(await dl.data.arrayBuffer()); out = extractText(buf, f.file_name, f.mime_type);
+        if (out.viaDrive) out = await lendViaDrive(s, f, buf, out); }
     } catch (e) { console.error('attachment read failed', f.file_name, e.message); continue; } // left unread so the 15-minute catch-up tries again
-    await s.from('task_attachments').update({ text_content: out.text || null, text_note: out.note || (out.text ? null : 'No readable text.') }).eq('id', f.id); read++;
+    await s.from('task_attachments').update({ text_content: out.text || null, text_note: out.note || (out.text || out.drive ? null : 'No readable text.'), drive_file_id: out.drive ? out.drive.id : null, drive_url: out.drive ? out.drive.webViewLink || null : null }).eq('id', f.id); read++;
   }
   return read;
+}
+
+// PDFs and pictures can't be turned into text here, so a copy is lent to Claude through Google Drive: uploaded to a
+// "Command Center - files for Claude" folder and shared, read-only, with the one Google account Claude's Drive
+// connector uses (settings.claude_drive_email). cleanupClaudeFiles() deletes the copy once Claude is done.
+async function lendViaDrive(s, f, buf, fallback) {
+  const { data: who } = await s.from('settings').select('value').eq('key', 'claude_drive_email').maybeSingle();
+  const token = who && who.value ? await accessToken() : null;
+  if (!token) return fallback;
+  if (!folderId) folderId = (await ensureFolder(token, 'Command Center - files for Claude', null)).id;
+  const file = await uploadFile(token, { name: f.file_name, mime: f.mime_type, buffer: buf, parentId: folderId });
+  try { await shareWithReader(token, file.id, who.value); }
+  catch (e) { await deleteFile(token, file.id).catch(() => {}); return { note: fallback.note + ' (Sharing it with Claude through Google Drive failed: ' + (e.message || 'unknown error') + ')' }; }
+  return { drive: file };
+}
+let folderId = null;
+
+// Remove what was set aside for Claude once no job is open on the task: the Drive copy is deleted and the stored
+// text is cleared. The original attachment on the task is untouched. Runs from the 15-minute scheduled check.
+export async function cleanupClaudeFiles(s) {
+  const { data: rows } = await s.from('task_attachments').select('id,task_id,drive_file_id').or('drive_file_id.not.is.null,text_content.not.is.null,text_note.not.is.null');
+  if (!rows || !rows.length) return 0;
+  const { data: open } = await s.from('claude_queue').select('source_ref').eq('kind', 'task').in('status', ['pending', 'working']);
+  const busy = new Set((open || []).map(j => j.source_ref));
+  let token = null, cleaned = 0;
+  for (const r of rows) {
+    if (busy.has('task:' + r.task_id)) continue;
+    if (r.drive_file_id) { token = token || await accessToken(); if (!token) continue; try { await deleteFile(token, r.drive_file_id); } catch (e) { console.error('drive cleanup failed', e.message); continue; } }
+    await s.from('task_attachments').update({ drive_file_id: null, drive_url: null, text_content: null, text_note: null }).eq('id', r.id); cleaned++;
+  }
+  return cleaned;
 }
 
 // When Claude's task worker next checks the queue (Eastern time). Mirrors its two scheduled runs:

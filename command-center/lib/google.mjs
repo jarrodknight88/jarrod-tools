@@ -164,6 +164,23 @@ export async function createDocFromHtml(token, { name, html, parentId }) {
   return j;
 }
 
+// Upload a file as-is (no conversion to a Google format). Returns { id, webViewLink }.
+export async function uploadFile(token, { name, mime, buffer, parentId }) {
+  const boundary = 'ccf' + Date.now();
+  const head = Buffer.from(`--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify({ name, parents: parentId ? [parentId] : undefined })}\r\n--${boundary}\r\nContent-Type: ${mime || 'application/octet-stream'}\r\n\r\n`);
+  const r = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,webViewLink', { method: 'POST', headers: { authorization: 'Bearer ' + token, 'content-type': `multipart/related; boundary=${boundary}` }, body: Buffer.concat([head, buffer, Buffer.from(`\r\n--${boundary}--`)]) });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error((j.error && j.error.message) || ('Drive upload ' + r.status));
+  return j;
+}
+// Let one named Google account read a file this app created. No notification email is sent.
+export const shareWithReader = (token, fileId, email) => g(token, `https://www.googleapis.com/drive/v3/files/${fileId}/permissions?sendNotificationEmail=false`, { method: 'POST', body: JSON.stringify({ role: 'reader', type: 'user', emailAddress: email }) });
+// Permanently delete a file this app created. A file that is already gone counts as deleted.
+export async function deleteFile(token, fileId) {
+  const r = await fetch('https://www.googleapis.com/drive/v3/files/' + fileId, { method: 'DELETE', headers: { authorization: 'Bearer ' + token } });
+  if (!r.ok && r.status !== 404) throw new Error('Drive delete ' + r.status);
+}
+
 // Find-or-create a folder by name under a parent (root when parentId is null).
 export async function ensureFolder(token, name, parentId) {
   const parentQ = parentId ? `'${parentId}' in parents` : "'root' in parents";
