@@ -34,7 +34,8 @@ Everything belongs to one of four areas (`areas`: CardsHQ, Teranga, Wugi, Home) 
 - `lib/app.mjs` + `netlify/functions/app.mjs` - its API under `/api/app/*`: one state read, then small targeted writes (create or patch a task, add a project, change a meeting, save a setting). Comments and files use `/api/tasks/:id/*`.
 - `dist/classic.html` - the previous dashboard (`src/template.html` + `src/logic.js` on the dc-runtime), kept as a fallback. It still uses `/api/state`.
 - `npm run dev` - builds, then serves the page on http://localhost:8787 running the real function code against an in-memory stand-in for Supabase (`dev/server.mjs`). No live data or Google calls.
-- Not built yet: Claude working tasks from comments (flag `CLAUDE_TASKS` in `app.js`), AI-written briefing, phone alerts and quiet hours, Jira, scheduled-run results, separate logins, the family calendar.
+- Claude on tasks (phase 3): a comment mentioning @Claude, or a recap action item marked as something Claude can prepare, puts a `kind='task'` job in `claude_queue`. The "Command Center task worker" Claude scheduled task (Jarrod's plan, no API key) calls `claude_task_claim()`, does the work with read-only use of connected tools, and posts one reply with `claude_task_finish()` (see `sql/004_claude_tasks.sql`). The task then shows "Needs your review" with Approve and Send back. `settings.claude_autostart` turns the recap auto-start off.
+- Not built yet: AI-written briefing, phone alerts and quiet hours, Jira, scheduled-run results, separate logins, the family calendar.
 
 ## Phases
 

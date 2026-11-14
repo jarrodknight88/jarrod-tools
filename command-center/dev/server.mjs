@@ -124,6 +124,11 @@ createServer(async (req, res) => {
     const request = () => new Request(url, { method: req.method, headers: { 'content-type': req.headers['content-type'] || 'application/json' }, body });
     if (parts[0] === 'api' && parts[1] === 'app') return send(await appFn(request(), { params: { a: parts[2], b: parts[3], c: parts[4] } }));
     if (parts[0] === 'api' && parts[1] === 'tasks') return send(await threadFn(request(), { params: { id: parts[2], kind: parts[3], fileId: parts[4] } }));
+    if (parts[0] === '__sim' && parts[1] === 'claude') { // stand-in for the Claude worker: reply on a queued task
+      const { title, reply } = JSON.parse(body.toString()), t = T.tasks.find(x => x.title === title), j = t && T.claude_queue.find(x => x.source_ref === 'task:' + t.id);
+      if (!j) { res.statusCode = 404; return res.end('no job'); }
+      T.task_comments.push({ ...DEFAULTS.task_comments(), task_id: t.id, author: 'claude', body: reply }); t.claude_status = 'needs_review'; j.status = 'done';
+      return res.end('ok'); }
     if (parts[0] === '__upload') { res.statusCode = 200; return res.end('{}'); }
     if (parts[0] === '__tables') { res.setHeader('content-type', 'application/json'); return res.end(JSON.stringify(T)); }
     let p = url.pathname === '/' ? '/index.html' : url.pathname;

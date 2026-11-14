@@ -27,7 +27,7 @@ function matchMeeting(meetings, note) {
 }
 
 async function loadConfig(s) {
-  const { data: cfgRows } = await s.from('settings').select('key,value').in('key', ['granola_sync', 'timezone', 'default_recap_folder']);
+  const { data: cfgRows } = await s.from('settings').select('key,value').in('key', ['granola_sync', 'timezone', 'default_recap_folder', 'claude_autostart']);
   const cfg = Object.fromEntries((cfgRows || []).map(r => [r.key, r.value]));
   return { cfg, sync: cfg.granola_sync || {}, tz: cfg.timezone || 'America/New_York' };
 }
@@ -107,6 +107,15 @@ async function finalize(s, { cfg, token, log }) {
         const rows = fail(await s.from('tasks').insert(recap.tasks.map(t => ({ title: t.title, owner: t.owner, urgency: t.urgency, due_date: t.due_date, notes: t.notes, source: 'granola', area_id: meeting?.area_id || 'cardshq' }))).select('id')).data;
         if (p.meeting_id) fail(await s.from('task_meetings').insert(rows.map(r => ({ task_id: r.id, meeting_id: p.meeting_id }))));
         rec.task_count = rows.length;
+        // Action items Claude can get started on are handed over straight away (Settings can turn this off).
+        const started = cfg.claude_autostart === false ? [] : recap.tasks.map((t, i) => ({ t, id: rows[i] && rows[i].id })).filter(x => x.t.claude && x.id);
+        for (const { t, id } of started) {
+          fail(await s.from('claude_queue').upsert({ kind: 'task', status: 'pending', source_ref: 'task:' + id, title: t.title,
+            payload: { task_id: id, request: t.claude, task_title: t.title, area: meeting?.area_id || 'cardshq', started_by: 'recap', recap_id: recapRow.id } }, { onConflict: 'source_ref', ignoreDuplicates: true }));
+          fail(await s.from('tasks').update({ claude_status: 'queued' }).eq('id', id));
+          fail(await s.from('task_comments').insert({ task_id: id, author: 'system', body: 'Claude started on this from the meeting recap: ' + t.claude }));
+        }
+        if (started.length) log.push(`handed ${started.length} task(s) to Claude`);
       }
       fail(await s.from('claude_queue').update({ status: 'done', completed_at: new Date().toISOString(), error: null }).eq('id', job.id));
       rec.status = 'processed'; log.push(`processed: ${docName} (${rec.task_count} tasks)`);

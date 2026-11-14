@@ -2,7 +2,7 @@
 // every change is a small request to /api/app/* (or /api/tasks/* for comments and files).
 (() => {
 'use strict';
-const CLAUDE_TASKS = false; // Phase 3 turns on handing tasks to Claude from a comment.
+const CLAUDE_TASKS = true; // Hand a task to Claude by mentioning @Claude in a comment.
 
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
@@ -217,7 +217,7 @@ function buildBrief(mode) {
     if (meetings.length) parts.push(`${n2w(meetings.length)} meeting${meetings.length === 1 ? '' : 's'} today`);
     if (late.length) parts.push(`${n2w(late.length)} task${late.length === 1 ? '' : 's'} overdue`);
     if (people) parts.push(`${n2w(people)} ${people === 1 ? 'person owes' : 'people owe'} you something`);
-    const needs = [...open.filter(t => t.claude === 'review').map(t => [ac(t.area), 'Review Claude\'s draft: ' + t.title]), ...open.filter(t => t.due === 0).map(it), ...late.map(it)];
+    const needs = [...open.filter(t => t.claude === 'review').map(t => [ac(t.area), 'Review Claude\'s reply: ' + t.title]), ...open.filter(t => t.due === 0).map(it), ...late.map(it)];
     const coming = [...EVENTS.filter(e => e.d === 1).sort((a, b) => a.start - b.start).slice(0, 1).map(e => [e.area ? ac(e.area) : '#8A93A6', `Tomorrow ${tmLong(e.start)}: ${e.title}`]), ...open.filter(t => t.due >= 1 && t.due <= 7).sort((a, b) => a.due - b.due).map(t => [ac(t.area), `${dueInfo(t).label}: ${t.title}`])];
     return { head: parts.length ? listSentence(parts) : 'Nothing on the calendar and nothing overdue. The day is yours.',
       cols: [['Finished yesterday', doneOn(-1).map(it)], ['Carrying over', onBoard.filter(t => t.carried).map(it)], ['Needs you', needs], ['Coming up', coming]],
@@ -225,7 +225,7 @@ function buildBrief(mode) {
   }
   const done = doneOn(0), total = done.length + onBoard.length;
   return { head: total ? `You closed ${n2w(done.length)} of ${n2w(total)} today. ${onBoard.length ? cap(n2w(onBoard.length)) + (onBoard.length === 1 ? ' carries' : ' carry') + ' over to tomorrow.' : 'Nothing carries over.'}` : 'Nothing was on the board today.',
-    cols: [['Done today', done.map(it)], ['Still open', onBoard.map(it)], ['Waiting on others', waiting.filter(t => t.due != null && t.due <= 0).map(t => [ac(t.area), `${t.owner}: ${t.title}`])], ['Tomorrow', [...EVENTS.filter(e => e.d === 1).sort((a, b) => a.start - b.start).map(ev), ...open.filter(t => t.due === 1).map(it)]]],
+    cols: [['Done today', done.map(it)], ['Still open', onBoard.map(it)], open.some(t => t.claude) ? ['With Claude', open.filter(t => t.claude).map(t => [ac(t.area), (t.claude === 'review' ? 'Review: ' : '') + t.title])] : ['Waiting on others', waiting.filter(t => t.due != null && t.due <= 0).map(t => [ac(t.area), `${t.owner}: ${t.title}`])], ['Tomorrow', [...EVENTS.filter(e => e.d === 1).sort((a, b) => a.start - b.start).map(ev), ...open.filter(t => t.due === 1).map(it)]]],
     note: 'Open tasks stay on the board for tomorrow. Done ones show up as "Finished yesterday" in the morning.' };
 }
 function renderBrief(mode) {
@@ -267,8 +267,8 @@ function renderDetail() {
   const t = cur(); if (!t) { closeAll(); return; }
   $('#dCrumb').innerHTML = `<i style="background:${ac(t.area)}"></i>${esc(an(t.area))}${projName(t) ? ' / ' + esc(projName(t)) : ''}`;
   const d = dueInfo(t), b = t.block, status = isDone(t) ? 'done' : t.board;
-  const review = t.claude === 'review' ? `<div class="rvbox"><b>Claude finished a draft</b><p>Nothing goes out until you approve it. The draft is in the comments below.</p><div class="btns"><button class="send" data-act="approve">Approve</button><button class="ghost" data-act="sendback">Send back</button></div></div>`
-    : t.claude === 'working' ? `<div class="rvbox working"><b>Claude is working on this</b><p>It will show here when there's something to review.</p></div>` : '';
+  const review = t.claude === 'review' ? `<div class="rvbox"><b>Claude replied</b><p>Its reply is in the comments below. Nothing goes out until you approve it.</p><div class="btns"><button class="send" data-act="approve">Approve</button><button class="ghost" data-act="sendback">Send back</button></div></div>`
+    : t.claude === 'working' ? `<div class="rvbox working"><b>Claude is on this</b><p>It picks up tasks every hour. Its reply will show in the comments here.</p></div>` : '';
   const blockDays = [...new Set([...Array(14).keys(), ...(b ? [b.d] : [])])].sort((x, y) => x - y);
   const meeting = MEETINGS.find(m => m.id === t.meeting);
   $('#dBody').innerHTML = `<textarea class="d-title" data-f="title" rows="2" aria-label="Task title">${esc(t.title)}</textarea>
@@ -356,8 +356,10 @@ function renderPage() {
       ${conn('Google Calendar', 'Your meetings, and the time blocks you make here', !c.googleConfigured ? 'off' : c.calendar ? 'ok' : 'fix', c.googleConfigured && !c.calendar ? link('Connect') : '')}
       ${conn('Google Drive', !c.calendar ? 'Connect Google first' : c.drive ? 'Recap Docs are saved to your mapped folders' : `Needs your approval again.${c.claude.unfiled ? ` ${c.claude.unfiled} recap${c.claude.unfiled === 1 ? ' is' : 's are'} waiting to be filed.` : ''}`, !c.googleConfigured ? 'off' : c.calendar && c.drive ? 'ok' : 'fix', c.calendar && !c.drive ? link('Reconnect') : '')}
       ${conn('Granola', g.configured ? `Meeting notes, checked every 30 minutes. Last check ${ago(g.lastRun)}.` : 'No Granola key on the site yet', g.configured ? 'ok' : 'off', g.configured ? '<button class="mini" data-act="granola">Check now</button>' : '')}
-      ${conn('Claude', `Writes recaps on your plan, no API key.${c.claude.waiting ? ` ${c.claude.waiting} waiting to be written.` : ''}`, 'ok')}
+      ${conn('Claude', `Runs on your plan, no API key.${c.claude.waiting ? ` ${c.claude.waiting} recap${c.claude.waiting === 1 ? '' : 's'} waiting to be written.` : ''}${c.claude.tasks ? ` ${c.claude.tasks} task${c.claude.tasks === 1 ? '' : 's'} in its queue.` : ''}`, 'ok')}
     </section>
+    <section class="set"><h3>Claude</h3><p>Mention @Claude in a task's comments and it picks the task up within the hour, then replies in the same thread for your review. It can read your connected tools and write drafts. It never sends, posts or changes anything.</p>
+      <div class="srow"><div><b>Start on recap action items automatically</b><small>When a recap is filed, Claude begins the tasks it can prepare on its own</small></div><span></span><button class="switch" role="switch" aria-checked="${S.settings.autostart}" data-act="autostart" aria-label="Start on recap action items automatically"></button></div></section>
     <section class="set"><h3>Daily briefing</h3><div class="srow"><div><b>Evening wrap-up starts at</b><small>Before this time you get the morning brief.</small></div><input type="time" data-s="wrap" value="${esc(S.settings.wrap)}" aria-label="Evening wrap-up time"><span></span></div></section>
     <section class="set"><h3>Meeting recaps</h3><div class="srow"><div><b>Default folder</b><small>${esc((S.settings.defaultFolder && S.settings.defaultFolder.path) || 'Meeting Recaps / General')}, used when a meeting has no folder of its own</small></div><span></span><button class="mini" data-act="pickdefault">Change</button></div></section>
     <section class="set"><h3>This dashboard</h3>
@@ -478,6 +480,7 @@ const ACT = {
   fptoggle: (v, el) => { const n = el.closest('.fnode'); n.dataset.open = n.dataset.open !== 'true'; },
   fppick: (v, el) => { $('#fp').classList.remove('show'); if (fpDone) fpDone(v, el.dataset.path); },
   fpclose: () => { $('#fp').classList.remove('show'); if (!$('#info').classList.contains('show')) $('#scrim').classList.remove('show'); },
+  autostart: async () => { S.settings.autostart = !S.settings.autostart; renderPage(); try { await api('PUT', '/api/app/settings', { autostart:S.settings.autostart }); toast(S.settings.autostart ? 'Claude will start on recap action items' : 'Claude will wait for you to hand tasks over'); } catch (e) { S.settings.autostart = !S.settings.autostart; renderPage(); toast('That didn\'t save. ' + e.message); } },
   granola: async () => { toast('Checking Granola'); try { const r = await api('POST', '/api/granola/sync', { force:true }); const n = k => (r.results || []).filter(x => x.status === k).length;
     toast(`${n('processed')} filed, ${n('queued')} queued for Claude${r.waiting_on_claude ? `, ${r.waiting_on_claude} waiting` : ''}`); refresh(true); } catch (e) { toast('Granola check failed. ' + e.message); } },
   signout: async () => { await fetch('/api/logout', { method:'POST', credentials:'same-origin' }).catch(() => {}); location.href = '/login.html'; },

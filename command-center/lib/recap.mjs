@@ -33,10 +33,10 @@ Return ONLY a JSON object, no markdown fences, with this exact shape:
   ],
   "keyDates": [ "Sep 16 - Pokemon launch" ],
   "tasks": [
-    { "title": "imperative task under 100 characters", "owner": "first name, or 'Jarrod'", "urgency": "urgent|soon|ongoing", "due_date": "YYYY-MM-DD or null", "notes": "optional detail or null" }
+    { "title": "imperative task under 100 characters", "owner": "first name, or 'Jarrod'", "urgency": "urgent|soon|ongoing", "due_date": "YYYY-MM-DD or null", "notes": "optional detail or null", "claude": "what an AI assistant should prepare for this task, or null" }
   ]
 }
-Rules: urgent = today, tomorrow, or this week; soon = within two weeks or a named date; ongoing = open-ended. Only include tasks someone actually committed to. Attribute each task to the person who said they would do it in the transcript. Include tasks owned by other people too - Jarrod tracks what he is waiting on. Add a section only if it has content; you may add one topic-specific section (e.g. "Shop Channel Performance") before Decisions Made when the meeting reported numbers. Keep every number exactly as stated; if figures are quoted per-day but do not sum to a stated total, say the list is as read out rather than implying it sums.`;
+Rules: urgent = today, tomorrow, or this week; soon = within two weeks or a named date; ongoing = open-ended. Only include tasks someone actually committed to. Attribute each task to the person who said they would do it in the transcript. Include tasks owned by other people too - Jarrod tracks what he is waiting on. For tasks owned by Jarrod only, fill "claude" when an AI assistant could get the work started without him: one or two sentences saying exactly what to prepare (a draft email or message, a summary, numbers pulled from Shopify, Jira or Drive, a plan or checklist), who it is for, and the key points from this meeting. Set "claude" to null when the task needs Jarrod himself: a decision, an approval, a conversation or meeting, anything physical, or changing a live system. Always null for tasks owned by anyone else. Add a section only if it has content; you may add one topic-specific section (e.g. "Shop Channel Performance") before Decisions Made when the meeting reported numbers. Keep every number exactly as stated; if figures are quoted per-day but do not sum to a stated total, say the list is as read out rather than implying it sums.`;
 }
 
 // Accepts the recap Claude wrote into claude_queue.result (object or JSON string) and normalizes it.
@@ -50,7 +50,8 @@ export function normalizeRecap(raw) {
   recap.headline = recap.headline || '';
   recap.sections = Array.isArray(recap.sections) ? recap.sections : [];
   recap.keyDates = Array.isArray(recap.keyDates) ? recap.keyDates : [];
-  recap.tasks = (recap.tasks || []).filter(t => t && t.title).map(t => ({ title: String(t.title).slice(0, 200), owner: t.owner || 'Jarrod', urgency: ['urgent', 'soon', 'ongoing'].includes(t.urgency) ? t.urgency : 'soon', due_date: /^\d{4}-\d{2}-\d{2}$/.test(t.due_date || '') ? t.due_date : null, notes: t.notes || null }));
+  recap.tasks = (recap.tasks || []).filter(t => t && t.title).map(t => ({ title: String(t.title).slice(0, 200), owner: t.owner || 'Jarrod', urgency: ['urgent', 'soon', 'ongoing'].includes(t.urgency) ? t.urgency : 'soon', due_date: /^\d{4}-\d{2}-\d{2}$/.test(t.due_date || '') ? t.due_date : null, notes: t.notes || null,
+    claude: typeof t.claude === 'string' && t.claude.trim() && /^jarrod\b/i.test(String(t.owner || 'Jarrod').trim()) ? t.claude.trim().slice(0, 1000) : null }));
   return recap;
 }
 

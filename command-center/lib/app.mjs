@@ -16,7 +16,7 @@ const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
 const fmt12 = t => { const [h, m] = t.split(':').map(Number); return `${((h + 11) % 12) + 1}:${String(m).padStart(2, '0')} ${h < 12 ? 'am' : 'pm'}`; };
 
 async function config(s) {
-  const { data } = fail(await s.from('settings').select('key,value').in('key', ['timezone', 'briefing_wrap', 'default_recap_folder', 'granola_last_run']));
+  const { data } = fail(await s.from('settings').select('key,value').in('key', ['timezone', 'briefing_wrap', 'default_recap_folder', 'granola_last_run', 'claude_autostart']));
   const cfg = Object.fromEntries((data || []).map(r => [r.key, r.value]));
   return { cfg, tz: cfg.timezone || 'America/New_York' };
 }
@@ -114,9 +114,10 @@ export async function loadApp({ start, days = 7 } = {}) {
     connections: {
       googleConfigured: google.configured, calendar: !!google.token, drive: google.drive,
       granola: { configured: !!Netlify.env.get('GRANOLA_API_KEY'), lastRun: last ? last.at : null, lastLog: last ? (last.error ? [last.error] : (last.log || []).slice(-3)) : [] },
-      claude: { waiting: queue.filter(q => q.kind === 'recap' && ['pending', 'working'].includes(q.status)).length, unfiled: queue.filter(q => q.kind === 'recap' && q.status === 'ready').length }
+      claude: { waiting: queue.filter(q => q.kind === 'recap' && ['pending', 'working'].includes(q.status)).length, unfiled: queue.filter(q => q.kind === 'recap' && q.status === 'ready').length,
+        tasks: queue.filter(q => q.kind === 'task' && ['pending', 'working'].includes(q.status)).length }
     },
-    settings: { wrap: typeof cfg.briefing_wrap === 'string' ? cfg.briefing_wrap : '16:00', defaultFolder: cfg.default_recap_folder || null }
+    settings: { wrap: typeof cfg.briefing_wrap === 'string' ? cfg.briefing_wrap : '16:00', defaultFolder: cfg.default_recap_folder || null, autostart: cfg.claude_autostart !== false }
   };
 }
 
@@ -310,6 +311,7 @@ export async function folders() {
 export async function saveSettings(b = {}) {
   const s = db();
   if ('wrap' in b) { if (!/^\d{2}:\d{2}$/.test(b.wrap || '')) throw bad('wrap must be HH:MM'); fail(await s.from('settings').upsert({ key: 'briefing_wrap', value: b.wrap }, { onConflict: 'key' })); }
+  if ('autostart' in b) fail(await s.from('settings').upsert({ key: 'claude_autostart', value: !!b.autostart }, { onConflict: 'key' }));
   if ('defaultFolder' in b) fail(await s.from('settings').upsert({ key: 'default_recap_folder', value: b.defaultFolder && b.defaultFolder.id ? { id: b.defaultFolder.id, path: String(b.defaultFolder.path || '').slice(0, 500) } : { id: null, path: null } }, { onConflict: 'key' }));
   return { ok: true };
 }
