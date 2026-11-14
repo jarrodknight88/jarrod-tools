@@ -7,7 +7,7 @@ Personal daily dashboard for Jarrod: today's meetings, tasks with Akiflow-style 
 - `src/template.html` + `src/logic.js` - the UI, exported from Claude Design and running on its bundled runtime (`static/support.js`). `npm run build` assembles them into `dist/index.html`.
 - `netlify/functions/` - the API. `login` / `logout` manage a signed session cookie; `state` reads and writes the whole dashboard document to Supabase.
 - `lib/db.mjs` - translation between the UI's state shape and the Supabase tables.
-- `lib/thread.mjs` + `netlify/functions/task-thread.mjs` - task comments and attachments (`/api/tasks/:id/thread`, `/comments`, `/attachments`). Files go to the private `task-attachments` bucket through signed upload URLs. A comment mentioning @Claude queues the task in `claude_queue`.
+- `lib/thread.mjs` + `netlify/functions/task-thread.mjs` - task comments and attachments (`/api/tasks/:id/thread`, `/comments`, `/attachments`). Files go to the private `task-attachments` bucket through signed upload URLs. A comment mentioning @Claude queues the task in `claude_queue`. Attachments reach Claude's worker as text (`lib/extract.mjs`), up to 150,000 characters each. A longer file, a PDF or a picture is lent through a temporary read-only Drive copy that is deleted after Claude replies; a long file also carries its first 20,000 characters as a preview. The same file attached twice is passed once (`sql/008_long_attachments.sql`).
 - `sql/` - schema changes, applied in order.
 - `dev/mock-server.mjs` - local smoke-test server with a fake `/api/state` (`node build.mjs && node dev/mock-server.mjs`, then open http://localhost:8787).
 

@@ -1,7 +1,7 @@
 // Task comments and attachments. Files live in the private Supabase bucket "task-attachments";
 // the browser uploads straight to a signed URL, so large files never pass through a Netlify function.
 import { db } from './db.mjs';
-import { extractText } from './extract.mjs';
+import { extractText, PREVIEW_CHARS } from './extract.mjs';
 import { accessToken, uploadFile, shareWithReader, deleteFile, ensureFolder } from './google.mjs';
 
 export const BUCKET = 'task-attachments';
@@ -48,11 +48,26 @@ export async function prepareForClaude(s, taskId, budgetMs = 6000) {
     try {
       if ((f.size_bytes || 0) > 15 * 1024 * 1024) out = { note: 'The file is too large to read for Claude (over 15 MB).' };
       else { const dl = await s.storage.from(BUCKET).download(f.storage_path); if (dl.error || !dl.data) throw new Error(dl.error ? dl.error.message : 'download failed'); const buf = Buffer.from(await dl.data.arrayBuffer()); out = extractText(buf, f.file_name, f.mime_type);
-        if (out.viaDrive) out = await lendViaDrive(s, f, buf, out); }
+        if (out.viaDrive) out = await lendViaDrive(s, f, buf, out);
+        else if (out.full) out = await lendLongText(s, f, out); }
     } catch (e) { console.error('attachment read failed', f.file_name, e.message); continue; } // left unread so the 15-minute catch-up tries again
     await s.from('task_attachments').update({ text_content: out.text || null, text_note: out.note || (out.text || out.drive ? null : 'No readable text.'), drive_file_id: out.drive ? out.drive.id : null, drive_url: out.drive ? out.drive.webViewLink || null : null }).eq('id', f.id); read++;
   }
   return read;
+}
+
+// A file whose text is too long to travel with the task is lent the same way, as plain text, so Claude can read
+// all of it. The start of the text still goes with the task as a preview. If Drive is not set up or the share
+// fails, Claude gets the text cut to the inline limit, with a note saying so.
+async function lendLongText(s, f, out) {
+  const plain = /\.(csv|tsv|txt|md|json|html?|xml|log|ya?ml|rtf)$/i.test(f.file_name || '');
+  const copy = { file_name: plain ? f.file_name : f.file_name + '.txt', mime_type: /\.csv$/i.test(f.file_name || '') ? 'text/csv' : 'text/plain' };
+  let lent;
+  try { lent = await lendViaDrive(s, copy, Buffer.from(out.full, 'utf8'), { note: out.note }); }
+  catch (e) { console.error('lending long text failed', f.file_name, e.message); lent = { note: out.note }; }
+  if (!lent.drive) return { text: out.text, note: lent.note || out.note };
+  const n = x => x.toLocaleString('en-US');
+  return { drive: lent.drive, text: out.full.slice(0, PREVIEW_CHARS), note: `Only the first ${n(PREVIEW_CHARS)} of ${n(out.full.length)} characters are shown here. The whole file is lent through Google Drive as plain text: read it with drive_file_id.` };
 }
 
 // PDFs and pictures can't be turned into text here, so a copy is lent to Claude through Google Drive: uploaded to a

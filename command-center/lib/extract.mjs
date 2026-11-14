@@ -3,7 +3,10 @@
 // PDFs and images are not handled; those come back with a note saying so.
 import { inflateRawSync } from 'node:zlib';
 
-const MAX_CHARS = 60000;
+// Up to MAX_CHARS of a file's text goes to Claude with the task. A longer file is lent whole through Google Drive
+// (see lendLongText in thread.mjs) and only the first PREVIEW_CHARS travel with the task.
+export const MAX_CHARS = 150000;
+export const PREVIEW_CHARS = 20000;
 const ext = name => (String(name || '').toLowerCase().match(/\.([a-z0-9]+)$/) || [])[1] || '';
 const TEXT_EXT = new Set(['txt', 'md', 'csv', 'tsv', 'json', 'html', 'htm', 'xml', 'log', 'yaml', 'yml', 'rtf']);
 
@@ -75,7 +78,8 @@ function pptx(buf) {
   return slides.join('\n\n');
 }
 
-// Returns { text } when the file could be read, or { note } saying why not.
+// Returns { text } when the file could be read, or { note } saying why not. A file longer than MAX_CHARS comes
+// back cut to MAX_CHARS with a note, plus { full } holding all of it so the caller can lend it through Drive.
 export function extractText(buf, name, mime = '') {
   const e = ext(name), m = String(mime || '').toLowerCase();
   try {
@@ -89,7 +93,7 @@ export function extractText(buf, name, mime = '') {
     else return { note: `This file type (${e || m || 'unknown'}) cannot be read for Claude yet.` };
     text = text.replace(/\u0000/g, '').trim();
     if (!text) return { note: 'The file had no readable text.' };
-    return text.length > MAX_CHARS ? { text: text.slice(0, MAX_CHARS), note: `Only the first ${MAX_CHARS.toLocaleString('en-US')} characters are included; the file is longer.` } : { text };
+    return text.length > MAX_CHARS ? { text: text.slice(0, MAX_CHARS), full: text, note: `Only the first ${MAX_CHARS.toLocaleString('en-US')} of ${text.length.toLocaleString('en-US')} characters are included; the rest could not be passed to Claude.` } : { text };
   } catch (err) {
     return { note: 'The file could not be read: ' + (err.message || 'unknown error') };
   }
