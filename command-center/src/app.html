@@ -29,6 +29,7 @@
     <button class="newbtn" data-act="new">New task <kbd>N</kbd></button>
     <button class="searchbtn" data-act="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>Search <kbd>/</kbd></button>
     <div class="seg" role="group" aria-label="Whose items" data-who></div>
+    <button class="newproj" data-act="newproj">+ New project</button>
     <div id="tree"></div>
     <div class="sidenav"><button data-act="page" data-v="meetings" id="navMeet">Meetings</button><button data-act="page" data-v="settings" id="navSet">Settings</button></div>
     <div class="side-foot">Drag a task onto the board or the calendar.</div>
@@ -104,6 +105,13 @@
   <div class="qrow"><span>For</span><div class="chips" id="qWho"></div></div>
   <label class="ck"><input type="checkbox" id="qBoard" checked> Put it on today's board</label>
   <div class="qfoot"><button class="ghost" data-act="close">Cancel</button><button class="send" data-act="qadd">Add task</button></div>
+</section>
+
+<section class="qa" id="qp" aria-label="New project">
+  <h2>New project</h2>
+  <input id="qpName" placeholder="Project name" autocomplete="off" aria-label="Project name" style="width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:15px;font-weight:600;margin-bottom:12px">
+  <div class="qrow"><span>Area</span><div class="chips" id="qpArea"></div></div>
+  <div class="qfoot"><button class="ghost" data-act="close">Cancel</button><button class="send" data-act="qpadd">Add project</button></div>
 </section>
 
 <section class="qa search" id="search" aria-label="Search">

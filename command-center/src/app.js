@@ -101,7 +101,7 @@ function dueInfo(t) {
 }
 function setBoard(t, b) { t.board = b; t.done = b === 'done'; if (t.done) { t.doneAt = new Date().toISOString(); t.claude = null; } else t.doneAt = null; return save(t, { board:b }); }
 let tt; function toast(msg, undo) { const el = $('#toast'), u = $('#toastUndo'); $('#toastMsg').textContent = msg; u.hidden = !undo; u.onclick = () => { undo(); el.classList.remove('show'); }; el.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => el.classList.remove('show'), undo ? 6000 : 2400); }
-function closeAll() { ['#scrim','#notif','#detail','#qa','#info','#search','#fp'].forEach(s => $(s).classList.remove('show')); }
+function closeAll() { ['#scrim','#notif','#detail','#qa','#qp','#info','#search','#fp'].forEach(s => $(s).classList.remove('show')); }
 const opt = (v, l, sel) => `<option value="${esc(v)}"${String(sel ?? '') === String(v) ? ' selected' : ''}>${l}</option>`;
 
 // ---------- cards, sidebar, tabs ----------
@@ -125,8 +125,8 @@ function renderSide() {
   $('#tree').innerHTML = S.areas.map((a, i) => {
     const id = a.id, open = TASKS.filter(t => t.area === id && mine(t) && !isDone(t)), isOpen = id in openAreas ? openAreas[id] : i < 2;
     const groups = [...PROJECTS.filter(p => p.area === id).map(p => [p.name, open.filter(t => t.proj === p.id)]), ['No project', open.filter(t => !t.proj || !PROJECTS.some(p => p.id === t.proj && p.area === id))]];
-    return `<div class="area" data-open="${isOpen}"><button data-act="area" data-v="${id}" aria-expanded="${isOpen}"><svg class="chev" viewBox="0 0 10 10"><path d="M2 3.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span class="dot" style="background:${a.color}"></span>${esc(a.name)}<span class="count">${open.length}</span></button>
-      <div class="projects">${groups.filter(([n, ts]) => n !== 'No project' || ts.length).map(([n, ts]) => `<div class="proj">${esc(n)}</div>${ts.map(t => `<div class="ptask" draggable="true" data-id="${t.id}"><span>${esc(t.title)}</span></div>`).join('') || '<div class="none">Nothing open</div>'}`).join('')}
+    return `<div class="area" data-open="${isOpen}"><button data-act="area" data-v="${id}" aria-expanded="${isOpen}"><svg class="chev" viewBox="0 0 10 10"><path d="M2 3.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span class="dot" style="background:${a.color}"></span>${esc(a.name)}<span class="count">${open.length}</span><span class="plus" role="button" tabindex="0" data-act="addprojtop" data-v="${id}" title="Add a project to ${esc(a.name)}" aria-label="Add a project to ${esc(a.name)}">+</span></button>
+      <div class="projects">${groups.filter(([n, ts]) => n !== 'No project' || ts.length).map(([n, ts]) => `<div class="proj">${esc(n)}</div>${ts.map(t => `<div class="ptask" draggable="true" data-id="${t.id}"><button class="chk" data-act="check" data-id="${t.id}" aria-label="Mark done: ${esc(t.title)}"></button><span>${esc(t.title)}</span></div>`).join('') || '<div class="none">Nothing open</div>'}`).join('')}
       <button class="addp" data-act="addproj" data-v="${id}">+ Add project</button></div></div>`;
   }).join('');
   const c = S.connections, bad = (c.googleConfigured && (!c.calendar || !c.drive)) ? 1 : 0, pg = document.body.dataset.page;
@@ -161,7 +161,7 @@ function renderView() {
     const people = [...new Set(ts.map(t => t.owner))];
     v.innerHTML = `<section class="list"><p>What other people committed to in your meetings. These come in from recaps on their own.</p>${people.map(p => { const x = ts.filter(t => t.owner === p);
       return `<div class="grp">${esc(p)}<span class="pill">${x.length}</span></div>` + x.map(t => { const d = dueInfo(t);
-        return `<div class="row" data-id="${t.id}" style="--c:${ac(t.area)}"><span></span><div><div class="t">${esc(t.title)}</div><div class="m">${meta(t, { due:false })}</div></div><span class="due ${d ? d.cls : ''}">${d ? d.label : ''}</span><button class="mini" data-act="check" data-id="${t.id}">Got it</button></div>`; }).join(''); }).join('') || '<div class="empty">Nobody owes you anything right now</div>'}</section>`;
+        return `<div class="row" data-id="${t.id}" style="--c:${ac(t.area)}"><button class="chk" data-act="check" data-id="${t.id}" aria-label="Mark done"></button><div><div class="t">${esc(t.title)}</div><div class="m">${meta(t, { due:false })}</div></div><span class="due ${d ? d.cls : ''}">${d ? d.label : ''}</span><button class="mini" data-act="check" data-id="${t.id}">Got it</button></div>`; }).join(''); }).join('') || '<div class="empty">Nobody owes you anything right now</div>'}</section>`;
   }
 }
 
@@ -400,6 +400,9 @@ $('#sInput').addEventListener('input', renderSearch);
 function setPage(p) { document.body.dataset.page = p; renderPage(); renderSide(); markTabs(); }
 function markTabs() { const b = document.body, on = b.dataset.page === 'meetings' ? 'meetings' : b.dataset.page === 'settings' ? '' : b.dataset.tab; $$('.tabbar button').forEach(x => x.dataset.v === on ? x.setAttribute('aria-current', 'page') : x.removeAttribute('aria-current')); }
 
+let qpArea = 'cardshq';
+const renderQp = () => $('#qpArea').innerHTML = S.areas.map(a => `<button data-act="qpset" data-v="${a.id}" aria-pressed="${qpArea === a.id}"><i style="background:${a.color}"></i>${esc(a.name)}</button>`).join('');
+
 // ---------- quick add ----------
 function renderQa() {
   $('#qArea').innerHTML = S.areas.map(a => `<button data-act="qset" data-k="area" data-v="${a.id}" aria-pressed="${q.area === a.id}"><i style="background:${a.color}"></i>${esc(a.name)}</button>`).join('');
@@ -423,6 +426,13 @@ const ACT = {
     i.onkeydown = async e => { if (e.key === 'Escape') renderSide(); if (e.key !== 'Enter' || !i.value.trim()) return; i.disabled = true;
       try { const r = await api('POST', '/api/app/projects', { name:i.value.trim(), area:v }); PROJECTS.push(r.project); toast('Project added'); } catch (err) { toast('Couldn\'t add that. ' + err.message); } renderSide(); };
     i.onblur = () => setTimeout(() => { if (!i.disabled) renderSide(); }, 150); },
+  addprojtop: (v, el, e) => { e.stopPropagation(); openAreas[v] = true; LS.set('open', openAreas); renderSide(); const b = $(`.addp[data-v="${v}"]`); if (b) ACT.addproj(v, b); },
+  newproj: () => { closeAll(); qpArea = lastArea; $('#qpName').value = ''; renderQp(); $('#qp').classList.add('show'); $('#scrim').classList.add('show'); setTimeout(() => $('#qpName').focus(), 60); },
+  qpset: v => { qpArea = v; renderQp(); },
+  qpadd: async () => { const name = $('#qpName').value.trim(); if (!name) { $('#qpName').focus(); return; } closeAll();
+    try { const r = await api('POST', '/api/app/projects', { name, area:qpArea }); PROJECTS.push(r.project); openAreas[qpArea] = true; LS.set('open', openAreas); lastArea = qpArea; LS.set('area', lastArea); renderSide(); if (phone.matches) ACT.tab('projects'); toast(`${name} added to ${an(qpArea)}`); }
+    catch (e) { toast('Couldn\'t add that. ' + e.message); } },
+  mcheck: (v, el) => { ACT.check(v, el); ACT.meeting(el.dataset.m); },
   tab: v => { if (v === 'meetings') { document.body.dataset.tab = 'today'; setPage('meetings'); } else { document.body.dataset.tab = v; if (v === 'today') setPage('home'); else markTabs(); } scrollTo(0, 0); },
   page: v => { if (calMode === 'week') { calMode = 'day'; document.body.dataset.cal = 'day'; renderCal(); } closeAll(); document.body.dataset.tab = 'today'; setPage(v); scrollTo(0, 0); },
   calmode: v => { calMode = v; document.body.dataset.cal = v; renderCal(); ensureEvents(); },
@@ -469,7 +479,7 @@ const ACT = {
       <dt>Recap folder</dt><dd>${esc(m.folderPath || (m.folderId ? 'Folder set' : 'Default folder'))}<button class="linkbtn" data-act="mfolder" data-v="${m.id}">Change</button></dd>
       <dt>Write recaps</dt><dd><button class="switch" role="switch" aria-checked="${m.on}" data-act="mrec" data-v="${m.id}" aria-label="Write recaps for this meeting"></button></dd></dl>
       <h3 class="d-sec">Recaps</h3><div id="mRecaps">${recaps(m.recaps)}</div>
-      <h3 class="d-sec" style="margin-top:18px">Open action items</h3>${items.map(t => { const d = dueInfo(t); return `<div class="row" data-id="${t.id}" style="--c:${ac(t.area)}"><span></span><div><div class="t">${esc(t.title)}</div><div class="m"><span>${t.owner ? esc(t.owner) : NAMES[t.who] || 'You'}</span></div></div><span class="due ${d ? d.cls : ''}">${d ? d.label : ''}</span><span></span></div>`; }).join('') || '<div class="none">Nothing open from this meeting</div>'}`);
+      <h3 class="d-sec" style="margin-top:18px">Open action items</h3>${items.map(t => { const d = dueInfo(t); return `<div class="row" data-id="${t.id}" style="--c:${ac(t.area)}"><button class="chk" data-act="mcheck" data-id="${t.id}" data-m="${m.id}" aria-label="Mark done"></button><div><div class="t">${esc(t.title)}</div><div class="m"><span>${t.owner ? esc(t.owner) : NAMES[t.who] || 'You'}</span></div></div><span class="due ${d ? d.cls : ''}">${d ? d.label : ''}</span><span></span></div>`; }).join('') || '<div class="none">Nothing open from this meeting</div>'}`);
     try { const r = await api('GET', `/api/app/meetings/${m.id}/recaps`); if ($('#mRecaps') && $('#info').classList.contains('show')) $('#mRecaps').innerHTML = recaps(r.recaps); } catch {} },
   mrec: async v => { const m = MEETINGS.find(x => x.id === v); m.on = !m.on; renderPage(); ACT.meeting(v);
     try { await api('PATCH', '/api/app/meetings/' + v, { on:m.on }); toast(m.on ? 'Recaps on for this meeting' : 'Recaps off for this meeting'); } catch (e) { m.on = !m.on; toast('That didn\'t save. ' + e.message); } },
@@ -495,6 +505,8 @@ document.addEventListener('keydown', async e => {
   const typing = /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName);
   if (e.key === 'Enter' && e.target.id === 'quick' && e.target.value.trim()) { const title = e.target.value.trim(); e.target.value = ''; if (await addTask({ title, area:lastArea, due:0, board:'todo' })) { toast(`Added to ${an(lastArea)}`); setTimeout(() => $('#quick') && $('#quick').focus(), 0); } }
   else if (e.key === 'Enter' && e.target.id === 'qTitle') ACT.qadd();
+  else if (e.key === 'Enter' && e.target.id === 'qpName') ACT.qpadd();
+  else if ((e.key === 'Enter' || e.key === ' ') && e.target.classList && e.target.classList.contains('plus')) { e.preventDefault(); e.target.click(); }
   else if (e.key === 'Enter' && (e.metaKey || e.ctrlKey) && e.target.id === 'dInput') ACT.comment();
   else if ((e.key || '').toLowerCase() === 'n' && !typing && !e.metaKey && !e.ctrlKey && !e.altKey) { e.preventDefault(); ACT.new(); }
   else if (e.key === '/' && !typing) { e.preventDefault(); ACT.search(); }
