@@ -1,4 +1,4 @@
-// Runs every 30 minutes. Queues new Granola notes for Claude and turns finished recaps into Docs + tasks.
+// Runs every 15 minutes. Queues new Granola notes for Claude and turns finished recaps into Docs + tasks.
 // The last run's log is saved to settings.granola_last_run so problems are visible without function logs.
 import { runSync } from '../../lib/sync.mjs';
 import { db } from '../../lib/db.mjs';
@@ -11,4 +11,4 @@ export default async () => {
   return new Response('ok');
 };
 
-export const config = { schedule: '*/30 * * * *' };
+export const config = { schedule: '*/15 * * * *' };
