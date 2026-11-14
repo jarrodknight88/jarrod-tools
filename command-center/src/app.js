@@ -101,7 +101,8 @@ function dueInfo(t) {
 }
 function setBoard(t, b) { t.board = b; t.done = b === 'done'; if (t.done) { t.doneAt = new Date().toISOString(); t.claude = null; } else t.doneAt = null; return save(t, { board:b }); }
 let tt; function toast(msg, undo) { const el = $('#toast'), u = $('#toastUndo'); $('#toastMsg').textContent = msg; u.hidden = !undo; u.onclick = () => { undo(); el.classList.remove('show'); }; el.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => el.classList.remove('show'), undo ? 6000 : 2400); }
-function closeAll() { ['#scrim','#notif','#detail','#qa','#qp','#info','#search','#fp'].forEach(s => $(s).classList.remove('show')); }
+function closeAll() { ['#scrim','#notif','#detail','#qa','#qp','#info','#search','#fp'].forEach(s => $(s).classList.remove('show'));
+  const f = document.activeElement; if (f && f.closest && f.closest('.qa,.detail,.notif')) f.blur(); } // so the N and / shortcuts work again straight away
 const opt = (v, l, sel) => `<option value="${esc(v)}"${String(sel ?? '') === String(v) ? ' selected' : ''}>${l}</option>`;
 
 // ---------- cards, sidebar, tabs ----------
@@ -427,7 +428,7 @@ const ACT = {
       try { const r = await api('POST', '/api/app/projects', { name:i.value.trim(), area:v }); PROJECTS.push(r.project); toast('Project added'); } catch (err) { toast('Couldn\'t add that. ' + err.message); } renderSide(); };
     i.onblur = () => setTimeout(() => { if (!i.disabled) renderSide(); }, 150); },
   addprojtop: (v, el, e) => { e.stopPropagation(); openAreas[v] = true; LS.set('open', openAreas); renderSide(); const b = $(`.addp[data-v="${v}"]`); if (b) ACT.addproj(v, b); },
-  newproj: () => { closeAll(); qpArea = lastArea; $('#qpName').value = ''; renderQp(); $('#qp').classList.add('show'); $('#scrim').classList.add('show'); setTimeout(() => $('#qpName').focus(), 60); },
+  newproj: v => { const carry = v === 'keep' ? $('#qTitle').value : ''; closeAll(); qpArea = v === 'keep' ? q.area : lastArea; $('#qpName').value = carry; renderQp(); $('#qp').classList.add('show'); $('#scrim').classList.add('show'); setTimeout(() => $('#qpName').focus(), 60); },
   qpset: v => { qpArea = v; renderQp(); },
   qpadd: async () => { const name = $('#qpName').value.trim(); if (!name) { $('#qpName').focus(); return; } closeAll();
     try { const r = await api('POST', '/api/app/projects', { name, area:qpArea }); PROJECTS.push(r.project); openAreas[qpArea] = true; LS.set('open', openAreas); lastArea = qpArea; LS.set('area', lastArea); renderSide(); if (phone.matches) ACT.tab('projects'); toast(`${name} added to ${an(qpArea)}`); }
@@ -445,7 +446,7 @@ const ACT = {
   close: closeAll,
   search: () => { closeAll(); $('#sInput').value = ''; renderSearch(); $('#search').classList.add('show'); $('#scrim').classList.add('show'); setTimeout(() => $('#sInput').focus(), 60); },
   sproj: v => { const p = PROJECTS.find(x => x.id === v); openAreas[p.area] = true; closeAll(); renderSide(); if (phone.matches) ACT.tab('projects'); toast(`${p.name} is under ${an(p.area)}`); },
-  new: () => { closeAll(); q.area = lastArea; q.due = 0; q.who = who === 'jalea' ? 'jalea' : 'jarrod'; $('#qTitle').value = ''; $('#qBoard').checked = true; renderQa(); $('#qa').classList.add('show'); $('#scrim').classList.add('show'); setTimeout(() => $('#qTitle').focus(), 60); },
+  new: v => { const carry = v === 'keep' ? $('#qpName').value : ''; closeAll(); q.area = v === 'keep' ? qpArea : lastArea; q.due = 0; q.who = who === 'jalea' ? 'jalea' : 'jarrod'; $('#qTitle').value = carry; $('#qBoard').checked = true; renderQa(); $('#qa').classList.add('show'); $('#scrim').classList.add('show'); setTimeout(() => $('#qTitle').focus(), 60); },
   qset: (v, el) => { const k = el.dataset.k; q[k] = k === 'due' ? (v === '' ? null : +v) : v; if (k === 'due') $('#qBoard').checked = q.due === 0; renderQa(); },
   qadd: async () => { const title = $('#qTitle').value.trim(); if (!title) { $('#qTitle').focus(); return; } closeAll();
     if (await addTask({ title, area:q.area, proj:$('#qProj').value || null, due:q.due, who:q.who, board:$('#qBoard').checked ? 'todo' : 'none' })) toast('Task added'); },

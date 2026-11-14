@@ -26,10 +26,9 @@
 
   <aside class="side">
     <div class="brand-row"><div class="brand">Command Center</div><button class="bell" data-act="bell" aria-label="Notifications"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="badge" data-badge hidden></span></button></div>
-    <button class="newbtn" data-act="new">New task <kbd>N</kbd></button>
+    <button class="newbtn" data-act="new">New <kbd>N</kbd></button>
     <button class="searchbtn" data-act="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>Search <kbd>/</kbd></button>
     <div class="seg" role="group" aria-label="Whose items" data-who></div>
-    <button class="newproj" data-act="newproj">+ New project</button>
     <div id="tree"></div>
     <div class="sidenav"><button data-act="page" data-v="meetings" id="navMeet">Meetings</button><button data-act="page" data-v="settings" id="navSet">Settings</button></div>
     <div class="side-foot">Drag a task onto the board or the calendar.</div>
@@ -69,7 +68,7 @@
   <button data-act="tab" data-v="projects"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Projects</button>
   <button data-act="tab" data-v="meetings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="9" r="3.2"/><path d="M3 19c.6-3 3-4.5 6-4.5s5.4 1.5 6 4.5M16 6.200a3 3 0 0 1 0 5.600M18 14.800c1.700.600 2.700 2 3 4.200"/></svg>Meetings</button>
 </nav>
-<button class="fab" data-act="new" aria-label="New task">+</button>
+<button class="fab" data-act="new" aria-label="New task or project">+</button>
 
 <div class="scrim" id="scrim" data-act="close"></div>
 <section class="notif" id="notif" aria-label="Notifications">
@@ -97,7 +96,7 @@
 </section>
 
 <section class="qa" id="qa" aria-label="New task">
-  <h2>New task</h2>
+  <div class="seg newsw" role="group" aria-label="What to create"><button data-act="new" data-v="keep" aria-pressed="true">Task</button><button data-act="newproj" data-v="keep" aria-pressed="false">Project</button></div>
   <input id="qTitle" placeholder="What needs doing?" autocomplete="off">
   <div class="qrow"><span>Area</span><div class="chips" id="qArea"></div></div>
   <div class="qrow"><span>Project</span><div><select id="qProj" aria-label="Project"></select></div></div>
@@ -108,7 +107,7 @@
 </section>
 
 <section class="qa" id="qp" aria-label="New project">
-  <h2>New project</h2>
+  <div class="seg newsw" role="group" aria-label="What to create"><button data-act="new" data-v="keep" aria-pressed="false">Task</button><button data-act="newproj" data-v="keep" aria-pressed="true">Project</button></div>
   <input id="qpName" placeholder="Project name" autocomplete="off" aria-label="Project name" style="width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:15px;font-weight:600;margin-bottom:12px">
   <div class="qrow"><span>Area</span><div class="chips" id="qpArea"></div></div>
   <div class="qfoot"><button class="ghost" data-act="close">Cancel</button><button class="send" data-act="qpadd">Add project</button></div>
