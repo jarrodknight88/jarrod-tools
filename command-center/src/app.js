@@ -54,6 +54,25 @@ async function api(method, path, body) {
 }
 // Comment text: escaped, links made clickable, @Claude highlighted.
 const rich = s => esc(s).replace(/\bhttps?:\/\/[^\s<]+/g, u => { const tail = (u.match(/(?:[.,;:!?)\]]|&quot;|&gt;)+$/) || [''])[0], url = tail ? u.slice(0, -tail.length) : u; return `<a href="${url}" target="_blank" rel="noopener">${url}</a>${tail}`; }).replace(/(^|[\s>])@claude\b/gi, '$1<b>@Claude</b>').replace(/\n/g, '<br>');
+// Claude can hand back a document inside a reply: [[file: name.csv]] ... [[/file]]. Those become downloadable files.
+const FILE_RE = /\[\[file:\s*([^\]\n]+?)\s*\]\]\n?([\s\S]*?)\n?\[\[\/file\]\]/g, DOCS = {};
+function replyHtml(c) {
+  if (c.author !== 'claude' || !/\[\[file:/.test(c.body)) return rich(c.body);
+  let out = '', last = 0, n = 0;
+  for (const m of c.body.matchAll(FILE_RE)) { const key = c.id + ':' + n++, name = m[1].replace(/[\\/:*?"<>|]+/g, ' ').trim().slice(0, 90) || 'file.txt'; DOCS[key] = { name, text: m[2] };
+    const before = c.body.slice(last, m.index).trim(); if (before) out += rich(before);
+    out += `<div class="docfile"><div class="thumb">${esc((name.split('.').pop() || 'file').toUpperCase().slice(0, 4))}</div><div class="dn"><b>${esc(name)}</b><span>${m[2].split('\n').length} lines</span></div><button class="mini" data-act="docdl" data-v="${key}">Download</button></div><details class="docprev"><summary>Preview</summary><pre>${esc(m[2].slice(0, 6000))}${m[2].length > 6000 ? '\n...' : ''}</pre></details>`; last = m.index + m[0].length; }
+  const rest = c.body.slice(last).trim(); return out + (rest ? rich(rest) : '');
+}
+function wordHtml(title, sub, text) {
+  const body = text.split(/\n{2,}/).map(par => { const lines = par.split('\n');
+    if (lines.every(l => /^\s*- /.test(l))) return `<ul>${lines.map(l => `<li>${rich(l.replace(/^\s*- /, ''))}</li>`).join('')}</ul>`;
+    if (lines.length === 1 && /^#{1,3} /.test(par)) return `<h2>${esc(par.replace(/^#{1,3} /, ''))}</h2>`;
+    if (lines.length > 1 && lines.every(l => l.includes('\t'))) return `<table border="1" cellspacing="0" cellpadding="5">${lines.map(l => `<tr>${l.split('\t').map(x => `<td>${esc(x)}</td>`).join('')}</tr>`).join('')}</table>`;
+    return `<p>${rich(par)}</p>`; }).join('');
+  return `<html xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><title>${esc(title)}</title><style>body{font-family:Calibri,Arial,sans-serif;font-size:11pt;line-height:1.4}h1{font-size:16pt;margin-bottom:2pt}h2{font-size:13pt;margin:14pt 0 4pt}.meta{color:#666;font-size:9.5pt;margin-bottom:14pt}table{border-collapse:collapse}</style></head><body><h1>${esc(title)}</h1>${sub ? `<div class="meta">${esc(sub)}</div>` : ''}${body}</body></html>`;
+}
+function download(name, parts, type) { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(parts, { type })); a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); toast('Saved to your downloads'); }
 const normProj = p => ({ ...p, due: off(p.due) });
 const normTask = t => ({ ...t, due: off(t.due), block: t.block ? { d: off(t.block.date), start: t.block.start, dur: t.block.dur, work: t.block.work } : null });
 const wire = p => { const o = { ...p }; if ('due' in o) o.due = o.due == null ? null : ymd(o.due); if ('block' in o) o.block = o.block ? { date: ymd(o.block.d), start: o.block.start, dur: o.block.dur, work: o.block.work } : null; return o; };
@@ -305,7 +324,7 @@ function renderThread() {
   const t = cur(); if (!t || !$('#dFiles')) return;
   $('#dFiles').innerHTML = (t.fileList || []).map(fileTile).join('') + '<button class="file add" data-act="attach" data-v="task">+ Add file</button>';
   $('#dThread').innerHTML = !t.thread ? '<div class="none">Loading comments</div>' : t.thread.map(c => c.author === 'system' ? `<div class="ev2">${esc(c.body)}</div>`
-    : `<div class="cm"><span class="av ${c.author}">${c.author === 'claude' ? SPARK : (NAMES[c.author] || '?').slice(0, 2)}</span><div><div class="who2">${NAMES[c.author] || esc(c.author)}<span>${stamp(c.at)}</span></div><div class="txt">${rich(c.body)}</div>${c.author === 'claude' ? `<div class="cacts"><button class="mini" data-act="cfile" data-v="${c.id}">Save as Word file</button><button class="mini" data-act="ccopy" data-v="${c.id}">Copy</button></div>` : ''}${(c.files || []).map(f => `<a class="att" ${f.url ? `href="${esc(f.url)}" target="_blank" rel="noopener"` : ''} style="text-decoration:none;color:inherit">${CLIP} ${esc(f.name)}</a>`).join(' ')}</div></div>`).join('') || '<div class="none">No comments yet</div>';
+    : `<div class="cm"><span class="av ${c.author}">${c.author === 'claude' ? SPARK : (NAMES[c.author] || '?').slice(0, 2)}</span><div><div class="who2">${NAMES[c.author] || esc(c.author)}<span>${stamp(c.at)}</span></div><div class="txt">${replyHtml(c)}</div>${c.author === 'claude' ? `<div class="cacts"><button class="mini" data-act="cfile" data-v="${c.id}">Save as Word file</button><button class="mini" data-act="ccopy" data-v="${c.id}">Copy</button></div>` : ''}${(c.files || []).map(f => `<a class="att" ${f.url ? `href="${esc(f.url)}" target="_blank" rel="noopener"` : ''} style="text-decoration:none;color:inherit">${CLIP} ${esc(f.name)}</a>`).join(' ')}</div></div>`).join('') || '<div class="none">No comments yet</div>';
 }
 async function loadThread(id) {
   try {
@@ -467,13 +486,16 @@ const ACT = {
   mcheck: (v, el) => { ACT.check(v, el); ACT.meeting(el.dataset.m); },
   ccopy: async v => { const c = (cur().thread || []).find(x => x.id === v); if (!c) return; try { await navigator.clipboard.writeText(c.body); toast('Copied'); } catch (e) { toast('Couldn\'t copy here'); } },
   cfile: v => { const t = cur(), c = (t.thread || []).find(x => x.id === v); if (!c) return;
-    const body = c.body.split(/\n{2,}/).map(par => { const lines = par.split('\n'); return lines.every(l => /^\s*- /.test(l)) ? `<ul>${lines.map(l => `<li>${rich(l.replace(/^\s*- /, ''))}</li>`).join('')}</ul>` : `<p>${rich(par)}</p>`; }).join('');
-    const html = `<html xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><title>${esc(t.title)}</title><style>body{font-family:Calibri,Arial,sans-serif;font-size:11pt;line-height:1.4}h1{font-size:16pt;margin-bottom:2pt}.meta{color:#666;font-size:9.5pt;margin-bottom:14pt}b{font-weight:600}</style></head><body><h1>${esc(t.title)}</h1><div class="meta">${esc(an(t.area))}, ${new Date(c.at).toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' })}</div>${body}</body></html>`;
-    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['\ufeff', html], { type:'application/msword' })); a.download = t.title.replace(/[^\w\- ]+/g, '').trim().slice(0, 70) + '.doc'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); toast('Saved to your downloads'); },
+    const text = c.body.replace(FILE_RE, (m, name, body) => `# ${name}\n\n${body}`);
+    download(t.title.replace(/[^\w\- ]+/g, '').trim().slice(0, 70) + '.doc', ['\ufeff', wordHtml(t.title, `${an(t.area)}, ${new Date(c.at).toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' })}`, text)], 'application/msword'); },
   projfold: v => { if (shutProj[v]) delete shutProj[v]; else shutProj[v] = true; LS.set('shutProj', shutProj); renderSide(); },
   subcheck: v => { const x = SUBS.find(y => y.id === v); if (!x) return; x.done = !x.done; save(x, { board: x.done ? 'done' : 'none' }, { quiet:true }); renderDetail(); renderBehind(); },
   subdel: async v => { const i = SUBS.findIndex(y => y.id === v); if (i < 0) return; const [x] = SUBS.splice(i, 1); renderDetail(); renderBehind();
     try { await api('DELETE', '/api/app/tasks/' + x.id); toast('Sub-task removed', async () => { try { await api('POST', `/api/app/tasks/${x.id}/restore`); SUBS.splice(i, 0, x); renderDetail(); renderBehind(); } catch (e) { toast('Couldn\'t undo. ' + e.message); } }); } catch (e) { SUBS.splice(i, 0, x); renderDetail(); toast('Couldn\'t remove. ' + e.message); } },
+  docdl: v => { const d = DOCS[v]; if (!d) return; const e = (d.name.split('.').pop() || '').toLowerCase();
+    if (e === 'doc' || e === 'docx') download(d.name.replace(/\.docx?$/i, '') + '.doc', ['\ufeff', wordHtml(d.name.replace(/\.docx?$/i, ''), '', d.text)], 'application/msword');
+    else if (e === 'csv') download(d.name, ['\ufeff', d.text], 'text/csv');
+    else download(d.name, [d.text], 'text/plain'); },
   showfin: v => { showFin[v] = !showFin[v]; renderSide(); },
   project: v => { const p = PROJECTS.find(x => x.id === v); if (!p) return; if (curProj !== v) pendingFinish = null; curProj = v;
     const ts = TASKS.filter(t => t.proj === v), open = ts.filter(t => !isDone(t)), d = p.due == null ? null : dueInfo(p);

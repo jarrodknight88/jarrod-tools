@@ -1,6 +1,7 @@
 // Task comments and attachments. Files live in the private Supabase bucket "task-attachments";
 // the browser uploads straight to a signed URL, so large files never pass through a Netlify function.
 import { db } from './db.mjs';
+import { extractText } from './extract.mjs';
 
 export const BUCKET = 'task-attachments';
 const MAX_BYTES = 25 * 1024 * 1024;
@@ -33,6 +34,23 @@ export async function getThread(taskId) {
     files: files.data.filter(f => !f.comment_id).map(fileOut),
     comments: comments.data.map(c => ({ id: c.id, author: c.author, body: c.body, at: c.created_at, files: files.data.filter(f => f.comment_id === c.id).map(fileOut) }))
   };
+}
+
+// Read the text out of a task's attachments so Claude's worker gets it with the task. Runs when a task is handed
+// to Claude; anything already read is skipped. Never blocks the hand-off: a file that fails just carries a note.
+export async function prepareForClaude(s, taskId, budgetMs = 6000) {
+  const started = Date.now(); let read = 0;
+  const { data: files } = await s.from('task_attachments').select('id,file_name,mime_type,size_bytes,storage_path').eq('task_id', taskId).is('text_content', null).is('text_note', null);
+  for (const f of files || []) {
+    if (Date.now() - started > budgetMs) break;
+    let out;
+    try {
+      if ((f.size_bytes || 0) > 15 * 1024 * 1024) out = { note: 'The file is too large to read for Claude (over 15 MB).' };
+      else { const dl = await s.storage.from(BUCKET).download(f.storage_path); if (dl.error || !dl.data) throw new Error(dl.error ? dl.error.message : 'download failed'); out = extractText(Buffer.from(await dl.data.arrayBuffer()), f.file_name, f.mime_type); }
+    } catch (e) { console.error('attachment read failed', f.file_name, e.message); continue; } // left unread so the 15-minute catch-up tries again
+    await s.from('task_attachments').update({ text_content: out.text || null, text_note: out.note || (out.text ? null : 'No readable text.') }).eq('id', f.id); read++;
+  }
+  return read;
 }
 
 // When Claude's task worker next checks the queue (Eastern time). Mirrors its two scheduled runs:
@@ -73,6 +91,7 @@ export async function addComment(taskId, { body = '', attachmentIds = [] } = {})
     else if (open) fail(await s.from('claude_queue').update({ status: 'pending', payload, result: null, error: null, claimed_at: null, ready_at: null, completed_at: null, title: task.title }).eq('id', open.id));
     else fail(await s.from('claude_queue').insert({ kind: 'task', status: 'pending', source_ref: ref, title: task.title, payload }));
     fail(await s.from('tasks').update({ claude_status: 'queued' }).eq('id', taskId));
+    try { await prepareForClaude(s, taskId); } catch (e) { console.error('prepareForClaude', e); }
     fail(await s.from('task_comments').insert({ task_id: taskId, author: 'system', body: `Queued for Claude. The next run is ${nextClaudeRun()}, and the reply will show up here.` }));
     queued = true;
   }
