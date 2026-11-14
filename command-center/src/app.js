@@ -52,6 +52,8 @@ async function api(method, path, body) {
     return j;
   } finally { if (write) busy(-1); }
 }
+// Comment text: escaped, links made clickable, @Claude highlighted.
+const rich = s => esc(s).replace(/\bhttps?:\/\/[^\s<]+/g, u => { const tail = (u.match(/(?:[.,;:!?)\]]|&quot;|&gt;)+$/) || [''])[0], url = tail ? u.slice(0, -tail.length) : u; return `<a href="${url}" target="_blank" rel="noopener">${url}</a>${tail}`; }).replace(/(^|[\s>])@claude\b/gi, '$1<b>@Claude</b>').replace(/\n/g, '<br>');
 const normProj = p => ({ ...p, due: off(p.due) });
 const normTask = t => ({ ...t, due: off(t.due), block: t.block ? { d: off(t.block.date), start: t.block.start, dur: t.block.dur, work: t.block.work } : null });
 const wire = p => { const o = { ...p }; if ('due' in o) o.due = o.due == null ? null : ymd(o.due); if ('block' in o) o.block = o.block ? { date: ymd(o.block.d), start: o.block.start, dur: o.block.dur, work: o.block.work } : null; return o; };
@@ -130,7 +132,7 @@ function renderSide() {
     const live = PROJECTS.filter(p => p.area === id && !p.done), fin = PROJECTS.filter(p => p.area === id && p.done);
     const groups = [...live.map(p => [p, open.filter(t => t.proj === p.id)]), [null, open.filter(t => !t.proj || !live.some(p => p.id === t.proj))]];
     return `<div class="area" data-open="${isOpen}"><button data-act="area" data-v="${id}" aria-expanded="${isOpen}"><svg class="chev" viewBox="0 0 10 10"><path d="M2 3.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span class="dot" style="background:${a.color}"></span>${esc(a.name)}<span class="count">${open.length}</span><span class="plus" role="button" tabindex="0" data-act="addprojtop" data-v="${id}" title="Add a project to ${esc(a.name)}" aria-label="Add a project to ${esc(a.name)}">+</span></button>
-      <div class="projects">${groups.filter(([p, ts]) => p || ts.length).map(([p, ts]) => `${p ? `<button class="proj" data-act="project" data-v="${p.id}" title="Open project">${esc(p.name)}${p.due != null ? `<small class="${p.due < 0 ? 'late' : ''}">${p.due < 0 ? 'Overdue' : 'Due ' + dueInfo(p).label.replace('Due ', '').replace('Today', 'today').replace('Tomorrow', 'tomorrow')}</small>` : ''}</button>` : '<div class="proj plain">No project</div>'}${ts.map(t => `<div class="ptask" draggable="true" data-id="${t.id}"><button class="chk" data-act="check" data-id="${t.id}" aria-label="Mark done: ${esc(t.title)}"></button><span>${esc(t.title)}</span></div>`).join('') || '<div class="none">Nothing open</div>'}`).join('')}
+      <div class="projects">${groups.filter(([p, ts]) => p || ts.length).map(([p, ts]) => `${p ? `<button class="proj" data-act="project" data-v="${p.id}" data-drop="${p.id}" title="Open project, or drop a task here">${esc(p.name)}${p.due != null ? `<small class="${p.due < 0 ? 'late' : ''}">${p.due < 0 ? 'Overdue' : 'Due ' + dueInfo(p).label.replace('Due ', '').replace('Today', 'today').replace('Tomorrow', 'tomorrow')}</small>` : ''}</button>` : `<div class="proj plain" data-drop="none" data-area="${id}">No project</div>`}${ts.map(t => `<div class="ptask" draggable="true" data-id="${t.id}"><button class="chk" data-act="check" data-id="${t.id}" aria-label="Mark done: ${esc(t.title)}"></button><span>${esc(t.title)}</span></div>`).join('') || '<div class="none">Nothing open</div>'}`).join('')}
       <button class="addp" data-act="addproj" data-v="${id}">+ Add project</button>${fin.length ? `<button class="addp" data-act="showfin" data-v="${id}">${showFin[id] ? 'Hide' : 'Show'} finished (${fin.length})</button>${showFin[id] ? fin.map(p => `<button class="proj fin" data-act="project" data-v="${p.id}">${esc(p.name)}</button>`).join('') : ''}` : ''}</div></div>`;
   }).join('');
   const c = S.connections, bad = (c.googleConfigured && (!c.calendar || !c.drive)) ? 1 : 0, pg = document.body.dataset.page;
@@ -299,7 +301,7 @@ function renderThread() {
   const t = cur(); if (!t || !$('#dFiles')) return;
   $('#dFiles').innerHTML = (t.fileList || []).map(fileTile).join('') + '<button class="file add" data-act="attach" data-v="task">+ Add file</button>';
   $('#dThread').innerHTML = !t.thread ? '<div class="none">Loading comments</div>' : t.thread.map(c => c.author === 'system' ? `<div class="ev2">${esc(c.body)}</div>`
-    : `<div class="cm"><span class="av ${c.author}">${c.author === 'claude' ? SPARK : (NAMES[c.author] || '?').slice(0, 2)}</span><div><div class="who2">${NAMES[c.author] || esc(c.author)}<span>${stamp(c.at)}</span></div><div class="txt">${esc(c.body).replace(/@claude\b/gi, '<b>@Claude</b>').replace(/\n/g, '<br>')}</div>${(c.files || []).map(f => `<a class="att" ${f.url ? `href="${esc(f.url)}" target="_blank" rel="noopener"` : ''} style="text-decoration:none;color:inherit">${CLIP} ${esc(f.name)}</a>`).join(' ')}</div></div>`).join('') || '<div class="none">No comments yet</div>';
+    : `<div class="cm"><span class="av ${c.author}">${c.author === 'claude' ? SPARK : (NAMES[c.author] || '?').slice(0, 2)}</span><div><div class="who2">${NAMES[c.author] || esc(c.author)}<span>${stamp(c.at)}</span></div><div class="txt">${rich(c.body)}</div>${c.author === 'claude' ? `<div class="cacts"><button class="mini" data-act="cfile" data-v="${c.id}">Save as Word file</button><button class="mini" data-act="ccopy" data-v="${c.id}">Copy</button></div>` : ''}${(c.files || []).map(f => `<a class="att" ${f.url ? `href="${esc(f.url)}" target="_blank" rel="noopener"` : ''} style="text-decoration:none;color:inherit">${CLIP} ${esc(f.name)}</a>`).join(' ')}</div></div>`).join('') || '<div class="none">No comments yet</div>';
 }
 async function loadThread(id) {
   try {
@@ -455,6 +457,11 @@ const ACT = {
     try { const r = await api('POST', '/api/app/projects', { name, area:qpArea }); PROJECTS.push(normProj(r.project)); openAreas[qpArea] = true; LS.set('open', openAreas); lastArea = qpArea; LS.set('area', lastArea); renderSide(); if (phone.matches) ACT.tab('projects'); toast(`${name} added to ${an(qpArea)}`); }
     catch (e) { toast('Couldn\'t add that. ' + e.message); } },
   mcheck: (v, el) => { ACT.check(v, el); ACT.meeting(el.dataset.m); },
+  ccopy: async v => { const c = (cur().thread || []).find(x => x.id === v); if (!c) return; try { await navigator.clipboard.writeText(c.body); toast('Copied'); } catch (e) { toast('Couldn\'t copy here'); } },
+  cfile: v => { const t = cur(), c = (t.thread || []).find(x => x.id === v); if (!c) return;
+    const body = c.body.split(/\n{2,}/).map(par => { const lines = par.split('\n'); return lines.every(l => /^\s*- /.test(l)) ? `<ul>${lines.map(l => `<li>${rich(l.replace(/^\s*- /, ''))}</li>`).join('')}</ul>` : `<p>${rich(par)}</p>`; }).join('');
+    const html = `<html xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><title>${esc(t.title)}</title><style>body{font-family:Calibri,Arial,sans-serif;font-size:11pt;line-height:1.4}h1{font-size:16pt;margin-bottom:2pt}.meta{color:#666;font-size:9.5pt;margin-bottom:14pt}b{font-weight:600}</style></head><body><h1>${esc(t.title)}</h1><div class="meta">${esc(an(t.area))}, ${new Date(c.at).toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' })}</div>${body}</body></html>`;
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['\ufeff', html], { type:'application/msword' })); a.download = t.title.replace(/[^\w\- ]+/g, '').trim().slice(0, 70) + '.doc'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); toast('Saved to your downloads'); },
   showfin: v => { showFin[v] = !showFin[v]; renderSide(); },
   project: v => { const p = PROJECTS.find(x => x.id === v); if (!p) return; if (curProj !== v) pendingFinish = null; curProj = v;
     const ts = TASKS.filter(t => t.proj === v), open = ts.filter(t => !isDone(t)), d = p.due == null ? null : dueInfo(p);
@@ -583,9 +590,14 @@ $('#fileInput').onchange = async () => { const fi = $('#fileInput'), files = [..
 document.addEventListener('dragstart', e => { const el = e.target.closest && e.target.closest('[draggable=true][data-id]'); if (!el) return;
   drag = { id:el.dataset.id, kind:el.classList.contains('block') ? 'block' : 'task' }; el.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', el.dataset.id); });
 document.addEventListener('dragend', () => { drag = null; $$('.dragging,.over').forEach(x => x.classList.remove('dragging', 'over')); });
-document.addEventListener('dragover', e => { const z = e.target.closest('.col,.dbody'); if (!z || !drag || (z.classList.contains('col') && drag.kind !== 'task')) return;
+document.addEventListener('dragover', e => { const pz = e.target.closest('[data-drop]'); if (pz && drag && drag.kind === 'task') { e.preventDefault(); $$('.over').forEach(x => x !== pz && x.classList.remove('over')); pz.classList.add('over'); return; }
+  const z = e.target.closest('.col,.dbody'); if (!z || !drag || (z.classList.contains('col') && drag.kind !== 'task')) return;
   e.preventDefault(); $$('.over').forEach(x => x !== z && x.classList.remove('over')); z.classList.add('over'); });
-document.addEventListener('drop', e => { const z = e.target.closest('.col,.dbody'); if (!z || !drag) return; e.preventDefault(); const t = byId(drag.id); drag = null; if (!t) return;
+document.addEventListener('drop', e => { const pz = e.target.closest('[data-drop]');
+  if (pz && drag && drag.kind === 'task') { e.preventDefault(); const t = byId(drag.id); drag = null; pz.classList.remove('over'); if (!t) return;
+    const p = PROJECTS.find(x => x.id === pz.dataset.drop), area = p ? p.area : pz.dataset.area, pid = p ? p.id : null;
+    if (t.proj === pid && t.area === area) return; const patch = { proj:pid }; if (t.area !== area) patch.area = area; t.proj = pid; t.area = area; save(t, patch); render(); toast(p ? `Moved to ${p.name}` : `Moved out to ${an(area)}, no project`); return; }
+  const z = e.target.closest('.col,.dbody'); if (!z || !drag) return; e.preventDefault(); const t = byId(drag.id); drag = null; if (!t) return;
   if (z.classList.contains('col')) { if (t.board !== z.dataset.col || (z.dataset.col === 'done') !== isDone(t)) { setBoard(t, z.dataset.col); toast(z.dataset.col === 'done' ? 'Marked done' : 'Moved to ' + (z.dataset.col === 'todo' ? 'To do' : 'Doing')); } }
   else { const r = z.getBoundingClientRect(), d = +z.dataset.d, start = START * 60 + Math.max(0, Math.min((END - START) * 60 - 30, Math.floor((e.clientY - r.top) / H * 2) * 30));
     t.block = { d, start, dur:t.block ? t.block.dur : 60, work:t.block ? t.block.work : true }; save(t, { block:t.block });
