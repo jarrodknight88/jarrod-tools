@@ -1,55 +1,55 @@
 {
- "date": "2026-11-15",
- "generatedAt": "2026-11-15T19:01:56.923Z",
+ "date": "2026-11-16",
+ "generatedAt": "2026-11-16T22:25:27.976Z",
  "quarter": "Q4 2026",
  "quarterStart": "2026-10-01",
  "scope": "Online Store + CardsHQ Headless API (locked ecom definition)",
  "isSample": false,
  "products": [],
  "tier4": {
-  "revenue": 2275151.03,
-  "unitsSold": 19934,
-  "orders": 5521
+  "revenue": 2341668.86,
+  "unitsSold": 20332,
+  "orders": 5647
  },
  "attribution": {
-  "onlineOrders": 5521,
-  "ordersWithUtm": 3265,
+  "onlineOrders": 5647,
+  "ordersWithUtm": 3338,
   "utmCoverage": 59.1,
   "channels": [
    {
     "label": "Direct / unknown",
-    "orders": 2045,
-    "revenue": 1007176.88
+    "orders": 2087,
+    "revenue": 1028334.34
    },
    {
     "label": "google",
-    "orders": 608,
-    "revenue": 331703.66
+    "orders": 622,
+    "revenue": 332370.83
    },
    {
     "label": "google / Google Shopping",
-    "orders": 464,
-    "revenue": 189144.91
+    "orders": 468,
+    "revenue": 191059.26
    },
    {
     "label": "google / 24123778505",
-    "orders": 320,
-    "revenue": 102701.11
+    "orders": 328,
+    "revenue": 104806.08
    },
    {
     "label": "fb / National New Inventory Campaign",
-    "orders": 123,
-    "revenue": 57096.2
+    "orders": 129,
+    "revenue": 65314.99
    },
    {
     "label": "Google (referrer only)",
-    "orders": 105,
-    "revenue": 51220.46
+    "orders": 110,
+    "revenue": 52678.46
    },
    {
     "label": "google / 22593909256",
-    "orders": 95,
-    "revenue": 31157.66
+    "orders": 101,
+    "revenue": 32103.74
    },
    {
     "label": "fb / Bowman Chrome Football Pre-Order 9.24.26",
@@ -57,24 +57,24 @@
     "revenue": 22877.95
    },
    {
+    "label": "shop_app",
+    "orders": 53,
+    "revenue": 22802.69
+   },
+   {
+    "label": "fb / Pokemon Manual (boxes)",
+    "orders": 156,
+    "revenue": 19748.35
+   },
+   {
     "label": "CardsHQ / 146b96616f-EMAIL_CAMPAIGN_2026_10_19_08_51",
     "orders": 20,
     "revenue": 19536.24
    },
    {
-    "label": "fb / Pokemon Manual (boxes)",
-    "orders": 150,
-    "revenue": 19212.36
-   },
-   {
-    "label": "shop_app",
-    "orders": 51,
-    "revenue": 19041.86
-   },
-   {
     "label": "chatgpt.com",
-    "orders": 45,
-    "revenue": 17737.2
+    "orders": 47,
+    "revenue": 17968.97
    }
   ]
  }
