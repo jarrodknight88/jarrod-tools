@@ -1,0 +1,81 @@
+{
+ "date": "2026-11-22",
+ "generatedAt": "2026-11-22T19:55:08.637Z",
+ "quarter": "Q4 2026",
+ "quarterStart": "2026-10-01",
+ "scope": "Online Store + CardsHQ Headless API (locked ecom definition)",
+ "isSample": false,
+ "products": [],
+ "tier4": {
+  "revenue": 2683335.41,
+  "unitsSold": 22543,
+  "orders": 6426
+ },
+ "attribution": {
+  "onlineOrders": 6426,
+  "ordersWithUtm": 3834,
+  "utmCoverage": 59.7,
+  "channels": [
+   {
+    "label": "Direct / unknown",
+    "orders": 2328,
+    "revenue": 1161961.77
+   },
+   {
+    "label": "google",
+    "orders": 706,
+    "revenue": 371677.4
+   },
+   {
+    "label": "google / Google Shopping",
+    "orders": 517,
+    "revenue": 215745.24
+   },
+   {
+    "label": "google / 24123778505",
+    "orders": 373,
+    "revenue": 137822.32
+   },
+   {
+    "label": "fb / National New Inventory Campaign",
+    "orders": 149,
+    "revenue": 72019.98
+   },
+   {
+    "label": "Google (referrer only)",
+    "orders": 130,
+    "revenue": 57928.43
+   },
+   {
+    "label": "google / 22593909256",
+    "orders": 117,
+    "revenue": 38138.49
+   },
+   {
+    "label": "fb / Bowman Chrome Football Pre-Order 9.24.26",
+    "orders": 51,
+    "revenue": 24454.02
+   },
+   {
+    "label": "shop_app",
+    "orders": 54,
+    "revenue": 23274.25
+   },
+   {
+    "label": "fb / Pokemon 30th Anniversary Sales Campaign",
+    "orders": 64,
+    "revenue": 22012.24
+   },
+   {
+    "label": "fb / Pokemon Manual (boxes)",
+    "orders": 177,
+    "revenue": 21920.28
+   },
+   {
+    "label": "chatgpt.com",
+    "orders": 52,
+    "revenue": 20280.05
+   }
+  ]
+ }
+}
