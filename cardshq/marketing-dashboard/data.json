@@ -1,40 +1,40 @@
 {
- "date": "2026-11-25",
- "generatedAt": "2026-11-25T21:54:40.691Z",
+ "date": "2026-11-26",
+ "generatedAt": "2026-11-26T21:48:45.841Z",
  "quarter": "Q4 2026",
  "quarterStart": "2026-10-01",
  "scope": "Online Store + CardsHQ Headless API (locked ecom definition)",
  "isSample": false,
  "products": [],
  "tier4": {
-  "revenue": 2946259.97,
-  "unitsSold": 24329,
-  "orders": 6953
+  "revenue": 3001805.14,
+  "unitsSold": 24821,
+  "orders": 7119
  },
  "attribution": {
-  "onlineOrders": 6953,
-  "ordersWithUtm": 4152,
-  "utmCoverage": 59.7,
+  "onlineOrders": 7119,
+  "ordersWithUtm": 4241,
+  "utmCoverage": 59.6,
   "channels": [
    {
     "label": "Direct / unknown",
-    "orders": 2505,
-    "revenue": 1250029.9
+    "orders": 2571,
+    "revenue": 1265083.83
    },
    {
     "label": "google",
-    "orders": 766,
-    "revenue": 413556.81
+    "orders": 779,
+    "revenue": 420178.78
    },
    {
     "label": "google / Google Shopping",
-    "orders": 534,
-    "revenue": 224174.06
+    "orders": 538,
+    "revenue": 225901.73
    },
    {
     "label": "google / 24123778505",
-    "orders": 400,
-    "revenue": 144134.17
+    "orders": 412,
+    "revenue": 146684.25
    },
    {
     "label": "fb / National New Inventory Campaign",
@@ -43,13 +43,18 @@
    },
    {
     "label": "Google (referrer only)",
-    "orders": 151,
-    "revenue": 68564.53
+    "orders": 156,
+    "revenue": 71316.88
    },
    {
     "label": "google / 22593909256",
-    "orders": 126,
-    "revenue": 39515.35
+    "orders": 127,
+    "revenue": 39565.7
+   },
+   {
+    "label": "CardsHQ / 646c4afcf2-EMAIL_CAMPAIGN_2026_10_30_05_13",
+    "orders": 53,
+    "revenue": 28744.6
    },
    {
     "label": "fb / Bowman Chrome Football Pre-Order 9.24.26",
@@ -68,13 +73,8 @@
    },
    {
     "label": "fb / Pokemon Manual (boxes)",
-    "orders": 196,
-    "revenue": 24223.29
-   },
-   {
-    "label": "CardsHQ / 146b96616f-EMAIL_CAMPAIGN_2026_10_19_08_51",
-    "orders": 22,
-    "revenue": 21836.2
+    "orders": 198,
+    "revenue": 24424.21
    }
   ]
  }
